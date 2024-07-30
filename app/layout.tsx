@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-
 import "./globals.css";
 import { ThemeProvider } from "./provider";
+import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -11,6 +11,8 @@ export const metadata: Metadata = {
   description:
     "Minimal Portfolio Showcasing Tanveer's Frontend Development Skills.",
 };
+
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
 export default function RootLayout({
   children,
@@ -21,6 +23,27 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="icon" href="/ts-logo.png" sizes="any" />
+        {/* Google Analytics Script */}
+        {GA_ID && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script
+              id="google-analytics"
+              dangerouslySetInnerHTML={{
+                __html: `
+                  window.dataLayer = window.dataLayer || [];
+                  function gtag(){dataLayer.push(arguments);}
+                  gtag('js', new Date());
+                  gtag('config', '${GA_ID}');
+                `,
+              }}
+              strategy="afterInteractive"
+            />
+          </>
+        )}
       </head>
       <body className={inter.className}>
         <ThemeProvider
