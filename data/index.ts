@@ -101,6 +101,13 @@ export const testimonials = [
     title: "CEO Of The Powered Project",
     imgUrl: "/shaurya.png",
   },
+  {
+    quote:
+      "Tanveer is one of the most talented and resourceful developers I have had the pleasure of working with. His creative and technical skills have consistently enabled us to deliver multiple projects on time and with exceptional quality. His expertise in creating user-friendly, awe-inspiring, and responsive interfaces has been a crucial pillar of several projects we have worked on together.",
+    name: "Aadit Chadda",
+    title: "Student At Trent University",
+    imgUrl: "/aadit.png",
+  },
 ];
 
 export const companies = [
