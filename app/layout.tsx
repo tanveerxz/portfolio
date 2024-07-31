@@ -8,9 +8,9 @@ import Script from "next/script";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Tanveer's Portfolio",
+  title: "Tanveer Singh | Front-End Web Developer | Portfolio",
   description:
-    "Minimal Portfolio Showcasing Tanveer's Frontend Development Skills.",
+    "Explore Tanveer Singh's portfolio, showcasing expertise in front-end development, web design, and modern web technologies. Discover projects, skills, and get in touch.",
 };
 
 export default function RootLayout({
