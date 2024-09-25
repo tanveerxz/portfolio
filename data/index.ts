@@ -80,6 +80,14 @@ export const projects = [
   },
   {
     id: 2,
+    title: "OrbitFind - An Event Faciliatator",
+    des: "OrbitFind - Find exciting events in your orbit! Level up your event discovery experience, earn badges, and create your own events for your community!",
+    img: "/orbitfind.png",
+    link: "https://orbitfind.co",
+  },
+
+  {
+    id: 3,
     title: "Social Media App",
     des: "Soon👀",
     img: "/social.jpg",
