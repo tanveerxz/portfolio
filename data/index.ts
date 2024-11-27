@@ -73,10 +73,10 @@ export const gridItems = [
 export const projects = [
   {
     id: 1,
-    title: "TPP - A product Showcase",
-    des: "Elegant ReactJS site highlighting a power bank with a sleek design.",
-    img: "/tpp.png",
-    link: "https://thepoweredproject.co",
+    title: "Kloak Ltd - Innovative Software Solutions",
+    des: "Explore Kloak Ltd's diverse range of applications across Cloud, Web, Desktop, and Mobile platforms, tailored for businesses of all sizes.",
+    img: "/kloak.png",
+    link: "https://app.kloak.org",
   },
   {
     id: 2,
