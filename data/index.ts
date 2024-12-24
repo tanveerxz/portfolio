@@ -148,17 +148,23 @@ export const workExperience = [
 export const socialMedia = [
   {
     id: 1,
-    img: "/git.svg",
-    url: "https://github.com/tanveerxz",
+    img: "/upwork.svg",
+    url: "https://www.upwork.com/freelancers/~01931ac7d2599273d8",
   },
   {
     id: 2,
+    img: "/git.svg",
+    url: "https://github.com/",
+  },
+  {
+    id: 3,
     img: "/twit.svg",
     url: "https://x.com/trueblueyt",
   },
   {
-    id: 3,
+    id: 4,
     img: "/link.svg",
+    classname: "img-white",
     url: "https://linkedin.com/in/tanveerxz",
   },
 ];
