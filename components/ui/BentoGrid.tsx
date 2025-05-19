@@ -67,8 +67,18 @@ export const BentoGridItem = ({
 
   const handleCopy = () => {
     const text = "tanveersingh252008@gmail.com";
-    navigator.clipboard.writeText(text);
-    setCopied(true);
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      navigator.clipboard
+        .writeText(text)
+        .then(() => {
+          setCopied(true);
+        })
+        .catch(() => {
+          alert("Failed to copy email.");
+        });
+    } else {
+      alert("Clipboard API not supported.");
+    }
   };
 
   return (
