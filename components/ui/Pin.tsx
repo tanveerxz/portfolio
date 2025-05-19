@@ -28,7 +28,7 @@ export const PinContainer = ({
   };
 
   const onClick = () => {
-    if (href) {
+    if (typeof window !== "undefined" && href) {
       window.open(href, "_blank", "noopener,noreferrer");
     }
   };
