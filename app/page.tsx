@@ -3,7 +3,7 @@
 import { navItems } from "@/data";
 import dynamic from "next/dynamic";
 
-const Hero = dynamic(() => import("@/components/Hero"), { ssr: false });
+import Hero from "@/components/Hero";
 const Grid = dynamic(() => import("@/components/Grid"), { ssr: false });
 import Footer from "@/components/Footer";
 import Clients from "@/components/Clients";
