@@ -147,6 +147,11 @@ export const workExperience = [
 
 export const socialMedia = [
   {
+    id: 0,
+    img: "/insta.svg",
+    url: "https://www.instagram.com/codedbytanveer/",
+  },
+  {
     id: 1,
     img: "/upwork.svg",
     url: "https://www.upwork.com/freelancers/~01931ac7d2599273d8",
