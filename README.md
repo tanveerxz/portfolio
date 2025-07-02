@@ -9,6 +9,7 @@ Welcome to my portfolio website! This site is crafted to showcase my skills, pro
 - **Tailwind CSS**: A utility-first CSS framework for rapid and custom UI design.
 - **React.js**: A library for building interactive UIs.
 - **Three.js**: A JavaScript library for creating and displaying animated 3D graphics in the browser.
+- **GSAP**: A robust animation library used here for smooth page transitions.
 
 ## 🌟 Features
 
