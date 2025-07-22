@@ -24,21 +24,13 @@ const RecentProjects: React.FC = () => {
             >
               <PinContainer title={item.title}>
                 <div className="relative flex items-center justify-center sm:w-96 w-[80vw] overflow-hidden h-[20vh] lg:h-[30vh] mb-10">
-                  <div
-                    className="relative w-full h-full overflow-hidden lg:rounded-3xl"
-                    style={{ backgroundColor: "#13162D" }}
-                  >
+                  <div className="relative w-full h-[20vh] lg:h-[30vh] overflow-hidden lg:rounded-3xl">
                     <img
-                      src="/bg.png"
-                      alt="Background Image"
+                      src={item.img}
+                      alt="Project Preview"
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <img
-                    src={item.img}
-                    alt="Cover"
-                    className="z-10 absolute bottom-0"
-                  />
                 </div>
 
                 <h1 className="font-bold lg:text-2xl md:text-xl text-base line-clamp-1">

@@ -73,10 +73,10 @@ export const gridItems = [
 export const projects = [
   {
     id: 1,
-    title: "Kloak Ltd - Innovative Software Solutions",
-    des: "Explore Kloak Ltd's diverse range of applications across Cloud, Web, Desktop, and Mobile platforms, tailored for businesses of all sizes.",
-    img: "/kloak.png",
-    link: "https://app.kloak.org",
+    title: "HousingPro - Modern UK Property Platform",
+    des: "HousingPro is a sleek real estate demo showcasing premium property listings across the UK. Built to highlight cutting-edge frontend skills and intuitive UI/UX design in the real estate space.",
+    img: "/housingpro.png",
+    link: "http://housingpro.vercel.app/",
   },
   {
     id: 2,
@@ -85,9 +85,16 @@ export const projects = [
     img: "/orbitfind.png",
     link: "https://orbitfind.co",
   },
-
   {
     id: 3,
+    title: "Kloak Ltd - Innovative Software Solutions",
+    des: "Explore Kloak Ltd's diverse range of applications across Cloud, Web, Desktop, and Mobile platforms, tailored for businesses of all sizes.",
+    img: "/kloak.png",
+    link: "https://app.kloak.org",
+  },
+
+  {
+    id: 4,
     title: "Social Media App",
     des: "Soon👀",
     img: "/social.jpg",
