@@ -9,6 +9,7 @@ import {
   ArrowRightIcon,
   StarIcon,
 } from "@heroicons/react/24/outline";
+import Image from "next/image";
 
 // Extend Window interface for gtag
 declare global {
@@ -234,7 +235,7 @@ export default function WebsiteBudgetLanding() {
       form.append("_subject", `New Website Lead - ${formData.budget} Budget`);
 
       // Replace 'YOUR_FORM_ID' with your actual Formspree form ID
-      const response = await fetch("https://formspree.io/f/xanbaqrg", {
+      const response = await fetch("https://formspree.io/f/YOUR_FORM_ID", {
         method: "POST",
         body: form,
         headers: {
@@ -336,7 +337,7 @@ export default function WebsiteBudgetLanding() {
       url: "https://housingpro.vercel.app/",
     },
     {
-      image: "/imd.png", // Will use placeholder until you add screenshots
+      image: null, // Will use placeholder until you add screenshots
       result: "Professional B2B wholesale platform",
       title: "IMD Corporation",
       url: "https://imdcorporation.com",
@@ -407,8 +408,8 @@ export default function WebsiteBudgetLanding() {
             </h1>
 
             <p className="text-xl sm:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto">
-              A developer's honest breakdown — no fluff, just clear deliverables
-              and realistic expectations.
+              A developer&apos;s honest breakdown — no fluff, just clear
+              deliverables and realistic expectations.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
@@ -735,13 +736,13 @@ export default function WebsiteBudgetLanding() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <a
-                  href="https://wa.link/chdm9n"
+                  href="https://wa.me/your-number"
                   className="text-blue-400 hover:text-blue-300 transition-colors"
                 >
                   WhatsApp for urgent questions →
                 </a>
                 <a
-                  href="mailto:hello@tanveersingh.dev"
+                  href="mailto:your-email@example.com"
                   className="text-blue-400 hover:text-blue-300 transition-colors"
                 >
                   Email me directly →
@@ -867,13 +868,13 @@ export default function WebsiteBudgetLanding() {
                   </p>
                   <div className="flex flex-col sm:flex-row gap-4 justify-center">
                     <a
-                      href="https://wa.link/chdm9n"
+                      href="https://wa.me/your-number"
                       className="text-blue-400 hover:text-blue-300 transition-colors"
                     >
                       WhatsApp →
                     </a>
                     <a
-                      href="mailto:hello@tanveersingh.dev"
+                      href="mailto:your-email@example.com"
                       className="text-blue-400 hover:text-blue-300 transition-colors"
                     >
                       Email →
