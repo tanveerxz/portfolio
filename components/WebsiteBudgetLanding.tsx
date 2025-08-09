@@ -28,7 +28,7 @@ const jsonLd = {
   provider: {
     "@type": "Person",
     name: "Tanveer",
-    url: "https://codedbytanveer.com",
+    url: "https://tanveersingh.dev",
   },
   serviceType: "Website Development",
   areaServed: ["UK", "US"],
@@ -331,13 +331,13 @@ export default function WebsiteBudgetLanding() {
 
   const portfolioItems = [
     {
-      image: "/housingpro.png", // Image should be in public/housingpro.png
+      image: "housingpro.png", // Image should be in public/housingpro.png
       result: "Modern property search with advanced filtering",
       title: "Housing Project",
       url: "https://housingpro.vercel.app/",
     },
     {
-      image: null, // Will use placeholder until you add screenshots
+      image: "imd.png", // Will use placeholder until you add screenshots
       result: "Professional B2B wholesale platform",
       title: "IMD Corporation",
       url: "https://imdcorporation.com",
@@ -385,12 +385,6 @@ export default function WebsiteBudgetLanding() {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
-      {/* JSON-LD Schema */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 to-purple-900/20" />
