@@ -354,7 +354,7 @@ export default function WebsiteBudgetLanding() {
     {
       question: "Which budget fits my business?",
       answer:
-        "Not sure? Book a free 15-minute call and I'll help you figure out what makes sense based on your goals, timeline, and current situation. No pressure, just honest advice.",
+        "Not sure? Book a free 15-minute call and I&apos;ll help you figure out what makes sense based on your goals, timeline, and current situation. No pressure, just honest advice.",
     },
     {
       question: "How long does each project take?",
@@ -471,7 +471,7 @@ export default function WebsiteBudgetLanding() {
                   <div className="space-y-4 flex-grow">
                     <div>
                       <h4 className="font-medium text-green-400 mb-2">
-                        ✓ What's included:
+                        {" ✓ What's included:"}
                       </h4>
                       <ul className="space-y-2">
                         {pkg.deliverables.map((item, i) => (
@@ -711,8 +711,9 @@ export default function WebsiteBudgetLanding() {
               Get Your Free Website Audit
             </h2>
             <p className="text-lg text-gray-300">
-              Tell me about your project and I'll send you a personalized plan
-              with honest recommendations.
+              {
+                " Tell me about your project and I'll send you a personalized plan with honest recommendations."
+              }
             </p>
           </motion.div>
 
@@ -725,7 +726,7 @@ export default function WebsiteBudgetLanding() {
                 Thanks for reaching out!
               </h3>
               <p className="text-gray-300 mb-6">
-                I'll review your project and send you a personalized audit
+                I&apos;ll review your project and send you a personalized audit
                 within 24 hours.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -823,7 +824,9 @@ export default function WebsiteBudgetLanding() {
                     onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                       setFormData({ ...formData, brief: e.target.value })
                     }
-                    placeholder="What's your business? What's your main goal with this website? Any specific features you need?"
+                    placeholder={
+                      "What's your business? What's your main goal with this website? Any specific features you need?"
+                    }
                   />
                 </div>
 
