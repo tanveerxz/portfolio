@@ -862,7 +862,7 @@ export default function WebsiteBudgetLanding() {
                   </p>
                   <div className="flex flex-col sm:flex-row gap-4 justify-center">
                     <a
-                      href="https://wa.me/your-number"
+                      href="https://wa.me/your-nuber"
                       className="text-blue-400 hover:text-blue-300 transition-colors"
                     >
                       WhatsApp →
