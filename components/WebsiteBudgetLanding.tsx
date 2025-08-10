@@ -331,22 +331,22 @@ export default function WebsiteBudgetLanding() {
 
   const portfolioItems = [
     {
-      image: "housingpro.png", // Image should be in public/housingpro.png
+      image: "/housingpro.png", // Image should be in public/housingpro.png
       result: "Modern property search with advanced filtering",
       title: "Housing Project",
       url: "https://housingpro.vercel.app/",
     },
     {
-      image: "imd.png", // Will use placeholder until you add screenshots
+      image: "/imd.png", // Will use placeholder until you add screenshots
       result: "Professional B2B wholesale platform",
       title: "IMD Corporation",
       url: "https://imdcorporation.com",
     },
     {
-      image: null,
-      result: "Mobile-first design, 90+ Lighthouse score",
-      title: "Performance-Optimized Site",
-      url: "#",
+      image: "/orbitfind.png",
+      result: "AI-powered event search platform",
+      title: "Orbitfind",
+      url: "https://orbitfind-waitlist.vercel.app/",
     },
   ];
 
