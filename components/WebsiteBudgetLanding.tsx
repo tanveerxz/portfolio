@@ -557,44 +557,12 @@ export default function WebsiteBudgetLanding() {
                 transition={{ delay: index * 0.1 }}
               >
                 <Card className="group hover:border-gray-600 transition-colors">
-                  <div className="bg-gray-700 rounded-lg h-48 mb-4 flex items-center justify-center overflow-hidden relative">
-                    {item.image ? (
-                      <>
-                        <img
-                          src={item.image}
-                          alt={item.title}
-                          className="w-full h-full object-cover"
-                          onLoad={(
-                            e: React.SyntheticEvent<HTMLImageElement>
-                          ) => {
-                            // Hide fallback when image loads successfully
-                            const fallback = e.currentTarget
-                              .nextElementSibling as HTMLElement;
-                            if (fallback) fallback.style.display = "none";
-                          }}
-                          onError={(
-                            e: React.SyntheticEvent<HTMLImageElement>
-                          ) => {
-                            // Hide image and show fallback on error
-                            e.currentTarget.style.display = "none";
-                            const fallback = e.currentTarget
-                              .nextElementSibling as HTMLElement;
-                            if (fallback) fallback.style.display = "flex";
-                          }}
-                        />
-                        <div className="absolute inset-0 flex items-center justify-center bg-gray-700">
-                          <span className="text-gray-500 text-center px-4">
-                            {item.title} Screenshot
-                          </span>
-                        </div>
-                      </>
-                    ) : (
-                      <div className="flex items-center justify-center w-full h-full">
-                        <span className="text-gray-500 text-center px-4">
-                          {item.title} Screenshot
-                        </span>
-                      </div>
-                    )}
+                  <div className="bg-gray-700 rounded-lg h-48 mb-4 overflow-hidden">
+                    <img
+                      src={item.image}
+                      alt={`${item.title} screenshot`}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                   <div className="text-sm text-blue-400 font-medium mb-1">
                     {item.result}
