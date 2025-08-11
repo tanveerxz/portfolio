@@ -83,7 +83,7 @@ export const projects = [
     title: "OrbitFind - An Event Faciliatator",
     des: "OrbitFind - Find exciting events in your orbit! Level up your event discovery experience, earn badges, and create your own events for your community!",
     img: "/orbitfind.png",
-    link: "https://orbitfind.co",
+    link: "https://orbitfind-waitlist.vercel.app/",
   },
   {
     id: 3,
