@@ -235,7 +235,7 @@ export default function WebsiteBudgetLanding() {
       form.append("_subject", `New Website Lead - ${formData.budget} Budget`);
 
       // Replace 'YOUR_FORM_ID' with your actual Formspree form ID
-      const response = await fetch("https://formspree.io/f/YOUR_FORM_ID", {
+      const response = await fetch("https://formspree.io/f/xanbaqrg", {
         method: "POST",
         body: form,
         headers: {
@@ -331,19 +331,19 @@ export default function WebsiteBudgetLanding() {
 
   const portfolioItems = [
     {
-      image: "/housingpro.png", // Image should be in public/housingpro.png
+      image: "housingpro.png", // Image should be in public/housingpro.png
       result: "Modern property search with advanced filtering",
       title: "Housing Project",
       url: "https://housingpro.vercel.app/",
     },
     {
-      image: "/imd.png", // Will use placeholder until you add screenshots
+      image: "imd.png", // Will use placeholder until you add screenshots
       result: "Professional B2B wholesale platform",
       title: "IMD Corporation",
       url: "https://imdcorporation.com",
     },
     {
-      image: "/orbitfind.png",
+      image: "orbitfind.png",
       result: "AI-powered event search platform",
       title: "Orbitfind",
       url: "https://orbitfind-waitlist.vercel.app/",
@@ -731,13 +731,13 @@ export default function WebsiteBudgetLanding() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <a
-                  href="https://wa.me/your-number"
+                  href="http://wa.me/447459239536"
                   className="text-blue-400 hover:text-blue-300 transition-colors"
                 >
                   WhatsApp for urgent questions →
                 </a>
                 <a
-                  href="mailto:your-email@example.com"
+                  href="mailto:hello@tanveersingh.dev"
                   className="text-blue-400 hover:text-blue-300 transition-colors"
                 >
                   Email me directly →
@@ -865,13 +865,13 @@ export default function WebsiteBudgetLanding() {
                   </p>
                   <div className="flex flex-col sm:flex-row gap-4 justify-center">
                     <a
-                      href="https://wa.me/your-nuber"
+                      href="http://wa.me/447459239536"
                       className="text-blue-400 hover:text-blue-300 transition-colors"
                     >
                       WhatsApp →
                     </a>
                     <a
-                      href="mailto:your-email@example.com"
+                      href="mailto:hello@tanveersingh.dev"
                       className="text-blue-400 hover:text-blue-300 transition-colors"
                     >
                       Email →
