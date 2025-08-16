@@ -72,6 +72,14 @@ export const gridItems = [
 
 export const projects = [
   {
+    id: 0,
+    title: "IMD Corporation - B2B Wholesale Platform",
+    des: "IMD Corporation is a dependable and reputable wholesaler of mobile phones and smart devices, offering comprehensive solutions for branding distributors, wholesalers, and retailers globally",
+    img: "/imd.png",
+    link: "https://imdcorporation.com/",
+    // techStack: ["Next.js", "Tailwind CSS", "TypeScript"],
+  },
+  {
     id: 1,
     title: "HousingPro - Modern UK Property Platform",
     des: "HousingPro is a sleek real estate demo showcasing premium property listings across the UK. Built to highlight cutting-edge frontend skills and intuitive UI/UX design in the real estate space.",
