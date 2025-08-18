@@ -164,7 +164,7 @@ const Clients = () => {
 
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
             <span className="bg-gradient-to-r from-white via-purple-200 to-blue-200 bg-clip-text text-transparent">
-              My Clients Don't Just
+              My Clients Don&apos;t Just
             </span>
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-400">
@@ -173,7 +173,7 @@ const Clients = () => {
           </h1>
 
           <p className="text-lg text-gray-300 max-w-3xl mx-auto mb-8">
-            Real businesses. Real growth. Real ROI. See how I've helped
+            Real businesses. Real growth. Real ROI. See how I&apos;ve helped
             companies
             <span className="text-purple-400 font-semibold">
               {" "}
@@ -449,8 +449,8 @@ const Clients = () => {
               </h3>
 
               <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-                Join 100+ successful businesses who've transformed their online
-                presence.
+                Join 100+ successful businesses who&apos;ve transformed their
+                online presence.
                 <span className="text-purple-400 font-semibold">
                   {" "}
                   Free strategy call included.
