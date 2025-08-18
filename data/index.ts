@@ -94,13 +94,13 @@ export const projects = [
     img: "/orbitfind.png",
     link: "https://orbitfind-waitlist.vercel.app/",
   },
-  {
-    id: 3,
-    title: "Kloak Ltd - Innovative Software Solutions",
-    des: "Explore Kloak Ltd's diverse range of applications across Cloud, Web, Desktop, and Mobile platforms, tailored for businesses of all sizes.",
-    img: "/kloak.png",
-    link: "https://app.kloak.org",
-  },
+  // {
+  //   id: 3,
+  //   title: "Kloak Ltd - Innovative Software Solutions",
+  //   des: "Explore Kloak Ltd's diverse range of applications across Cloud, Web, Desktop, and Mobile platforms, tailored for businesses of all sizes.",
+  //   img: "/kloak.png",
+  //   link: "https://app.kloak.org",
+  // },
 ];
 
 export const testimonials = [
