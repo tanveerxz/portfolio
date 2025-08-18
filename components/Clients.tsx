@@ -90,7 +90,6 @@ const Clients = () => {
   ];
 
   const trustSignals = [
-    { icon: Award, text: "Top 1% Developer on Upwork" },
     { icon: Zap, text: "48hr Average Response Time" },
     { icon: Target, text: "100% Project Success Rate" },
     { icon: Shield, text: "NDA & IP Protection" },

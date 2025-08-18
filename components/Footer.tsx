@@ -223,7 +223,7 @@ const Footer = () => {
 
   const trustIndicators = [
     { icon: Shield, text: "100% Secure & Confidential" },
-    { icon: Clock, text: "24hr Response Guarantee" },
+    { icon: Clock, text: "48hr Response Guarantee" },
     { icon: Star, text: "5-Star Rated Developer" },
     { icon: Zap, text: "Free Strategy Session" },
   ];
