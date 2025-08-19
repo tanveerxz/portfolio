@@ -56,7 +56,7 @@ const Clients = () => {
 
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
             <span className="bg-gradient-to-r from-white via-purple-200 to-blue-200 bg-clip-text text-transparent">
-              My Clients Don't Just
+              My Clients Don&apos;t Just
             </span>
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-400">
@@ -65,7 +65,7 @@ const Clients = () => {
           </h1>
 
           <p className="text-lg text-gray-300 max-w-3xl mx-auto">
-            Real businesses. Real growth. Real ROI. See how I've helped
+            Real businesses. Real growth. Real ROI. See how I&apos;ve helped
             companies achieve measurable success with conversion-focused
             development.
           </p>
@@ -131,10 +131,10 @@ const Clients = () => {
 
                     {/* Testimonial text */}
                     <blockquote className="text-xl md:text-2xl font-light leading-relaxed text-white mb-8 relative z-10">
-                      <span className="text-3xl text-purple-400">"</span>
+                      <span className="text-3xl text-purple-400">&quot;</span>
                       {testimonials[activeIndex]?.quote ||
                         "Amazing work that transformed our business completely!"}
-                      <span className="text-3xl text-purple-400">"</span>
+                      <span className="text-3xl text-purple-400">&quot;</span>
                     </blockquote>
 
                     {/* Enhanced Client info */}
@@ -230,7 +230,7 @@ const Clients = () => {
               </div>
 
               <p className="text-white/80 text-sm mb-4 line-clamp-3">
-                "{testimonial.quote}"
+                &quot;{testimonial.quote}&quot;
               </p>
 
               <div className="flex items-center gap-3">
