@@ -318,7 +318,7 @@ const Footer = () => {
           </div>
 
           <p className="text-gray-300 md:mt-6 my-5 text-center text-lg max-w-2xl mx-auto">
-            Join 30+ successful businesses who've transformed their online
+            Join 30+ successful businesses who&apos;ve transformed their online
             presence with
             <span className="text-purple-400 font-semibold">
               {" "}
@@ -389,8 +389,8 @@ const Footer = () => {
                     🚀 Thanks for reaching out!
                   </h3>
                   <p className="text-gray-300 mb-8 text-lg">
-                    I'll review your project and send you a personalized audit
-                    within 24 hours.
+                    I&apos;ll review your project and send you a personalized
+                    audit within 24 hours.
                   </p>
                   <div className="flex flex-col sm:flex-row gap-4 justify-center">
                     <motion.a
@@ -425,7 +425,7 @@ const Footer = () => {
                       Get Your Free Website Audit 🎯
                     </h3>
                     <p className="text-gray-400">
-                      Tell me about your project and I'll send you a
+                      Tell me about your project and I&apos;ll send you a
                       personalized strategy + competitive analysis
                     </p>
                   </div>
@@ -581,7 +581,7 @@ const Footer = () => {
 
                     <div className="text-center pt-6 border-t border-gray-700/50">
                       <p className="text-sm text-gray-400 mb-4">
-                        🚀 Prefer to chat directly? I'm always available!
+                        🚀 Prefer to chat directly? I&apos;m always available!
                       </p>
                       <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <motion.a

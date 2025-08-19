@@ -13,7 +13,7 @@ const realExperience = [
     type: "Leadership",
     location: "Remote",
     description:
-      "Leading cross-functional teams to build and scale Scoofy's AI-powered e-commerce platform. Architecting frontend stack with Next.js, TypeScript, and TailwindCSS while collaborating with AI engineers to integrate LLM-powered shopping experiences.",
+      "Leading cross-functional teams to build and scale Scoofy&apos;s AI-powered e-commerce platform. Architecting frontend stack with Next.js, TypeScript, and TailwindCSS while collaborating with AI engineers to integrate LLM-powered shopping experiences.",
     achievements: [
       { metric: "AI Integration", value: "LLM-Powered" },
       { metric: "Team Lead", value: "Cross-functional" },
@@ -153,7 +153,7 @@ const Experience = () => {
             My <span className="text-purple">work experience</span>
           </h1>
           <p className="text-white-100 text-lg max-w-2xl mx-auto mt-6">
-            From fintech intern to AI platform leader - here's my journey
+            From fintech intern to AI platform leader - here&apos;s my journey
             building real products that impact thousands of users.
           </p>
         </motion.div>
