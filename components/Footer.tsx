@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { CheckIcon } from "@heroicons/react/24/outline";
 import { motion, AnimatePresence } from "framer-motion";
@@ -14,9 +16,13 @@ import {
   Shield,
   Clock,
   Zap,
+  Target,
+  Award,
+  TrendingUp,
 } from "lucide-react";
 
 import { socialMedia } from "@/data";
+
 declare global {
   interface Window {
     gtag?: (...args: any[]) => void;
@@ -71,7 +77,6 @@ const Card = ({
     transition={{ duration: 0.6 }}
     className={`bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-xl border border-gray-700/50 rounded-2xl p-8 shadow-2xl relative overflow-hidden ${className}`}
   >
-    {/* Animated background gradient */}
     <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-blue-500/5 animate-pulse" />
     <div className="relative z-10">{children}</div>
   </motion.div>
@@ -165,7 +170,7 @@ const Footer = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [utmParams, setUtmParams] = useState({ source: "", campaign: "" });
-  const [focusedField, setFocusedField] = useState("");
+  const [spotsLeft, setSpotsLeft] = useState(3);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -175,6 +180,14 @@ const Footer = () => {
         campaign: urlParams.get("utm_campaign") || "",
       });
     }
+  }, []);
+
+  // Urgency timer
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSpotsLeft((prev) => (prev > 1 ? prev - 1 : 3));
+    }, 180000); // 3 minutes
+    return () => clearInterval(interval);
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -228,6 +241,33 @@ const Footer = () => {
     { icon: Zap, text: "Free Strategy Session" },
   ];
 
+  const impactStats = [
+    {
+      label: "Avg. Revenue Boost",
+      value: "285%",
+      icon: TrendingUp,
+      color: "text-green-400",
+    },
+    {
+      label: "Client Success Rate",
+      value: "99.7%",
+      icon: Target,
+      color: "text-blue-400",
+    },
+    {
+      label: "Happy Clients",
+      value: "30+",
+      icon: Award,
+      color: "text-purple-400",
+    },
+    {
+      label: "Project ROI",
+      value: "12x",
+      icon: DollarSign,
+      color: "text-yellow-400",
+    },
+  ];
+
   return (
     <footer
       className="w-full pt-20 pb-10 relative overflow-hidden"
@@ -238,12 +278,22 @@ const Footer = () => {
       <div className="absolute top-20 left-10 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl animate-pulse" />
       <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse" />
 
-      {/* background grid */}
-      <div className="w-full absolute left-0 -bottom-72 min-h-96 pointer-events-none opacity-30">
-        <div className="w-full h-full bg-gradient-to-t from-gray-900 via-purple-900/20 to-transparent" />
-      </div>
-
       <div className="flex flex-col items-center relative z-10">
+        {/* Urgency Banner */}
+        <motion.div
+          initial={{ opacity: 0, y: -30 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8 text-center"
+        >
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-red-500/20 to-orange-500/20 backdrop-blur-sm border border-red-500/30 rounded-full px-6 py-3">
+            <Clock className="w-4 h-4 text-orange-400 animate-pulse" />
+            <span className="text-orange-200 font-medium">
+              🔥 Only {spotsLeft} project spots left this month
+            </span>
+          </div>
+        </motion.div>
+
+        {/* Main conversion section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -251,25 +301,52 @@ const Footer = () => {
           className="text-center mb-16"
         >
           <div className="flex flex-col items-center">
+            {" "}
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold lg:max-w-[45vw] text-center mb-6">
               <span className="bg-gradient-to-r from-white via-purple-200 to-blue-200 bg-clip-text text-transparent">
-                Ready to take
+                Ready to
               </span>
-              <span className="text-purple-400"> your</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-400">
+                {" "}
+                3x Your Revenue
+              </span>
               <span className="bg-gradient-to-r from-white via-purple-200 to-blue-200 bg-clip-text text-transparent">
                 {" "}
-                digital presence to the next level?
+                Too?
               </span>
             </h1>
           </div>
+
           <p className="text-gray-300 md:mt-6 my-5 text-center text-lg max-w-2xl mx-auto">
-            Reach out to me today and let&apos;s discuss how I can help you
-            achieve your goals with a
+            Join 30+ successful businesses who've transformed their online
+            presence with
             <span className="text-purple-400 font-semibold">
               {" "}
-              results-driven approach.
+              conversion-focused development.
             </span>
           </p>
+
+          {/* Impact Stats */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12"
+          >
+            {impactStats.map((stat, index) => (
+              <motion.div
+                key={index}
+                whileHover={{ scale: 1.05, y: -5 }}
+                className="text-center p-6 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm border border-white/20"
+              >
+                <stat.icon className={`w-8 h-8 ${stat.color} mx-auto mb-3`} />
+                <div className={`text-3xl font-bold ${stat.color} mb-1`}>
+                  {stat.value}
+                </div>
+                <div className="text-sm text-gray-400">{stat.label}</div>
+              </motion.div>
+            ))}
+          </motion.div>
 
           {/* Trust indicators */}
           <div className="flex flex-wrap justify-center gap-4 mt-8">
@@ -312,8 +389,8 @@ const Footer = () => {
                     🚀 Thanks for reaching out!
                   </h3>
                   <p className="text-gray-300 mb-8 text-lg">
-                    I&apos;ll review your project and send you a personalized
-                    audit within 24 hours.
+                    I'll review your project and send you a personalized audit
+                    within 24 hours.
                   </p>
                   <div className="flex flex-col sm:flex-row gap-4 justify-center">
                     <motion.a
@@ -348,8 +425,8 @@ const Footer = () => {
                       Get Your Free Website Audit 🎯
                     </h3>
                     <p className="text-gray-400">
-                      Tell me about your project and I&apos;ll send you a
-                      personalized strategy
+                      Tell me about your project and I'll send you a
+                      personalized strategy + competitive analysis
                     </p>
                   </div>
 
@@ -365,8 +442,6 @@ const Footer = () => {
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                           setFormData({ ...formData, name: e.target.value })
                         }
-                        onFocus={() => setFocusedField("name")}
-                        onBlur={() => setFocusedField("")}
                         placeholder="John Smith"
                       />
                       <Input
@@ -379,8 +454,6 @@ const Footer = () => {
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                           setFormData({ ...formData, email: e.target.value })
                         }
-                        onFocus={() => setFocusedField("email")}
-                        onBlur={() => setFocusedField("")}
                         placeholder="john@company.com"
                       />
                     </div>
@@ -395,8 +468,6 @@ const Footer = () => {
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                           setFormData({ ...formData, company: e.target.value })
                         }
-                        onFocus={() => setFocusedField("company")}
-                        onBlur={() => setFocusedField("")}
                         placeholder="Your Company Ltd"
                       />
                       <Input
@@ -408,8 +479,6 @@ const Footer = () => {
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                           setFormData({ ...formData, website: e.target.value })
                         }
-                        onFocus={() => setFocusedField("website")}
-                        onBlur={() => setFocusedField("")}
                         placeholder="https://yoursite.com"
                       />
                     </div>
@@ -423,14 +492,12 @@ const Footer = () => {
                       onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
                         setFormData({ ...formData, budget: e.target.value })
                       }
-                      onFocus={() => setFocusedField("budget")}
-                      onBlur={() => setFocusedField("")}
                     >
                       <option value="">💰 Select your investment range</option>
-                      <option value="£500">£500 - Starter Package</option>
-                      <option value="£1K">£1K - Professional Package</option>
-                      <option value="£3K">£3K - Premium Package</option>
-                      <option value="£5K">£5K+ - Enterprise Solution</option>
+                      <option value="£1K">£1K - Starter Package</option>
+                      <option value="£3K">£3K - Professional Package</option>
+                      <option value="£5K">£5K - Premium Package</option>
+                      <option value="£10K+">£10K+ - Enterprise Solution</option>
                       <option value="not-sure">🤔 Not sure yet</option>
                     </Select>
 
@@ -456,8 +523,6 @@ const Footer = () => {
                           ) =>
                             setFormData({ ...formData, brief: e.target.value })
                           }
-                          onFocus={() => setFocusedField("brief")}
-                          onBlur={() => setFocusedField("")}
                           placeholder="What's your business about? What are your main goals? Any specific features you need? The more details, the better I can help! 🚀"
                         />
                         <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-500/10 to-blue-500/10 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none" />
@@ -516,7 +581,7 @@ const Footer = () => {
 
                     <div className="text-center pt-6 border-t border-gray-700/50">
                       <p className="text-sm text-gray-400 mb-4">
-                        🚀 Prefer to chat directly? I&apos;m always available!
+                        🚀 Prefer to chat directly? I'm always available!
                       </p>
                       <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <motion.a
