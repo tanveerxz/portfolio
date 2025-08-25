@@ -36,11 +36,24 @@ const Hero = () => {
             <div className="min-h-[calc(100svh-var(--nav-safe))] grid place-items-center">
               <div className="w-full flex flex-col items-center md:items-start">
                 {/* 3) Tight typography that fits 1366×768 cleanly */}
-                <h1 className="text-center md:text-left leading-[1.02] tracking-[-0.01em] text-white">
+                <h1
+                  className="text-center md:text-left tracking-[-0.01em] text-white relative z-30
+               leading-[1.08]"
+                >
+                  {" "}
+                  {/* was 1.02 */}
                   <span className="block text-[clamp(2.2rem,5.2vw,4.2rem)] font-bold">
                     Crafting Innovative Frontend
                   </span>
-                  <span className="block text-[clamp(2.2rem,5.2vw,4.2rem)] font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-300 via-sky-300 to-purple-300">
+                  <span
+                    className="
+      block text-[clamp(2.2rem,5.2vw,4.2rem)] font-bold
+      bg-clip-text text-transparent
+      bg-gradient-to-r from-cyan-300 via-sky-300 to-cyan-200
+      pb-[0.15em]      /* <-- add a little breathing room at the bottom */
+      leading-[1.1]    /* <-- optional: per-line leading so it never crops */
+    "
+                  >
                     Solutions with Precision &amp; Style
                   </span>
                 </h1>
