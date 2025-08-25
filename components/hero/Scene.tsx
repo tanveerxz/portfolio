@@ -1,12 +1,35 @@
 "use client";
 
-import React, { useMemo, useRef, useEffect } from "react";
+import React, { useMemo, useRef, useEffect, useState } from "react";
 import { Canvas, useThree, useFrame } from "@react-three/fiber";
 import { Float, Environment, Lightformer } from "@react-three/drei";
 import * as THREE from "three";
 import { useHeroTimeline } from "./useHeroTimeline";
 
-type Props = { pinRef: React.RefObject<HTMLElement | null> };
+type Props = {
+  pinRef: React.RefObject<HTMLElement | null>;
+  onReady?: () => void;
+};
+function FirstFrameReady({ onReady }: { onReady?: () => void }) {
+  const { gl } = useThree();
+  const called = useRef(false);
+  const [frames, setFrames] = useState(0);
+
+  useFrame(() => {
+    if (called.current) return;
+    setFrames((f) => {
+      const next = f + 1;
+      if (next >= 2) {
+        // wait 2 frames for env/materials to appear
+        called.current = true;
+        onReady?.();
+      }
+      return next;
+    });
+  });
+
+  return null;
+}
 
 /** ultra-thin progress arc shader */
 /** luxury progress arc: gradient, rounded tip, shimmer, halo */
@@ -221,7 +244,7 @@ function Content({ pinRef }: Props) {
   );
 }
 
-const Scene = ({ pinRef }: Props) => {
+const Scene = ({ pinRef, onReady }: Props) => {
   return (
     <div className="fixed inset-0 z-[1] pointer-events-none">
       <Canvas
@@ -231,6 +254,7 @@ const Scene = ({ pinRef }: Props) => {
       >
         {/* ❌ remove background color so canvas is transparent */}
         {/* <color attach="background" args={["#0A0E10"]} /> */}
+        <FirstFrameReady onReady={onReady} />
 
         <Content pinRef={pinRef} />
       </Canvas>

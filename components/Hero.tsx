@@ -1,58 +1,72 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { FaLocationArrow } from "react-icons/fa6";
 import MagicButton from "./MagicButton";
-// import DottedBackdrop from "../components/hero/DottedBackDrop";
+import SplashLoader from "./hero/SplashLoader";
 
-const HeroScene = dynamic(() => import("./hero/Scene"));
+// IMPORTANT: client only
+const HeroScene = dynamic(() => import("./hero/Scene"), { ssr: false });
 
 const Hero = () => {
   const pinRef = useRef<HTMLDivElement | null>(null);
+  const [ready, setReady] = useState(false);
+
+  // safety auto-hide after 5s in case onReady never fires
+  useEffect(() => {
+    const t = setTimeout(() => setReady(true), 5000);
+    return () => clearTimeout(t);
+  }, []);
 
   return (
-    // 1) Fit the screen; define --nav-safe for the pin fold
     <section
       id="home"
       className="relative min-h-[100svh] overflow-hidden"
-      style={
-        {
-          // Safe space for FloatingNav + breathing room
-          // Tweak to your actual nav height if needed
-          ["--nav-safe" as any]: "7.5rem",
-        } as React.CSSProperties
-      }
+      style={{ ["--nav-safe" as any]: "7.5rem" } as React.CSSProperties}
     >
-      {/* <DottedBackdrop /> */}
-      <HeroScene pinRef={pinRef} />
+      {/* 1) Global lock BEFORE hydration; toggles off when ready */}
+      <style jsx global>{`
+        html {
+          overflow: ${ready ? "auto" : "hidden"};
+        }
+      `}</style>
 
-      {/* Content that pins the zoom timeline */}
+      {/* 2) Loader is ALWAYS rendered; just fades out */}
+      <div
+        className={`fixed inset-0 z-[9999] transition-opacity duration-500 ${
+          ready ? "opacity-0 pointer-events-none" : "opacity-100"
+        }`}
+      >
+        <SplashLoader />
+      </div>
+
+      {/* 3) 3D Scene signals when the first frames are ready */}
+      <HeroScene
+        pinRef={pinRef}
+        onReady={() => {
+          setReady(true);
+          window.dispatchEvent(new Event("hero-ready")); // 🔔 tells page.tsx loader to hide
+        }}
+      />
+
+      {/* ---- Content ---- */}
       <div id="hero-pin" ref={pinRef} className="relative z-10">
-        {/* Top padding equal to nav-safe so nothing hides under the nav */}
         <div className="px-6" style={{ paddingTop: "var(--nav-safe)" }}>
           <div className="mx-auto w-full max-w-[1200px]">
-            {/* 2) The entire first fold MUST fit: */}
             <div className="min-h-[calc(100svh-var(--nav-safe))] grid place-items-center">
               <div className="w-full flex flex-col items-center md:items-start">
-                {/* 3) Tight typography that fits 1366×768 cleanly */}
-                <h1
-                  className="text-center md:text-left tracking-[-0.01em] text-white relative z-30
-               leading-[1.08]"
-                >
-                  {" "}
-                  {/* was 1.02 */}
+                <h1 className="text-center md:text-left tracking-[-0.01em] text-white relative z-30 leading-[1.08]">
                   <span className="block text-[clamp(2.2rem,5.2vw,4.2rem)] font-bold">
                     Crafting Innovative Frontend
                   </span>
                   <span
                     className="
-      block text-[clamp(2.2rem,5.2vw,4.2rem)] font-bold
-      bg-clip-text text-transparent
-      bg-gradient-to-r from-cyan-300 via-sky-300 to-cyan-200
-      pb-[0.15em]      /* <-- add a little breathing room at the bottom */
-      leading-[1.1]    /* <-- optional: per-line leading so it never crops */
-    "
+                      block text-[clamp(2.2rem,5.2vw,4.2rem)] font-bold
+                      bg-clip-text text-transparent
+                      bg-gradient-to-r from-cyan-300 via-sky-300 to-cyan-200
+                      pb-[0.15em] leading-[1.1]
+                    "
                   >
                     Solutions with Precision &amp; Style
                   </span>
@@ -64,7 +78,6 @@ const Hero = () => {
                 </p>
 
                 <div className="mt-7 md:mt-8 flex flex-col sm:flex-row items-center md:items-start gap-3.5 sm:gap-4">
-                  {/* Primary */}
                   <a href="#projects" className="w-full sm:w-auto">
                     <MagicButton
                       title="View My Work"
@@ -75,7 +88,6 @@ const Hero = () => {
                     />
                   </a>
 
-                  {/* Secondary */}
                   <a href="#contact" className="w-full sm:w-auto">
                     <MagicButton
                       title="Let’s Connect"
@@ -97,7 +109,6 @@ const Hero = () => {
                     />
                   </a>
 
-                  {/* Tertiary (text link) */}
                   <a
                     href="#about"
                     className="text-white/65 hover:text-white/95 text-sm underline underline-offset-4"
@@ -106,16 +117,7 @@ const Hero = () => {
                   </a>
                 </div>
 
-                {/* 5) Trust row, compact so it never pushes below the fold */}
                 <div className="mt-6 md:mt-7 flex items-center gap-3 text-white/70">
-                  {/* <div className="flex -space-x-2.5">
-                    {[0, 1, 2, 3].map((i) => (
-                      <span
-                        key={i}
-                        className="inline-block h-8 w-8 rounded-full bg-white/10 border border-white/15 backdrop-blur-sm"
-                      />
-                    ))}
-                  </div> */}
                   <span className="text-sm md:text-[0.95rem]">
                     Trusted by{" "}
                     <span className="text-white/90 font-medium">
@@ -126,8 +128,6 @@ const Hero = () => {
                 </div>
               </div>
             </div>
-
-            {/* 6) Tiny footer spacer so nothing clips on short viewports */}
             <div className="pb-4 md:pb-6" />
           </div>
         </div>
