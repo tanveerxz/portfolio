@@ -1,41 +1,61 @@
-import React from "react";
+"use client";
 
-/**
- *  UI: border magic from tailwind css btns
- *  Link: https://ui.aceternity.com/components/tailwindcss-buttons
- *
- *  change border radius to rounded-lg
- *  add margin of md:mt-10
- *  remove focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50
- */
+import React from "react";
+import clsx from "clsx";
+
+type Props = {
+  title: string;
+  icon?: React.ReactNode;
+  iconPosition?: "left" | "right";
+  onClick?: () => void;
+  variant?: "primary" | "secondary" | "ghost";
+  fullWidth?: boolean;
+  otherClasses?: string;
+};
+
 const MagicButton = ({
   title,
   icon,
-  position,
-  handleClick,
+  iconPosition = "right",
+  onClick,
+  variant = "primary",
+  fullWidth = false,
   otherClasses,
-}: {
-  title: string;
-  icon: React.ReactNode;
-  position: string;
-  handleClick?: () => void;
-  otherClasses?: string;
-}) => {
+}: Props) => {
   return (
     <button
-      className="relative inline-flex h-12 w-full md:w-60 md:mt-10 overflow-hidden rounded-lg p-[1px] focus:outline-none"
-      onClick={handleClick}
+      onClick={onClick}
+      className={clsx(
+        "relative inline-flex h-12 overflow-hidden rounded-lg p-[1px] focus:outline-none transition-all",
+        fullWidth ? "w-full" : "w-auto",
+        otherClasses
+      )}
     >
-      <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
+      {/* Animated border only for primary style */}
+      {variant === "primary" && (
+        <span className="absolute inset-[-1000%] animate-[spin_4s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_40%,#E2CBFF_80%,#393BB2_100%)]" />
+      )}
 
-      {/* remove px-3 py-1, add px-5 gap-2 */}
       <span
-        className={`inline-flex h-full w-full cursor-pointer items-center justify-center rounded-lg
-             bg-slate-950 px-7 text-sm font-medium text-white backdrop-blur-3xl gap-2 ${otherClasses}`}
+        className={clsx(
+          "inline-flex h-full w-full items-center justify-center gap-2 rounded-lg px-6 font-medium backdrop-blur-2xl transition-all",
+          {
+            "bg-slate-950 text-white hover:bg-slate-900/90 active:scale-[0.98]":
+              variant === "primary",
+            "bg-transparent border border-white/20 text-white/80 hover:text-white hover:bg-white/5":
+              variant === "secondary",
+            "bg-transparent text-white/70 hover:text-white":
+              variant === "ghost",
+          }
+        )}
       >
-        {position === "left" && icon}
+        {icon && iconPosition === "left" && (
+          <span className="shrink-0 translate-y-[0.5px]">{icon}</span>
+        )}
         {title}
-        {position === "right" && icon}
+        {icon && iconPosition === "right" && (
+          <span className="shrink-0 translate-y-[0.5px]">{icon}</span>
+        )}
       </span>
     </button>
   );

@@ -1,75 +1,125 @@
-import { FaLocationArrow } from "react-icons/fa6";
+"use client";
 
+import React, { useRef } from "react";
+import dynamic from "next/dynamic";
+import { FaLocationArrow } from "react-icons/fa6";
 import MagicButton from "./MagicButton";
-import { Spotlight } from "./ui/Spotlight";
-import { TextGenerateEffect } from "./ui/TextGenerateEffect";
+// import DottedBackdrop from "../components/hero/DottedBackDrop";
+
+const HeroScene = dynamic(() => import("./hero/Scene"));
 
 const Hero = () => {
+  const pinRef = useRef<HTMLDivElement | null>(null);
+
   return (
-    <div id="home" className="pb-20 pt-36">
-      {/**
-       *  UI: Spotlights
-       *  Link: https://ui.aceternity.com/components/spotlight
-       */}
-      <div>
-        <Spotlight
-          className="-top-40 -left-10 md:-left-32 md:-top-20 h-screen"
-          fill="white"
-        />
-        <Spotlight
-          className="h-[80vh] w-[50vw] top-10 left-full"
-          fill="purple"
-        />
-        <Spotlight className="left-80 top-28 h-[80vh] w-[50vw]" fill="blue" />
-      </div>
+    // 1) Fit the screen; define --nav-safe for the pin fold
+    <section
+      id="home"
+      className="relative min-h-[100svh] overflow-hidden"
+      style={
+        {
+          // Safe space for FloatingNav + breathing room
+          // Tweak to your actual nav height if needed
+          ["--nav-safe" as any]: "7.5rem",
+        } as React.CSSProperties
+      }
+    >
+      {/* <DottedBackdrop /> */}
+      <HeroScene pinRef={pinRef} />
 
-      {/**
-       *  UI: grid
-       *  change bg color to bg-black-100 and reduce grid color from
-       *  0.2 to 0.03
-       */}
-      <div
-        className="h-screen w-full dark:bg-black-100 bg-white dark:bg-grid-white/[0.03] bg-grid-black-100/[0.2]
-       absolute top-0 left-0 flex items-center justify-center"
-      >
-        {/* Radial gradient for the container to give a faded look */}
-        <div
-          // chnage the bg to bg-black-100, so it matches the bg color and will blend in
-          className="absolute pointer-events-none inset-0 flex items-center justify-center dark:bg-black-100
-         bg-white [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"
-        />
-      </div>
+      {/* Content that pins the zoom timeline */}
+      <div id="hero-pin" ref={pinRef} className="relative z-10">
+        {/* Top padding equal to nav-safe so nothing hides under the nav */}
+        <div className="px-6" style={{ paddingTop: "var(--nav-safe)" }}>
+          <div className="mx-auto w-full max-w-[1200px]">
+            {/* 2) The entire first fold MUST fit: */}
+            <div className="min-h-[calc(100svh-var(--nav-safe))] grid place-items-center">
+              <div className="w-full flex flex-col items-center md:items-start">
+                {/* 3) Tight typography that fits 1366×768 cleanly */}
+                <h1 className="text-center md:text-left leading-[1.02] tracking-[-0.01em] text-white">
+                  <span className="block text-[clamp(2.2rem,5.2vw,4.2rem)] font-bold">
+                    Crafting Innovative Frontend
+                  </span>
+                  <span className="block text-[clamp(2.2rem,5.2vw,4.2rem)] font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-300 via-sky-300 to-purple-300">
+                    Solutions with Precision &amp; Style
+                  </span>
+                </h1>
 
-      <div className="flex justify-center relative my-20 z-10">
-        <div className="max-w-[89vw] md:max-w-2xl lg:max-w-[60vw] flex flex-col items-center justify-center">
-          <p className="uppercase tracking-widest text-xs text-center text-blue-100 max-w-80">
-            {/* Dynamic Web Magic with Next.js */}
-          </p>
+                <p className="mt-3 md:mt-4 text-center md:text-left text-white/75 text-[clamp(0.95rem,1.4vw,1.2rem)] max-w-[52ch]">
+                  I’m Tanveer — React/Next developer in London, building
+                  premium, performant interfaces with tasteful motion.
+                </p>
 
-          {/**
-           *  Link: https://ui.aceternity.com/components/text-generate-effect
-           *
-           *  change md:text-6xl, add more responsive code
-           */}
-          <TextGenerateEffect
-            words="Crafting Innovative Frontend Solutions with Precision and Style"
-            className="text-center text-[40px] md:text-5xl lg:text-6xl"
-          />
+                <div className="mt-7 md:mt-8 flex flex-col sm:flex-row items-center md:items-start gap-3.5 sm:gap-4">
+                  {/* Primary */}
+                  <a href="#projects" className="w-full sm:w-auto">
+                    <MagicButton
+                      title="View My Work"
+                      icon={<FaLocationArrow />}
+                      variant="primary"
+                      size="lg"
+                      className="w-full sm:w-auto"
+                    />
+                  </a>
 
-          <p className="text-center md:tracking-wider mb-4 text-sm md:text-lg lg:text-2xl">
-            Hi! I&apos;m Tanveer, a ReactJS Developer based in London.
-          </p>
+                  {/* Secondary */}
+                  <a href="#contact" className="w-full sm:w-auto">
+                    <MagicButton
+                      title="Let’s Connect"
+                      variant="secondary"
+                      size="lg"
+                      className="w-full sm:w-auto"
+                      icon={
+                        <svg width="18" height="18" viewBox="0 0 24 24">
+                          <path
+                            d="M5 12h14M13 5l7 7-7 7"
+                            stroke="currentColor"
+                            strokeWidth="1.8"
+                            fill="none"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      }
+                    />
+                  </a>
 
-          <a href="#about">
-            <MagicButton
-              title="Show my work"
-              icon={<FaLocationArrow />}
-              position="right"
-            />
-          </a>
+                  {/* Tertiary (text link) */}
+                  <a
+                    href="#about"
+                    className="text-white/65 hover:text-white/95 text-sm underline underline-offset-4"
+                  >
+                    Learn about my approach
+                  </a>
+                </div>
+
+                {/* 5) Trust row, compact so it never pushes below the fold */}
+                <div className="mt-6 md:mt-7 flex items-center gap-3 text-white/70">
+                  {/* <div className="flex -space-x-2.5">
+                    {[0, 1, 2, 3].map((i) => (
+                      <span
+                        key={i}
+                        className="inline-block h-8 w-8 rounded-full bg-white/10 border border-white/15 backdrop-blur-sm"
+                      />
+                    ))}
+                  </div> */}
+                  <span className="text-sm md:text-[0.95rem]">
+                    Trusted by{" "}
+                    <span className="text-white/90 font-medium">
+                      50+ clients
+                    </span>{" "}
+                    — 5★ average
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* 6) Tiny footer spacer so nothing clips on short viewports */}
+            <div className="pb-4 md:pb-6" />
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

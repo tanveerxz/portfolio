@@ -6,9 +6,10 @@ import { CanvasRevealEffect } from "./ui/CanvasRevealEffect";
 const Approach = () => {
   return (
     <section className="w-full py-20">
-      <h1 className="heading">
+      <h1 className="heading relative z-20">
         My <span className="text-purple">approach</span>
       </h1>
+
       {/* remove bg-white dark:bg-black */}
       <div className="my-20 flex flex-col lg:flex-row items-center justify-center w-full gap-4">
         {/* add des prop */}
@@ -80,7 +81,7 @@ const Card = ({
       onMouseLeave={() => setHovered(false)}
       // change h-[30rem] to h-[35rem], add rounded-3xl
       className="border border-black/[0.2] group/canvas-card flex items-center justify-center
-       dark:border-white/[0.2]  max-w-sm w-full mx-auto p-4 relative lg:h-[35rem] rounded-3xl "
+ dark:border-white/[0.2]  max-w-sm w-full mx-auto p-4 relative lg:h-[35rem] rounded-3xl z-20"
       style={{
         //   add these two
         //   you can generate the color from here https://cssgradient.io/

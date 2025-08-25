@@ -35,7 +35,7 @@ const Clients = () => {
   };
 
   return (
-    <section id="testimonials" className="py-16 relative overflow-hidden">
+    <section id="testimonials" className="relative z-20 isolate py-16">
       {/* Subtle background */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-900/5 to-transparent" />
 
@@ -54,7 +54,7 @@ const Clients = () => {
             </span>
           </div>
 
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">
+          <h1 className="text-4xl md:text-6xl font-bold mb-6 ">
             <span className="bg-gradient-to-r from-white via-purple-200 to-blue-200 bg-clip-text text-transparent">
               My Clients Don&apos;t Just
             </span>
@@ -113,7 +113,7 @@ const Clients = () => {
                     </div>
 
                     {/* Stars */}
-                    <div className="flex gap-1 mb-8 relative z-10">
+                    <div className="hidden md:flex gap-1 mb-8 relative z-10 ">
                       {[...Array(5)].map((_, i) => (
                         <motion.div
                           key={i}

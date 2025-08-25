@@ -142,18 +142,17 @@ const Experience = () => {
   return (
     <section className="py-20 w-full relative">
       <div className="max-w-6xl mx-auto px-4 relative">
-        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-20"
+          className="text-center mb-20 relative z-30"
         >
-          <h1 className="heading">
+          <h1 className="heading relative z-30">
             My <span className="text-purple">work experience</span>
           </h1>
-          <p className="text-white-100 text-lg max-w-2xl mx-auto mt-6">
-            From fintech intern to AI platform leader - here&apos;s my journey
+          <p className="text-white-100 text-lg max-w-2xl mx-auto mt-6 relative z-30">
+            From fintech intern to AI platform leader – here&apos;s my journey
             building real products that impact thousands of users.
           </p>
         </motion.div>
@@ -184,18 +183,15 @@ const Experience = () => {
                   {/* Content Card */}
                   <div className={`w-full md:w-5/12 ml-12 md:ml-0`}>
                     <motion.div
-                      whileHover={{ y: -8, scale: 1.02 }}
+                      // whileHover={{ y: -8, scale: 1.02 }}
                       onHoverStart={() => setActiveCard(index)}
                       onHoverEnd={() => setActiveCard(null)}
                       className="group cursor-pointer"
                     >
                       <div
-                        className="relative p-8 rounded-2xl border border-white/[0.1] group-hover:border-purple/50 transition-all duration-500 overflow-hidden"
-                        style={{
-                          background: "rgb(4,7,29)",
-                          backgroundColor:
-                            "linear-gradient(90deg, rgba(4,7,29,1) 0%, rgba(12,14,35,1) 100%)",
-                        }}
+                        className="relative z-20 p-8 rounded-2xl border border-white/[0.1] 
+           group-hover:border-purple/50 transition-all duration-500 overflow-hidden 
+           bg-white/5 backdrop-blur-md"
                       >
                         {/* Type badge */}
                         <div
@@ -287,26 +283,45 @@ const Experience = () => {
 
         {/* Simple bottom stats */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
-          className="text-center mt-20"
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="relative z-30 mt-16"
         >
-          <div className="inline-flex items-center gap-8 bg-black-100 border border-white/[0.1] rounded-2xl px-8 py-6">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-purple">5+</div>
-              <div className="text-white-100 text-sm">Companies</div>
-            </div>
-            <div className="w-px h-8 bg-white/20" />
-            <div className="text-center">
-              <div className="text-2xl font-bold text-purple">1.7K+</div>
-              <div className="text-white-100 text-sm">Users Reached</div>
-            </div>
-            <div className="w-px h-8 bg-white/20" />
-            <div className="text-center">
-              <div className="text-2xl font-bold text-purple">2+</div>
-              <div className="text-white-100 text-sm">Years Experience</div>
-            </div>
+          <div className="mx-auto max-w-3xl rounded-2xl border border-white/12 bg-white/[0.04] px-6 py-5 md:px-8 md:py-6 backdrop-blur-xl transition-shadow hover:shadow-[0_14px_50px_rgba(56,189,248,0.18)]">
+            {/* semantic + keyboard readable */}
+            <dl className="grid grid-cols-3 items-center divide-x divide-white/10 text-center">
+              {/* Companies */}
+              <div className="px-2 md:px-4">
+                <dd className="text-[1.6rem] md:text-3xl font-extrabold leading-none bg-clip-text text-transparent bg-gradient-to-r from-violet-300 to-sky-300">
+                  5+
+                </dd>
+                <dt className="mt-1 text-xs md:text-sm text-white/70">
+                  Companies
+                </dt>
+              </div>
+
+              {/* Users Reached */}
+              <div className="px-2 md:px-4">
+                <dd className="text-[1.6rem] md:text-3xl font-extrabold leading-none bg-clip-text text-transparent bg-gradient-to-r from-cyan-300 to-emerald-300">
+                  1.7K+
+                </dd>
+                <dt className="mt-1 text-xs md:text-sm text-white/70">
+                  Users Reached
+                </dt>
+              </div>
+
+              {/* Years Experience */}
+              <div className="px-2 md:px-4">
+                <dd className="text-[1.6rem] md:text-3xl font-extrabold leading-none bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-300 to-violet-300">
+                  2+
+                </dd>
+                <dt className="mt-1 text-xs md:text-sm text-white/70">
+                  Years Experience
+                </dt>
+              </div>
+            </dl>
           </div>
         </motion.div>
       </div>
