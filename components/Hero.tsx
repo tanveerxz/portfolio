@@ -7,7 +7,7 @@ import MagicButton from "./MagicButton";
 import SplashLoader from "./hero/SplashLoader";
 
 // IMPORTANT: client only
-const HeroScene = dynamic(() => import("./hero/Scene"), { ssr: false });
+const HeroScene = dynamic(() => import("./hero/Scene"), { ssr: true });
 
 const Hero = () => {
   const pinRef = useRef<HTMLDivElement | null>(null);

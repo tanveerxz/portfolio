@@ -12,8 +12,8 @@ import RecentProjects from "@/components/RecentProjects";
 import { FloatingNav } from "@/components/ui/FloatingNavbar";
 
 // dynamic imports
-const Hero = dynamic(() => import("@/components/Hero"), { ssr: false });
-const Grid = dynamic(() => import("@/components/Grid"), { ssr: false });
+const Hero = dynamic(() => import("@/components/Hero"), { ssr: true });
+const Grid = dynamic(() => import("@/components/Grid"), { ssr: true });
 
 // ✅ import the loader component from your file
 import SplashLoader from "@/components/hero/SplashLoader";
