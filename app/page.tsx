@@ -11,9 +11,11 @@ import Experience from "@/components/Experience";
 import RecentProjects from "@/components/RecentProjects";
 import { FloatingNav } from "@/components/ui/FloatingNavbar";
 
-// dynamic imports
-const Hero = dynamic(() => import("@/components/Hero"), { ssr: true });
-const Grid = dynamic(() => import("@/components/Grid"), { ssr: true });
+// // dynamic imports
+// const Hero = dynamic(() => import("@/components/Hero"), { ssr: true });
+// const Grid = dynamic(() => import("@/components/Grid"), { ssr: true });
+import Hero from "@/components/Hero";
+import Grid from "@/components/Grid";
 
 // ✅ import the loader component from your file
 import SplashLoader from "@/components/hero/SplashLoader";
