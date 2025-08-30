@@ -12,9 +12,9 @@ import RecentProjects from "@/components/RecentProjects";
 import { FloatingNav } from "@/components/ui/FloatingNavbar";
 
 // // dynamic imports
-// const Hero = dynamic(() => import("@/components/Hero"), { ssr: true });
+const Hero = dynamic(() => import("@/components/Hero"), { ssr: false });
 // const Grid = dynamic(() => import("@/components/Grid"), { ssr: true });
-import Hero from "@/components/Hero";
+// import Hero from "@/components/Hero";
 import Grid from "@/components/Grid";
 
 // ✅ import the loader component from your file
