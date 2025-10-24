@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CheckIcon } from "@heroicons/react/24/outline";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   User,
@@ -16,12 +15,19 @@ import {
   Shield,
   Clock,
   Zap,
+  Check,
+  CheckCircle,
   Target,
-  Award,
   TrendingUp,
+  Award,
+  Handshake,
 } from "lucide-react";
 
-import { socialMedia } from "@/data";
+const socialMedia = [
+  { id: 1, img: "/link.svg", url: "https://linkedin.com" },
+  { id: 2, img: "/git.svg", url: "https://github.com" },
+  { id: 3, img: "/twit.svg", url: "https://twitter.com" },
+];
 
 declare global {
   interface Window {
@@ -33,33 +39,36 @@ const Button = ({
   children,
   variant = "primary",
   className = "",
-  ...props
+  onClick,
+  disabled,
+  type = "button",
 }: {
   children: React.ReactNode;
   variant?: "primary" | "ghost";
   className?: string;
-  [key: string]: any;
+  onClick?: () => void;
+  disabled?: boolean;
+  type?: "button" | "submit";
 }) => {
   const baseClasses =
-    "px-6 py-3 rounded-xl font-semibold transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-400 relative overflow-hidden group";
+    "px-8 py-4 rounded-2xl font-semibold transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-400/50 relative overflow-hidden";
   const variants = {
     primary:
-      "bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-lg hover:shadow-purple-500/25 transform hover:scale-105",
+      "bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white shadow-xl hover:shadow-purple-500/30 disabled:opacity-50 disabled:cursor-not-allowed",
     ghost:
-      "border-2 border-purple-500/30 hover:border-purple-400 text-white hover:bg-purple-500/10 backdrop-blur-sm",
+      "border border-white/10 hover:border-white/20 text-white hover:bg-white/5 backdrop-blur-xl",
   };
 
   return (
     <motion.button
-      whileHover={{ y: -2 }}
-      whileTap={{ scale: 0.98 }}
+      type={type}
+      whileHover={disabled ? {} : { scale: 1.02 }}
+      whileTap={disabled ? {} : { scale: 0.98 }}
       className={`${baseClasses} ${variants[variant]} ${className}`}
-      {...props}
+      onClick={onClick}
+      disabled={disabled}
     >
-      <span className="relative z-10">{children}</span>
-      {variant === "primary" && (
-        <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-blue-400 opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
-      )}
+      {children}
     </motion.button>
   );
 };
@@ -75,9 +84,9 @@ const Card = ({
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.6 }}
-    className={`bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-xl border border-gray-700/50 rounded-2xl p-8 shadow-2xl relative overflow-hidden ${className}`}
+    className={`bg-white/[0.02] backdrop-blur-2xl border border-white/10 rounded-3xl p-8 md:p-12 shadow-2xl relative overflow-hidden ${className}`}
   >
-    <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-blue-500/5 animate-pulse" />
+    <div className="absolute inset-0 bg-gradient-to-br from-purple-500/[0.03] via-transparent to-blue-500/[0.03]" />
     <div className="relative z-10">{children}</div>
   </motion.div>
 );
@@ -85,78 +94,104 @@ const Card = ({
 const Input = ({
   label,
   icon: Icon,
-  ...props
+  value,
+  onChange,
+  type = "text",
+  required = false,
+  placeholder = "",
 }: {
   label: string;
   icon?: any;
-  [key: string]: any;
+  value: string;
+  onChange: (value: string) => void;
+  type?: string;
+  required?: boolean;
+  placeholder?: string;
 }) => (
-  <motion.div
-    initial={{ opacity: 0, x: -20 }}
-    animate={{ opacity: 1, x: 0 }}
-    transition={{ duration: 0.5 }}
-    className="space-y-3"
-  >
-    <label className="block text-sm font-semibold text-gray-200 flex items-center gap-2">
+  <div className="space-y-2">
+    <label className="block text-sm font-medium text-gray-300 flex items-center gap-2 pl-1">
       {Icon && <Icon className="w-4 h-4 text-purple-400" />}
       {label}
     </label>
     <div className="relative group">
       <input
-        className="w-full px-4 py-4 bg-gray-800/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all duration-300 group-hover:border-gray-500/70 backdrop-blur-sm"
-        {...props}
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        required={required}
+        placeholder={placeholder}
+        className="w-full px-5 py-3.5 bg-white/[0.03] border border-white/10 rounded-2xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-400/50 focus:border-purple-400/50 transition-all duration-300 hover:bg-white/[0.05] backdrop-blur-xl"
       />
-      <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-500/10 to-blue-500/10 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none" />
     </div>
-  </motion.div>
+  </div>
 );
 
-const Select = ({
-  label,
-  icon: Icon,
-  children,
-  ...props
+const BudgetSelector = ({
+  value,
+  onChange,
 }: {
-  label: string;
-  icon?: any;
-  children: React.ReactNode;
-  [key: string]: any;
-}) => (
-  <motion.div
-    initial={{ opacity: 0, x: -20 }}
-    animate={{ opacity: 1, x: 0 }}
-    transition={{ duration: 0.5 }}
-    className="space-y-3"
-  >
-    <label className="block text-sm font-semibold text-gray-200 flex items-center gap-2">
-      {Icon && <Icon className="w-4 h-4 text-purple-400" />}
-      {label}
-    </label>
-    <div className="relative group">
-      <select
-        className="w-full px-4 py-4 bg-gray-800/50 border border-gray-600/50 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all duration-300 group-hover:border-gray-500/70 backdrop-blur-sm appearance-none cursor-pointer"
-        {...props}
-      >
-        {children}
-      </select>
-      <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
-        <svg
-          className="w-5 h-5 text-gray-400"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M19 9l-7 7-7-7"
-          />
-        </svg>
+  value: string;
+  onChange: (value: string) => void;
+}) => {
+  const budgetOptions = [
+    { value: "£1K", label: "£1K", subtitle: "Starter" },
+    { value: "£3K", label: "£3K", subtitle: "Professional" },
+    { value: "£5K", label: "£5K", subtitle: "Premium" },
+    { value: "£10K+", label: "£10K+", subtitle: "Enterprise" },
+  ];
+
+  return (
+    <div className="space-y-2">
+      <label className="block text-sm font-medium text-gray-300 flex items-center gap-2 pl-1">
+        <DollarSign className="w-4 h-4 text-purple-400" />
+        Investment Budget *
+      </label>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {budgetOptions.map((option) => (
+          <motion.button
+            key={option.value}
+            type="button"
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            onClick={() => onChange(option.value)}
+            className={`relative p-4 rounded-2xl border transition-all duration-300 ${
+              value === option.value
+                ? "bg-purple-500/20 border-purple-400/50 shadow-lg shadow-purple-500/20"
+                : "bg-white/[0.03] border-white/10 hover:bg-white/[0.05] hover:border-white/20"
+            }`}
+          >
+            <div className="text-center">
+              <div className="text-lg font-bold text-white mb-0.5">
+                {option.label}
+              </div>
+              <div className="text-xs text-gray-400">{option.subtitle}</div>
+            </div>
+            {value === option.value && (
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className="absolute -top-2 -right-2 w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center"
+              >
+                <Check className="w-4 h-4 text-white" />
+              </motion.div>
+            )}
+          </motion.button>
+        ))}
       </div>
+      <button
+        type="button"
+        onClick={() => onChange("not-sure")}
+        className={`w-full mt-2 px-4 py-3 rounded-2xl border text-sm transition-all duration-300 ${
+          value === "not-sure"
+            ? "bg-purple-500/20 border-purple-400/50 text-purple-300"
+            : "bg-white/[0.03] border-white/10 hover:bg-white/[0.05] text-gray-400"
+        }`}
+      >
+        💭 Not sure yet - Let&apos;s discuss
+      </button>
     </div>
-  </motion.div>
-);
+  );
+};
 
 const Footer = () => {
   const [formData, setFormData] = useState({
@@ -169,29 +204,26 @@ const Footer = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [utmParams, setUtmParams] = useState({ source: "", campaign: "" });
   const [spotsLeft, setSpotsLeft] = useState(3);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const urlParams = new URLSearchParams(window.location.search);
-      setUtmParams({
-        source: urlParams.get("utm_source") || "",
-        campaign: urlParams.get("utm_campaign") || "",
-      });
-    }
-  }, []);
-
-  // Urgency timer
-  useEffect(() => {
     const interval = setInterval(() => {
       setSpotsLeft((prev) => (prev > 1 ? prev - 1 : 3));
-    }, 180000); // 3 minutes
+    }, 180000);
     return () => clearInterval(interval);
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
+    if (
+      !formData.name ||
+      !formData.email ||
+      !formData.budget ||
+      !formData.brief
+    ) {
+      alert("Please fill in all required fields");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -202,8 +234,6 @@ const Footer = () => {
       form.append("website", formData.website);
       form.append("budget", formData.budget);
       form.append("brief", formData.brief);
-      form.append("utm_source", utmParams.source);
-      form.append("utm_campaign", utmParams.campaign);
       form.append("timestamp", new Date().toISOString());
       form.append("_subject", `New Website Lead - ${formData.budget} Budget`);
 
@@ -279,135 +309,141 @@ const Footer = () => {
       <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse" />
 
       <div className="flex flex-col items-center relative z-10">
-        {/* Urgency Banner */}
-        <motion.div
-          initial={{ opacity: 0, y: -30 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8 text-center"
-        >
-          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-red-500/20 to-orange-500/20 backdrop-blur-sm border border-red-500/30 rounded-full px-6 py-3">
-            <Clock className="w-4 h-4 text-orange-400 animate-pulse" />
-            <span className="text-orange-200 font-medium">
-              🔥 Only {spotsLeft} project spots left this month
-            </span>
-          </div>
-        </motion.div>
-
-        {/* Main conversion section */}
+        {/* Refined Contact Intro */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-24 px-4 md:px-0"
         >
-          <div className="flex flex-col items-center">
-            {" "}
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold lg:max-w-[45vw] text-center mb-6">
-              <span className="bg-gradient-to-r from-white via-purple-200 to-blue-200 bg-clip-text text-transparent">
-                Ready to
-              </span>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-400">
-                {" "}
-                3x Your Revenue
-              </span>
-              <span className="bg-gradient-to-r from-white via-purple-200 to-blue-200 bg-clip-text text-transparent">
-                {" "}
-                Too?
-              </span>
-            </h1>
+          {/* Availability Tag */}
+          <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 backdrop-blur-sm rounded-full px-5 py-2 mb-10">
+            <Clock className="w-4 h-4 text-purple-300" />
+            <span className="text-gray-300 font-medium tracking-wide text-sm md:text-base">
+              Currently accepting {spotsLeft} new projects
+            </span>
           </div>
 
-          <p className="text-gray-300 md:mt-6 my-5 text-center text-lg max-w-2xl mx-auto">
-            Join 30+ successful businesses who&apos;ve transformed their online
-            presence with
-            <span className="text-purple-400 font-semibold">
-              {" "}
-              conversion-focused development.
+          {/* Headline */}
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-5 leading-[1.15]">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-200 to-blue-200">
+              Let’s Create Something
+            </span>{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-400">
+              Exceptional
             </span>
+          </h1>
+
+          {/* Tagline */}
+          <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mt-2 mb-12 leading-relaxed">
+            Clean design. Seamless performance. Built for impact.
           </p>
 
-          {/* Impact Stats */}
+          {/* Highlights */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 25 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12"
+            className="grid grid-cols-2 md:grid-cols-4 gap-5 md:gap-8 mb-14 max-w-5xl mx-auto"
           >
-            {impactStats.map((stat, index) => (
+            {[
+              {
+                icon: Award,
+                label: "Projects Delivered",
+                value: "50+",
+                color: "text-purple-400",
+              },
+              {
+                icon: Target,
+                label: "Client Retention Rate",
+                value: "95%",
+                color: "text-blue-400",
+              },
+              {
+                icon: Star,
+                label: "Average Rating",
+                value: "5.0★",
+                color: "text-yellow-400",
+              },
+              {
+                icon: TrendingUp,
+                label: "Active Partnerships",
+                value: "20+",
+                color: "text-green-400",
+              },
+            ].map((stat, index) => (
               <motion.div
                 key={index}
-                whileHover={{ scale: 1.05, y: -5 }}
-                className="text-center p-6 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-sm border border-white/20"
+                whileHover={{ scale: 1.04, y: -3 }}
+                className="text-center p-5 md:p-6 rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur-md hover:bg-white/[0.08] transition-all"
               >
                 <stat.icon className={`w-8 h-8 ${stat.color} mx-auto mb-3`} />
-                <div className={`text-3xl font-bold ${stat.color} mb-1`}>
+                <div className={`text-3xl font-semibold ${stat.color} mb-1`}>
                   {stat.value}
                 </div>
-                <div className="text-sm text-gray-400">{stat.label}</div>
+                <div className="text-sm text-gray-400 font-light tracking-wide">
+                  {stat.label}
+                </div>
               </motion.div>
             ))}
           </motion.div>
 
-          {/* Trust indicators */}
-          <div className="flex flex-wrap justify-center gap-4 mt-8">
-            {trustIndicators.map((indicator, index) => (
+          {/* Trust Indicators */}
+          <div className="flex flex-wrap justify-center gap-4 md:gap-6 mt-4">
+            {[
+              { icon: Shield, text: "Trusted by Clients" },
+              { icon: Star, text: "Top-Rated Developer" },
+              { icon: Zap, text: "Quick Turnaround" },
+            ].map((item, i) => (
               <motion.div
-                key={index}
-                initial={{ opacity: 0, scale: 0.8 }}
+                key={i}
+                initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ delay: index * 0.1 }}
-                className="flex items-center gap-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full px-4 py-2"
+                transition={{ delay: i * 0.1 }}
+                className="flex items-center gap-2 bg-white/[0.04] border border-white/10 rounded-full px-4 py-2.5 backdrop-blur-sm hover:bg-white/[0.06] transition-all"
               >
-                <indicator.icon className="w-4 h-4 text-purple-400" />
-                <span className="text-sm text-gray-300">{indicator.text}</span>
+                <item.icon className="w-4 h-4 text-purple-400" />
+                <span className="text-sm text-gray-300">{item.text}</span>
               </motion.div>
             ))}
           </div>
         </motion.div>
 
-        {/* Enhanced form */}
-        <div className="w-full max-w-3xl mt-6">
+        {/* Form */}
+        <div className="w-full max-w-3xl">
           <AnimatePresence mode="wait">
             {isSubmitted ? (
               <motion.div
                 key="success"
-                initial={{ opacity: 0, scale: 0.8, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.8, y: -20 }}
-                transition={{ duration: 0.6 }}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.4 }}
               >
-                <Card className="text-center py-16 border-green-500/30 bg-gradient-to-br from-green-900/20 to-emerald-900/20">
+                <Card className="text-center py-16 border-green-500/20">
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-                    className="w-20 h-20 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full mx-auto mb-6 flex items-center justify-center shadow-lg"
+                    className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full mx-auto mb-6 flex items-center justify-center"
                   >
-                    <CheckIcon className="w-10 h-10 text-white" />
+                    <CheckCircle className="w-8 h-8 text-white" />
                   </motion.div>
-                  <h3 className="text-2xl font-bold mb-4 text-white">
-                    🚀 Thanks for reaching out!
+                  <h3 className="text-3xl font-bold mb-4 text-white">
+                    Thanks for reaching out!
                   </h3>
-                  <p className="text-gray-300 mb-8 text-lg">
-                    I&apos;ll review your project and send you a personalized
-                    audit within 24 hours.
+                  <p className="text-gray-400 mb-8 text-lg max-w-md mx-auto">
+                    I&apos;ll review your project and get back to you within 24
+                    hours with a personalized strategy.
                   </p>
                   <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <motion.a
-                      whileHover={{ scale: 1.05 }}
+                    <a
                       href="http://wa.me/447459239536"
-                      className="flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors font-medium"
+                      className="flex items-center justify-center gap-2 text-green-400 hover:text-green-300 transition-colors font-medium"
                     >
-                      📱 WhatsApp for urgent questions{" "}
+                      WhatsApp for urgent questions
                       <ArrowRight className="w-4 h-4" />
-                    </motion.a>
-                    <motion.a
-                      whileHover={{ scale: 1.05 }}
-                      href="mailto:hello@tanveersingh.dev"
-                      className="flex items-center gap-2 text-purple-400 hover:text-purple-300 transition-colors font-medium"
-                    >
-                      ✉️ Email me directly <ArrowRight className="w-4 h-4" />
-                    </motion.a>
+                    </a>
                   </div>
                 </Card>
               </motion.div>
@@ -417,30 +453,19 @@ const Footer = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.6 }}
+                transition={{ duration: 0.4 }}
               >
                 <Card>
-                  <div className="mb-8 text-center">
-                    <h3 className="text-2xl font-bold text-white mb-2">
-                      Get Your Free Website Audit 🎯
-                    </h3>
-                    <p className="text-gray-400">
-                      Tell me about your project and I&apos;ll send you a
-                      personalized strategy + competitive analysis
-                    </p>
-                  </div>
-
-                  <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="space-y-6">
                     <div className="grid sm:grid-cols-2 gap-6">
                       <Input
                         label="Your Name *"
                         icon={User}
                         type="text"
-                        name="name"
                         required
                         value={formData.name}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                          setFormData({ ...formData, name: e.target.value })
+                        onChange={(value) =>
+                          setFormData({ ...formData, name: value })
                         }
                         placeholder="John Smith"
                       />
@@ -448,11 +473,10 @@ const Footer = () => {
                         label="Email Address *"
                         icon={Mail}
                         type="email"
-                        name="email"
                         required
                         value={formData.email}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                          setFormData({ ...formData, email: e.target.value })
+                        onChange={(value) =>
+                          setFormData({ ...formData, email: value })
                         }
                         placeholder="john@company.com"
                       />
@@ -463,10 +487,9 @@ const Footer = () => {
                         label="Company Name"
                         icon={Building}
                         type="text"
-                        name="company"
                         value={formData.company}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                          setFormData({ ...formData, company: e.target.value })
+                        onChange={(value) =>
+                          setFormData({ ...formData, company: value })
                         }
                         placeholder="Your Company Ltd"
                       />
@@ -474,133 +497,82 @@ const Footer = () => {
                         label="Current Website"
                         icon={Globe}
                         type="url"
-                        name="website"
                         value={formData.website}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                          setFormData({ ...formData, website: e.target.value })
+                        onChange={(value) =>
+                          setFormData({ ...formData, website: value })
                         }
                         placeholder="https://yoursite.com"
                       />
                     </div>
 
-                    <Select
-                      label="Investment Budget *"
-                      icon={DollarSign}
-                      name="budget"
-                      required
+                    <BudgetSelector
                       value={formData.budget}
-                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                        setFormData({ ...formData, budget: e.target.value })
+                      onChange={(value) =>
+                        setFormData({ ...formData, budget: value })
                       }
-                    >
-                      <option value="">💰 Select your investment range</option>
-                      <option value="£1K">£1K - Starter Package</option>
-                      <option value="£3K">£3K - Professional Package</option>
-                      <option value="£5K">£5K - Premium Package</option>
-                      <option value="£10K+">£10K+ - Enterprise Solution</option>
-                      <option value="not-sure">🤔 Not sure yet</option>
-                    </Select>
+                    />
 
-                    <motion.div
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.5 }}
-                      className="space-y-3"
-                    >
-                      <label className="block text-sm font-semibold text-gray-200 flex items-center gap-2">
+                    <div className="space-y-2">
+                      <label className="block text-sm font-medium text-gray-300 flex items-center gap-2 pl-1">
                         <MessageSquare className="w-4 h-4 text-purple-400" />
                         Tell me about your project *
                       </label>
-                      <div className="relative group">
+                      <div className="relative">
                         <textarea
-                          name="brief"
                           required
                           rows={5}
-                          className="w-full px-4 py-4 bg-gray-800/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all duration-300 group-hover:border-gray-500/70 backdrop-blur-sm resize-none"
+                          className="w-full px-5 py-4 bg-white/[0.03] border border-white/10 rounded-2xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-400/50 focus:border-purple-400/50 transition-all duration-300 hover:bg-white/[0.05] backdrop-blur-xl resize-none"
                           value={formData.brief}
-                          onChange={(
-                            e: React.ChangeEvent<HTMLTextAreaElement>
-                          ) =>
+                          onChange={(e) =>
                             setFormData({ ...formData, brief: e.target.value })
                           }
-                          placeholder="What's your business about? What are your main goals? Any specific features you need? The more details, the better I can help! 🚀"
+                          placeholder="What are your goals? What challenges are you facing? Any specific features in mind?"
                         />
-                        <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-500/10 to-blue-500/10 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none" />
-                      </div>
-                    </motion.div>
-
-                    {/* Honeypot */}
-                    <input
-                      type="text"
-                      name="_gotcha"
-                      style={{ display: "none" }}
-                    />
-
-                    {/* Hidden tracking fields */}
-                    <input
-                      type="hidden"
-                      name="utm_source"
-                      value={utmParams.source}
-                    />
-                    <input
-                      type="hidden"
-                      name="utm_campaign"
-                      value={utmParams.campaign}
-                    />
-                    <input
-                      type="hidden"
-                      name="_subject"
-                      value={`New Website Lead - ${formData.budget} Budget`}
-                    />
-
-                    <motion.div
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      <Button
-                        type="submit"
-                        variant="primary"
-                        className="w-full text-lg py-5 font-bold text-white relative overflow-hidden group"
-                        disabled={isSubmitting}
-                      >
-                        <span className="flex items-center justify-center gap-3">
-                          {isSubmitting ? (
-                            <>
-                              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                              Sending Your Request...
-                            </>
-                          ) : (
-                            <>
-                              🎯 Get My Free Audit & Strategy
-                              <Send className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                            </>
-                          )}
-                        </span>
-                      </Button>
-                    </motion.div>
-
-                    <div className="text-center pt-6 border-t border-gray-700/50">
-                      <p className="text-sm text-gray-400 mb-4">
-                        🚀 Prefer to chat directly? I&apos;m always available!
-                      </p>
-                      <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <motion.a
-                          whileHover={{ scale: 1.05 }}
-                          href="http://wa.me/447459239536"
-                          className="flex items-center justify-center gap-2 text-green-400 hover:text-green-300 transition-colors font-medium"
-                        >
-                          📱 WhatsApp <ArrowRight className="w-4 h-4" />
-                        </motion.a>
-                        <motion.a
-                          whileHover={{ scale: 1.05 }}
-                          href="mailto:hello@tanveersingh.dev"
-                          className="flex items-center justify-center gap-2 text-blue-400 hover:text-blue-300 transition-colors font-medium"
-                        >
-                          ✉️ Email <ArrowRight className="w-4 h-4" />
-                        </motion.a>
                       </div>
                     </div>
-                  </form>
+
+                    <Button
+                      type="button"
+                      variant="primary"
+                      className="w-full text-lg py-5"
+                      disabled={isSubmitting}
+                      onClick={handleSubmit}
+                    >
+                      <span className="flex items-center justify-center gap-3">
+                        {isSubmitting ? (
+                          <>
+                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                            Sending...
+                          </>
+                        ) : (
+                          <>
+                            Send Message
+                            <Send className="w-5 h-5" />
+                          </>
+                        )}
+                      </span>
+                    </Button>
+
+                    <div className="text-center pt-6 border-t border-white/5">
+                      <p className="text-sm text-gray-500 mb-3">
+                        Prefer to chat directly?
+                      </p>
+                      <div className="flex flex-col sm:flex-row gap-3 justify-center text-sm">
+                        <a
+                          href="http://wa.me/447459239536"
+                          className="text-gray-400 hover:text-white transition-colors"
+                        >
+                          WhatsApp →
+                        </a>
+                        <a
+                          href="mailto:hello@tanveersingh.dev"
+                          className="text-gray-400 hover:text-white transition-colors"
+                        >
+                          Email →
+                        </a>
+                      </div>
+                    </div>
+                  </div>
                 </Card>
               </motion.div>
             )}
@@ -612,30 +584,29 @@ const Footer = () => {
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.2 }}
-        className="flex mt-20 md:flex-row flex-col justify-between items-center relative z-10"
+        className="flex mt-24 md:flex-row flex-col justify-between items-center relative z-10 px-5"
       >
-        <p className="md:text-base text-sm md:font-normal font-light text-gray-400">
-          Copyright © 2025 Tanveer Singh
-        </p>
+        <p className="text-sm text-gray-500">Copyright © 2025 Tanveer Singh</p>
 
-        <div className="flex items-center md:gap-3 gap-6 mt-4 md:mt-0">
+        <div className="flex items-center gap-4 mt-6 md:mt-0">
           {socialMedia.map((info) => (
-            <motion.div
+            <motion.a
               key={info.id}
+              href={info.url}
+              target="_blank"
+              rel="noopener noreferrer"
               whileHover={{ scale: 1.1, y: -2 }}
               whileTap={{ scale: 0.95 }}
-              className="w-12 h-12 cursor-pointer flex justify-center items-center backdrop-blur-lg bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 hover:border-purple-400/50 transition-all duration-300 group"
+              className="w-10 h-10 flex justify-center items-center bg-white/[0.03] hover:bg-white/[0.08] rounded-xl border border-white/10 hover:border-white/20 transition-all duration-300"
             >
-              <a href={info.url} target="_blank" rel="noopener noreferrer">
-                <img
-                  src={info.img}
-                  alt="social media icon"
-                  width={24}
-                  height={24}
-                  className="group-hover:scale-110 transition-transform duration-300"
-                />
-              </a>
-            </motion.div>
+              <img
+                src={info.img}
+                alt="social"
+                width={20}
+                height={20}
+                className="opacity-70 hover:opacity-100 transition-opacity"
+              />
+            </motion.a>
           ))}
         </div>
       </motion.div>

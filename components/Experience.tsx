@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import React, { useRef, useState, useEffect } from "react";
+import { motion, useMotionValue, animate } from "framer-motion";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const realExperience = [
   {
@@ -9,20 +10,15 @@ const realExperience = [
     company: "Scoofy",
     title: "Head of Frontend Development",
     period: "Feb 2025 - Present",
-    duration: "7+ months",
     type: "Leadership",
     location: "Remote",
     description:
-      "Leading cross-functional teams to build and scale Scoofy&apos;s AI-powered e-commerce platform. Architecting frontend stack with Next.js, TypeScript, and TailwindCSS while collaborating with AI engineers to integrate LLM-powered shopping experiences.",
-    achievements: [
-      { metric: "AI Integration", value: "LLM-Powered" },
-      { metric: "Team Lead", value: "Cross-functional" },
-    ],
+      "Leading cross-functional teams to build and scale Scoofy’s AI-powered e-commerce platform using Next.js, TypeScript, and TailwindCSS.",
     technologies: ["Next.js", "TypeScript", "TailwindCSS", "AI/LLM"],
     highlights: [
-      "Leading frontend architecture for AI-powered platform",
-      "Optimizing performance and user engagement",
-      "Implementing scalable development practices",
+      "Led frontend architecture for AI commerce",
+      "Collaborated with AI engineers for LLM integration",
+      "Implemented scalable component-driven design",
     ],
   },
   {
@@ -30,20 +26,15 @@ const realExperience = [
     company: "Kloak Ltd",
     title: "Frontend Developer",
     period: "Jul 2024 - Present",
-    duration: "1+ year",
     type: "Full-time",
     location: "London, UK",
     description:
-      "Developing modern web applications using React ecosystem. Building responsive, performant user interfaces and collaborating with backend teams on API integrations.",
-    achievements: [
-      { metric: "Duration", value: "1+ Year" },
-      { metric: "Focus", value: "Modern Web" },
-    ],
+      "Developing modern web applications using React ecosystem. Building responsive, performant user interfaces and integrating REST APIs.",
     technologies: ["React", "JavaScript", "CSS", "API Integration"],
     highlights: [
       "Building production-ready web applications",
-      "Collaborating with development teams",
-      "Implementing modern frontend practices",
+      "Collaborating with backend teams on API integrations",
+      "Improving UI responsiveness across devices",
     ],
   },
   {
@@ -51,20 +42,15 @@ const realExperience = [
     company: "OrbitFind",
     title: "Founder & Lead Developer",
     period: "Aug 2024 - Sep 2024",
-    duration: "2 months",
     type: "Startup",
     location: "Remote",
     description:
-      "Founded and led a team of 4 developers to create an innovative event discovery platform with gamified elements and AI features. Built full-stack solution enabling event search, RSVP, hosting, and achievement systems.",
-    achievements: [
-      { metric: "User Activities", value: "1.5K+" },
-      { metric: "Waitlist", value: "130+ Users" },
-    ],
-    technologies: ["React", "TypeScript", "Flask", "MySQL", "AWS", "Node.js"],
+      "Founded and led a team of 4 developers to create a gamified event discovery platform with AI-driven recommendations.",
+    technologies: ["React", "TypeScript", "Flask", "MySQL", "AWS"],
     highlights: [
-      "Led team of 4 developers as founder",
       "Achieved 1.5K+ user activities in 2 months",
-      "Built gamified platform with AI features",
+      "Integrated gamified achievement systems",
+      "Built scalable architecture end-to-end",
     ],
   },
   {
@@ -72,20 +58,15 @@ const realExperience = [
     company: "Headstarter AI",
     title: "Software Engineering Fellow",
     period: "Jul 2024 - Sep 2024",
-    duration: "3 months",
     type: "Fellowship",
     location: "Remote + London Events",
     description:
-      "Intensive fellowship building 7 AI-powered projects using modern tech stack. Collaborated with cross-functional teams using Agile methodologies and achieved significant user engagement across multiple platforms.",
-    achievements: [
-      { metric: "User Interactions", value: "200+" },
-      { metric: "Social Engagement", value: "5K+" },
-    ],
+      "Built 7 AI-powered projects using modern stacks, driving 5K+ engagements and 200+ user interactions.",
     technologies: ["Next.js", "Firebase", "RAG", "Pinecone", "AWS", "LLMs"],
     highlights: [
-      "Built 7 AI-powered projects in 3 months",
-      "200+ user interactions across platforms",
-      "5K+ social media engagements generated",
+      "Collaborated with global developers",
+      "Rapid prototyping & agile workflows",
+      "Integrated advanced LLM-based features",
     ],
   },
   {
@@ -93,36 +74,55 @@ const realExperience = [
     company: "Fam India",
     title: "Frontend Developer Intern",
     period: "Jul 2023 - Aug 2023",
-    duration: "2 months",
     type: "Internship",
     location: "Remote",
     description:
-      "Gained valuable hands-on experience at a renowned fintech company. Worked on frontend development projects and learned industry best practices in financial technology.",
-    achievements: [
-      { metric: "Industry", value: "Fintech" },
-      { metric: "Experience", value: "First Role" },
-    ],
+      "Contributed to a fintech platform, creating responsive UI and understanding financial tech architecture.",
     technologies: ["HTML", "CSS", "JavaScript", "React"],
     highlights: [
-      "First professional development experience",
-      "Worked in fintech industry environment",
-      "Learned industry development standards",
+      "First professional dev experience",
+      "Worked with fintech engineers",
+      "Learned scalable frontend practices",
     ],
   },
 ];
 
 const Experience = () => {
-  const [activeCard, setActiveCard] = useState<number | null>(null);
-  const [visibleCards, setVisibleCards] = useState(new Set());
+  const trackRef = useRef<HTMLDivElement>(null);
+  const x = useMotionValue(0);
+  const [maxDrag, setMaxDrag] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Show cards progressively
+  // Dynamically calculate how far you can drag
   useEffect(() => {
-    realExperience.forEach((_, index) => {
-      setTimeout(() => {
-        setVisibleCards((prev) => new Set([...prev, index]));
-      }, index * 150);
-    });
+    const updateDragLimit = () => {
+      if (!trackRef.current) return;
+      const containerWidth = trackRef.current.parentElement?.offsetWidth || 0;
+      const contentWidth = trackRef.current.scrollWidth;
+      setMaxDrag(contentWidth - containerWidth);
+    };
+
+    updateDragLimit();
+    window.addEventListener("resize", updateDragLimit);
+    return () => window.removeEventListener("resize", updateDragLimit);
   }, []);
+
+  // Scroll buttons move the same motion value
+  const scroll = (direction: "left" | "right") => {
+    const cardWidth = trackRef.current?.firstElementChild?.clientWidth || 400;
+    const newX =
+      direction === "left"
+        ? Math.min(x.get() + cardWidth + 20, 0)
+        : Math.max(x.get() - (cardWidth + 20), -maxDrag);
+
+    animate(x, newX, { type: "spring", stiffness: 300, damping: 40 });
+
+    setCurrentIndex((prev) =>
+      direction === "left"
+        ? Math.max(prev - 1, 0)
+        : Math.min(prev + 1, realExperience.length - 1)
+    );
+  };
 
   const getTypeColor = (type: string) => {
     switch (type) {
@@ -134,196 +134,123 @@ const Experience = () => {
         return "bg-blue-500/20 text-blue-300 border-blue-500/30";
       case "Full-time":
         return "bg-purple-500/20 text-purple-300 border-purple-500/30";
+      case "Internship":
+        return "bg-orange-500/20 text-orange-300 border-orange-500/30";
       default:
         return "bg-gray-500/20 text-gray-300 border-gray-500/30";
     }
   };
 
   return (
-    <section className="py-20 w-full relative">
-      <div className="max-w-6xl mx-auto px-4 relative">
-        <motion.div
+    <section className="relative w-full py-20 overflow-hidden z-[60] isolate">
+      {/* Header */}
+      <div className="text-center mb-12">
+        <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-20 relative z-30"
+          className="text-4xl md:text-5xl font-bold text-white"
         >
-          <h1 className="heading relative z-30">
-            My <span className="text-purple">work experience</span>
-          </h1>
-          <p className="text-white-100 text-lg max-w-2xl mx-auto mt-6 relative z-30">
-            From fintech intern to AI platform leader – here&apos;s my journey
-            building real products that impact thousands of users.
-          </p>
-        </motion.div>
+          My <span className="text-purple">Work Experience</span>
+        </motion.h2>
+        <p className="text-white/70 max-w-2xl mx-auto mt-4">
+          Scroll or drag horizontally to explore my professional journey.
+        </p>
+      </div>
 
-        {/* Experience Timeline */}
-        <div className="relative">
-          {/* Clean timeline line */}
-          <div className="absolute left-6 md:left-1/2 transform md:-translate-x-1/2 w-0.5 h-full bg-gradient-to-b from-transparent via-purple/50 to-transparent" />
+      {/* Slider controls */}
+      <div className="flex justify-between items-center px-8 md:px-20 mb-6">
+        <button
+          onClick={() => scroll("left")}
+          className="p-3 rounded-full bg-white/10 border border-white/20 hover:bg-white/20 transition"
+        >
+          <ChevronLeft className="text-white w-5 h-5" />
+        </button>
+        <button
+          onClick={() => scroll("right")}
+          className="p-3 rounded-full bg-white/10 border border-white/20 hover:bg-white/20 transition"
+        >
+          <ChevronRight className="text-white w-5 h-5" />
+        </button>
+      </div>
 
-          <div className="space-y-16">
-            {realExperience.map((exp, index) => {
-              const isLeft = index % 2 === 0;
-              const isVisible = visibleCards.has(index);
-
-              return (
-                <motion.div
-                  key={exp.id}
-                  initial={{ opacity: 0, x: isLeft ? -30 : 30, y: 20 }}
-                  animate={isVisible ? { opacity: 1, x: 0, y: 0 } : {}}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className={`relative flex items-start ${
-                    isLeft ? "md:flex-row" : "md:flex-row-reverse"
-                  } flex-col md:gap-12`}
-                >
-                  {/* Timeline dot */}
-                  <div className="absolute left-6 md:left-1/2 transform md:-translate-x-1/2 w-3 h-3 bg-purple rounded-full border-4 border-black-100 z-10 mt-6" />
-
-                  {/* Content Card */}
-                  <div className={`w-full md:w-5/12 ml-12 md:ml-0`}>
-                    <motion.div
-                      // whileHover={{ y: -8, scale: 1.02 }}
-                      onHoverStart={() => setActiveCard(index)}
-                      onHoverEnd={() => setActiveCard(null)}
-                      className="group cursor-pointer"
-                    >
-                      <div
-                        className="relative z-20 p-8 rounded-2xl border border-white/[0.1] 
-           group-hover:border-purple/50 transition-all duration-500 overflow-hidden 
-           bg-white/5 backdrop-blur-md"
-                      >
-                        {/* Type badge */}
-                        <div
-                          className={`inline-flex px-3 py-1 rounded-full text-xs font-medium border mb-4 ${getTypeColor(
-                            exp.type
-                          )}`}
-                        >
-                          {exp.type}
-                        </div>
-
-                        {/* Header */}
-                        <div className="mb-6">
-                          <h3 className="text-2xl font-bold text-white mb-2 group-hover:text-purple-200 transition-colors">
-                            {exp.title}
-                          </h3>
-                          <p className="text-purple font-semibold text-lg mb-3">
-                            {exp.company}
-                          </p>
-                          <div className="flex flex-wrap gap-4 text-sm text-white-100">
-                            <span>{exp.period}</span>
-                            <span>•</span>
-                            <span>{exp.location}</span>
-                          </div>
-                        </div>
-
-                        {/* Description */}
-                        <p className="text-white-100 leading-relaxed mb-6 group-hover:text-white transition-colors">
-                          {exp.description}
-                        </p>
-
-                        {/* Key achievements */}
-                        <div className="mb-6">
-                          <h4 className="text-white font-semibold mb-3 text-sm">
-                            Key Impact:
-                          </h4>
-                          <div className="space-y-2">
-                            {exp.highlights.map((highlight, idx) => (
-                              <div key={idx} className="flex items-start gap-3">
-                                <div className="w-1.5 h-1.5 bg-purple rounded-full mt-2 flex-shrink-0" />
-                                <span className="text-white-100 text-sm leading-relaxed">
-                                  {highlight}
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-
-                        {/* Technologies */}
-                        <div className="mb-6">
-                          <div className="flex flex-wrap gap-2">
-                            {exp.technologies.map((tech, techIndex) => (
-                              <span
-                                key={techIndex}
-                                className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-xs text-white-100 group-hover:bg-purple/10 group-hover:border-purple/30 transition-all duration-300"
-                              >
-                                {tech}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-
-                        {/* Metrics */}
-                        <div className="grid grid-cols-2 gap-4">
-                          {exp.achievements.map((achievement, idx) => (
-                            <div
-                              key={idx}
-                              className="text-center p-3 rounded-lg bg-white/5 group-hover:bg-purple/10 transition-colors"
-                            >
-                              <div className="text-purple font-bold text-sm">
-                                {achievement.value}
-                              </div>
-                              <div className="text-white-100 text-xs">
-                                {achievement.metric}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-
-                        {/* Hover glow */}
-                        <div className="absolute inset-0 bg-gradient-to-r from-purple/5 via-purple/10 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-                      </div>
-                    </motion.div>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Simple bottom stats */}
+      {/* Unified drag + button slider */}
+      <div className="relative overflow-hidden px-10 md:px-20">
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.4 }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="relative z-30 mt-16"
+          ref={trackRef}
+          drag="x"
+          style={{ x }}
+          dragConstraints={{ left: -maxDrag, right: 0 }}
+          dragElastic={0.1}
+          className="flex gap-8 cursor-grab active:cursor-grabbing"
         >
-          <div className="mx-auto max-w-3xl rounded-2xl border border-white/12 bg-white/[0.04] px-6 py-5 md:px-8 md:py-6 backdrop-blur-xl transition-shadow hover:shadow-[0_14px_50px_rgba(56,189,248,0.18)]">
-            {/* semantic + keyboard readable */}
-            <dl className="grid grid-cols-3 items-center divide-x divide-white/10 text-center">
-              {/* Companies */}
-              <div className="px-2 md:px-4">
-                <dd className="text-[1.6rem] md:text-3xl font-extrabold leading-none bg-clip-text text-transparent bg-gradient-to-r from-violet-300 to-sky-300">
-                  5+
-                </dd>
-                <dt className="mt-1 text-xs md:text-sm text-white/70">
-                  Companies
-                </dt>
-              </div>
+          {realExperience.map((exp) => (
+            <motion.div
+              key={exp.id}
+              whileHover={{ y: -6 }}
+              transition={{ duration: 0.3 }}
+              className="flex-shrink-0 w-[85vw] sm:w-[65vw] md:w-[45vw] lg:w-[38vw]"
+            >
+              <div
+                className="relative p-8 rounded-2xl border border-white/10 
+                  bg-white/5 backdrop-blur-lg transition-all duration-500 
+                  hover:border-purple/40 hover:shadow-[0_8px_30px_rgba(168,85,247,0.3)]"
+              >
+                <div
+                  className={`inline-flex px-3 py-1 rounded-full text-xs font-medium border mb-4 ${getTypeColor(
+                    exp.type
+                  )}`}
+                >
+                  {exp.type}
+                </div>
 
-              {/* Users Reached */}
-              <div className="px-2 md:px-4">
-                <dd className="text-[1.6rem] md:text-3xl font-extrabold leading-none bg-clip-text text-transparent bg-gradient-to-r from-cyan-300 to-emerald-300">
-                  1.7K+
-                </dd>
-                <dt className="mt-1 text-xs md:text-sm text-white/70">
-                  Users Reached
-                </dt>
-              </div>
+                <h3 className="text-2xl font-bold text-white mb-2">
+                  {exp.title}
+                </h3>
+                <p className="text-purple font-semibold">{exp.company}</p>
+                <div className="text-white/70 text-sm mt-1">
+                  {exp.period} • {exp.location}
+                </div>
 
-              {/* Years Experience */}
-              <div className="px-2 md:px-4">
-                <dd className="text-[1.6rem] md:text-3xl font-extrabold leading-none bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-300 to-violet-300">
-                  2+
-                </dd>
-                <dt className="mt-1 text-xs md:text-sm text-white/70">
-                  Years Experience
-                </dt>
+                <p className="text-white/80 mt-4 leading-relaxed">
+                  {exp.description}
+                </p>
+
+                <div className="mt-6 space-y-2">
+                  {exp.highlights.map((h, i) => (
+                    <div key={i} className="flex items-start gap-2 text-sm">
+                      <div className="w-1.5 h-1.5 rounded-full bg-purple mt-2"></div>
+                      <span className="text-white/80">{h}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-6 flex flex-wrap gap-2">
+                  {exp.technologies.map((tech, i) => (
+                    <span
+                      key={i}
+                      className="px-3 py-1 text-xs bg-white/5 border border-white/10 rounded-full text-white/70 hover:bg-purple/10 hover:border-purple/30 transition-all"
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
               </div>
-            </dl>
-          </div>
+            </motion.div>
+          ))}
         </motion.div>
+      </div>
+
+      {/* Dots */}
+      <div className="flex justify-center gap-2 mt-10">
+        {realExperience.map((_, i) => (
+          <div
+            key={i}
+            className={`h-2 rounded-full transition-all duration-300 ${
+              i === currentIndex ? "w-8 bg-purple-400" : "w-3 bg-white/20"
+            }`}
+          />
+        ))}
       </div>
     </section>
   );

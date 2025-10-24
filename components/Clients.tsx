@@ -1,274 +1,274 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Star,
-  ChevronLeft,
-  ChevronRight,
-  ArrowRight,
-  CheckCircle,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, ArrowRight, Quote } from "lucide-react";
 import { testimonials } from "@/data";
 
-const Clients = () => {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+const clamp = (n: number, min: number, max: number) =>
+  Math.max(min, Math.min(max, n));
 
-  // Auto-rotate testimonials
+const useAutoplay = (enabled: boolean, delay = 6000) => {
+  const [tick, setTick] = useState(0);
   useEffect(() => {
-    if (!isAutoPlaying) return;
-    const interval = setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % testimonials.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [isAutoPlaying]);
+    if (!enabled) return;
+    const id = setInterval(() => setTick((t) => t + 1), delay);
+    return () => clearInterval(id);
+  }, [enabled, delay]);
+  return tick;
+};
 
-  const nextTestimonial = () => {
-    setActiveIndex((prev) => (prev + 1) % testimonials.length);
+const usePrefersReducedMotion = () => {
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReduced(mq.matches);
+    const handler = () => setReduced(mq.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+  return reduced;
+};
+
+const GlassCard: React.FC<{
+  children: React.ReactNode;
+  className?: string;
+}> = ({ children, className = "" }) => (
+  <div
+    className={`relative rounded-3xl border overflow-hidden border-white/15 bg-white/[0.06] backdrop-blur-2xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.5)] before:absolute before:inset-0 before:pointer-events-none before:bg-[radial-gradient(1000px_400px_at_-20%_-20%,rgba(255,255,255,0.14),transparent_40%),radial-gradient(600px_260px_at_120%_0%,rgba(255,255,255,0.08),transparent_40%)] ${className}`}
+  >
+    <div className="pointer-events-none absolute -top-1 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent" />
+    {children}
+  </div>
+);
+
+const Avatar: React.FC<{ src?: string; alt?: string }> = ({ src, alt }) => (
+  <div className="relative size-14 shrink-0 rounded-full p-[2px] bg-gradient-to-br from-white/60 via-white/20 to-transparent">
+    <img
+      src={
+        src ||
+        "https://images.unsplash.com/photo-1544723795-3fb6469f5b39?q=80&w=256&auto=format&fit=crop&ixlib=rb-4.0.3&crop=faces"
+      }
+      alt={alt || "Client"}
+      className="size-full rounded-full object-cover"
+    />
+  </div>
+);
+
+const Indicator: React.FC<{
+  active: boolean;
+  onClick: () => void;
+  label: string;
+}> = ({ active, onClick, label }) => (
+  <button
+    aria-label={label}
+    onClick={onClick}
+    className={`h-2 rounded-full transition-all duration-300 ${
+      active ? "w-10 bg-white" : "w-3 bg-white/30 hover:bg-white/50"
+    } focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60`}
+  />
+);
+
+const Clients: React.FC = () => {
+  const [index, setIndex] = useState(0);
+  const [hovering, setHovering] = useState(false);
+  const reducedMotion = usePrefersReducedMotion();
+  const visible = useRef(true);
+
+  useEffect(() => {
+    const onVis = () =>
+      (visible.current = document.visibilityState === "visible");
+    document.addEventListener("visibilitychange", onVis);
+    return () => document.removeEventListener("visibilitychange", onVis);
+  }, []);
+
+  const autoplayTick = useAutoplay(!hovering && !reducedMotion, 6000);
+  useEffect(() => {
+    if (!visible.current) return;
+    setIndex((i) => (i + 1) % testimonials.length);
+  }, [autoplayTick]);
+
+  const go = (dir: 1 | -1) =>
+    setIndex((i) => (i + dir + testimonials.length) % testimonials.length);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight") go(1);
+      else if (e.key === "ArrowLeft") go(-1);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  const startX = useRef(0);
+  const onTouchStart = (e: React.TouchEvent) =>
+    (startX.current = e.touches[0].clientX);
+  const onTouchMove = (e: React.TouchEvent) => {
+    const dx = e.touches[0].clientX - startX.current;
+    if (Math.abs(dx) > 48) {
+      go(dx < 0 ? 1 : -1);
+      startX.current = e.touches[0].clientX;
+    }
   };
 
-  const prevTestimonial = () => {
-    setActiveIndex(
-      (prev) => (prev - 1 + testimonials.length) % testimonials.length
-    );
-  };
+  const item = useMemo(() => testimonials[index] ?? {}, [index]);
 
   return (
-    <section id="testimonials" className="relative z-20 isolate py-16">
-      {/* Subtle background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-900/5 to-transparent" />
+    <section id="testimonials" className="relative z-20 isolate py-16 md:py-24">
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-white/[0.04] to-transparent" />
 
-      <div className="max-w-7xl mx-auto px-4 relative">
-        {/* Header with better messaging */}
+      <div className="relative mx-auto max-w-7xl px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-12 md:mb-16"
         >
-          <div className="inline-flex items-center gap-2 bg-purple-500/10 backdrop-blur-sm border border-purple-500/20 rounded-full px-6 py-3 mb-6">
-            <Star className="w-5 h-5 text-purple-400" />
-            <span className="text-purple-200 font-medium">
-              Client Success Stories
-            </span>
+          <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] px-5 py-2 backdrop-blur">
+            <div className="size-2 rounded-full bg-emerald-400" />
+            <span className="text-sm text-white/80">What clients say</span>
           </div>
-
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 ">
-            <span className="bg-gradient-to-r from-white via-purple-200 to-blue-200 bg-clip-text text-transparent">
-              My Clients Don&apos;t Just
-            </span>
-            <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-400">
-              Get Websites, They Get Results
-            </span>
-          </h1>
-
-          <p className="text-lg text-gray-300 max-w-3xl mx-auto">
-            Real businesses. Real growth. Real ROI. See how I&apos;ve helped
-            companies achieve measurable success with conversion-focused
-            development.
+          <h2 className="mt-6 text-3xl font-semibold tracking-tight text-white md:text-5xl">
+            Built for outcomes. Designed to convert.
+          </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-balance text-white/70">
+            Real projects, measurable impact. Here’s a snapshot of the
+            experience working with me.
           </p>
         </motion.div>
 
-        {/* Main testimonial carousel - clean and focused */}
-        <div className="relative mb-12">
-          <div
-            className="flex items-center justify-center gap-6"
-            onMouseEnter={() => setIsAutoPlaying(false)}
-            onMouseLeave={() => setIsAutoPlaying(true)}
-          >
-            {/* Navigation Buttons with better styling */}
-            <motion.button
-              whileHover={{ scale: 1.1, rotate: -5 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={prevTestimonial}
-              className="p-4 rounded-full bg-gradient-to-r from-purple-500/20 to-blue-500/20 backdrop-blur-sm border border-white/20 hover:from-purple-500/30 hover:to-blue-500/30 transition-all duration-300 group"
-            >
-              <ChevronLeft className="w-6 h-6 text-white group-hover:text-purple-200" />
-            </motion.button>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
+          <div className="md:col-span-7 lg:col-span-8">
+            <GlassCard>
+              <div
+                role="region"
+                aria-roledescription="carousel"
+                aria-label="Client testimonials"
+                onMouseEnter={() => setHovering(true)}
+                onMouseLeave={() => setHovering(false)}
+                onTouchStart={onTouchStart}
+                onTouchMove={onTouchMove}
+                className="relative p-6 sm:p-8 md:p-10"
+              >
+                <div className="absolute inset-x-0 top-0 flex justify-between p-3 md:p-4">
+                  <button
+                    aria-label="Previous testimonial"
+                    onClick={() => go(-1)}
+                    className="group rounded-full border border-white/20 bg-white/[0.06] p-2 backdrop-blur hover:bg-white/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+                  >
+                    <ChevronLeft className="size-5 text-white/80 group-hover:text-white" />
+                  </button>
+                  <button
+                    aria-label="Next testimonial"
+                    onClick={() => go(1)}
+                    className="group rounded-full border border-white/20 bg-white/[0.06] p-2 backdrop-blur hover:bg-white/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+                  >
+                    <ChevronRight className="size-5 text-white/80 group-hover:text-white" />
+                  </button>
+                </div>
 
-            {/* Featured testimonial - clean design */}
-            <div className="w-full max-w-4xl">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activeIndex}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.5 }}
-                  className="relative"
-                >
-                  <div className="relative p-10 md:p-16 rounded-3xl bg-gradient-to-br from-white/[0.08] via-white/[0.05] to-white/[0.02] backdrop-blur-3xl border border-white/[0.18] shadow-2xl overflow-hidden">
-                    {/* Subtle animated background gradient */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-purple-500/[0.03] via-transparent to-blue-500/[0.03]" />
-
-                    {/* Glass reflection effects */}
-                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-                    <div className="absolute top-0 left-0 bottom-0 w-px bg-gradient-to-b from-white/10 via-transparent to-transparent" />
-
-                    {/* Premium badge */}
-                    <div className="absolute top-6 right-6 bg-gradient-to-r from-green-400 to-emerald-400 text-black text-xs font-bold px-3 py-1 rounded-full">
-                      VERIFIED RESULTS
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{
+                      duration: reducedMotion ? 0 : 0.4,
+                      ease: "easeOut",
+                    }}
+                  >
+                    <div className="flex items-start gap-4 md:gap-6">
+                      <Avatar src={item.imgUrl} alt={item.name} />
+                      <div className="min-w-0">
+                        <div className="flex flex-wrap items-center gap-3">
+                          <h3 className="text-lg font-semibold text-white md:text-xl">
+                            {item.name || "Client"}
+                          </h3>
+                          {item.title && (
+                            <span className="text-sm text-white/60">
+                              {item.title}
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </div>
 
-                    {/* Stars */}
-                    <div className="hidden md:flex gap-1 mb-8 relative z-10 ">
-                      {[...Array(5)].map((_, i) => (
-                        <motion.div
+                    <div className="relative mt-6 md:mt-8">
+                      <Quote className="absolute -left-2 -top-2 size-5 text-white/25" />
+                      <blockquote className="text-pretty text-base leading-relaxed text-white/90 md:text-lg">
+                        {item.quote ||
+                          "Outstanding delivery, thoughtful communication, and a product that genuinely moved our metrics."}
+                      </blockquote>
+                    </div>
+
+                    <div className="mt-8 flex items-center gap-3">
+                      <a
+                        href="#contact"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          document
+                            .getElementById("contact")
+                            ?.scrollIntoView({ behavior: "smooth" });
+                        }}
+                        className="group inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/[0.08] px-4 py-2 text-sm text-white/90 backdrop-blur transition hover:bg-white/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+                      >
+                        Start a project
+                        <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+                      </a>
+                    </div>
+
+                    <div className="mt-8 flex items-center gap-2">
+                      {testimonials.map((_, i) => (
+                        <Indicator
                           key={i}
-                          initial={{ opacity: 0, scale: 0 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ delay: i * 0.1 }}
-                        >
-                          <Star className="w-6 h-6 fill-yellow-400 text-yellow-400 drop-shadow-lg" />
-                        </motion.div>
+                          active={i === index}
+                          onClick={() => setIndex(i)}
+                          label={`Show testimonial ${i + 1}`}
+                        />
                       ))}
-                      <span className="ml-2 text-yellow-400 font-semibold">
-                        5.0
-                      </span>
                     </div>
-
-                    {/* Testimonial text */}
-                    <blockquote className="text-xl md:text-2xl font-light leading-relaxed text-white mb-8 relative z-10">
-                      <span className="text-3xl text-purple-400">&quot;</span>
-                      {testimonials[activeIndex]?.quote ||
-                        "Amazing work that transformed our business completely!"}
-                      <span className="text-3xl text-purple-400">&quot;</span>
-                    </blockquote>
-
-                    {/* Enhanced Client info */}
-                    <div className="flex items-center gap-6 relative z-10">
-                      <div className="relative">
-                        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-purple-400 via-pink-400 to-blue-400 p-1">
-                          <img
-                            src={
-                              testimonials[activeIndex]?.imgUrl ||
-                              "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face"
-                            }
-                            alt={testimonials[activeIndex]?.name || "Client"}
-                            className="w-full h-full rounded-full object-cover"
-                          />
-                        </div>
-                        {/* Active indicator */}
-                        <div className="absolute -bottom-1 -right-1 w-7 h-7 bg-green-400 rounded-full border-3 border-white/30 flex items-center justify-center">
-                          <Star className="w-4 h-4 text-white fill-white" />
-                        </div>
-                      </div>
-
-                      <div className="flex-1">
-                        <h3 className="text-2xl font-bold text-white mb-1">
-                          {testimonials[activeIndex]?.name || "Client Name"}
-                        </h3>
-                        <p className="text-purple-300 font-medium mb-2">
-                          {testimonials[activeIndex]?.title ||
-                            "Position, Company"}
-                        </p>
-                        <div className="flex items-center gap-2 text-sm text-gray-400">
-                          <div className="w-2 h-2 bg-green-400 rounded-full" />
-                          <span>Project completed 2024</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Floating decorative elements */}
-                    <div className="absolute -top-6 -right-6 w-32 h-32 bg-gradient-to-br from-purple-500/[0.15] to-pink-500/[0.10] rounded-full blur-2xl" />
-                    <div className="absolute -bottom-8 -left-8 w-40 h-40 bg-gradient-to-tr from-blue-500/[0.10] to-cyan-500/[0.08] rounded-full blur-3xl" />
-                  </div>
-                </motion.div>
-              </AnimatePresence>
-            </div>
-
-            <motion.button
-              whileHover={{ scale: 1.1, rotate: 5 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={nextTestimonial}
-              className="p-4 rounded-full bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-sm border border-white/20 hover:from-blue-500/30 hover:to-purple-500/30 transition-all duration-300 group"
-            >
-              <ChevronRight className="w-6 h-6 text-white group-hover:text-blue-200" />
-            </motion.button>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+            </GlassCard>
           </div>
 
-          {/* Enhanced Indicators */}
-          <div className="flex justify-center gap-3 mt-8">
-            {testimonials.map((_, index) => (
-              <motion.button
-                key={index}
-                whileHover={{ scale: 1.3 }}
-                whileTap={{ scale: 0.8 }}
-                onClick={() => setActiveIndex(index)}
-                className={`h-3 rounded-full transition-all duration-300 ${
-                  index === activeIndex
-                    ? "bg-gradient-to-r from-purple-400 to-blue-400 w-12"
-                    : "bg-white/20 hover:bg-white/40 w-3"
-                }`}
-              />
+          <div className="md:col-span-5 lg:col-span-4 grid grid-cols-1 gap-4">
+            {testimonials.slice(0, 4).map((t, i) => (
+              <button
+                key={i}
+                onClick={() => setIndex(i)}
+                className="text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+                aria-label={`Focus testimonial from ${t.name}`}
+              >
+                <GlassCard
+                  className={`${
+                    i === index ? "ring-1 ring-white/30" : ""
+                  } transition-transform duration-300 hover:-translate-y-0.5`}
+                >
+                  <div className="flex items-start gap-3 p-4 sm:p-5">
+                    <Avatar src={t.imgUrl} alt={t.name} />
+                    <div className="min-w-0">
+                      <p className="line-clamp-3 text-sm text-white/80">
+                        “{t.quote}”
+                      </p>
+                      <div className="mt-3 flex items-center gap-2 text-xs text-white/60">
+                        <span className="font-medium text-white/80">
+                          {t.name}
+                        </span>
+                        {t.title && (
+                          <span className="text-white/50">• {t.title}</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </GlassCard>
+              </button>
             ))}
           </div>
         </div>
-
-        {/* Quick testimonial grid - no overwhelming elements */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="grid md:grid-cols-3 gap-6"
-        >
-          {testimonials.slice(0, 3).map((testimonial, index) => (
-            <motion.div
-              key={index}
-              whileHover={{ y: -5 }}
-              className="p-6 rounded-xl bg-white/[0.02] backdrop-blur-sm border border-white/[0.08] hover:border-white/20 transition-all duration-300"
-            >
-              <div className="flex gap-1 mb-3">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className="w-3 h-3 fill-yellow-400 text-yellow-400"
-                  />
-                ))}
-              </div>
-
-              <p className="text-white/80 text-sm mb-4 line-clamp-3">
-                &quot;{testimonial.quote}&quot;
-              </p>
-
-              <div className="flex items-center gap-3">
-                <img
-                  src={testimonial.imgUrl}
-                  alt={testimonial.name}
-                  className="w-8 h-8 rounded-full object-cover"
-                />
-                <div>
-                  <h5 className="text-white text-sm font-medium">
-                    {testimonial.name}
-                  </h5>
-                  <p className="text-gray-400 text-xs">{testimonial.title}</p>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
-
-        {/* Simple transition to next section */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="text-center mt-16 cursor-pointer"
-          onClick={() => {
-            const formSection = document.getElementById("contact"); // footer id
-            if (formSection) {
-              formSection.scrollIntoView({ behavior: "smooth" });
-            }
-          }}
-        >
-          <div className="inline-flex items-center gap-2 text-gray-400">
-            <CheckCircle className="w-4 h-4 text-green-400" />
-            <span className="text-sm">Ready to join them?</span>
-            <ArrowRight className="w-4 h-4" />
-          </div>
-        </motion.div>
       </div>
     </section>
   );
