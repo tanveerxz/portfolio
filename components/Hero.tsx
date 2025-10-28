@@ -13,6 +13,16 @@ const Hero = () => {
   const pinRef = useRef<HTMLDivElement | null>(null);
   const [ready, setReady] = useState(false);
 
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect screen size
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
   // safety auto-hide after 5s in case onReady never fires
   useEffect(() => {
     const t = setTimeout(() => setReady(true), 5000);
@@ -41,14 +51,16 @@ const Hero = () => {
         <SplashLoader />
       </div>
 
-      {/* 3) 3D Scene signals when the first frames are ready */}
-      <HeroScene
-        pinRef={pinRef}
-        onReady={() => {
-          setReady(true);
-          window.dispatchEvent(new Event("hero-ready")); // 🔔 tells page.tsx loader to hide
-        }}
-      />
+      {/* Render 3D only on desktop */}
+      {!isMobile && (
+        <HeroScene
+          pinRef={pinRef}
+          onReady={() => {
+            setReady(true);
+            window.dispatchEvent(new Event("hero-ready"));
+          }}
+        />
+      )}
 
       {/* ---- Content ---- */}
       <div id="hero-pin" ref={pinRef} className="relative z-10">

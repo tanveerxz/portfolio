@@ -55,22 +55,86 @@ const Avatar: React.FC<{ src?: string; alt?: string }> = ({ src, alt }) => (
   </div>
 );
 
-const Indicator: React.FC<{
-  active: boolean;
-  onClick: () => void;
-  label: string;
-}> = ({ active, onClick, label }) => (
-  <button
-    aria-label={label}
-    onClick={onClick}
-    className={`h-2 rounded-full transition-all duration-300 ${
-      active ? "w-10 bg-white" : "w-3 bg-white/30 hover:bg-white/50"
-    } focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60`}
-  />
-);
+const IndicatorBar: React.FC<{
+  activeIndex: number;
+  prevIndex: number;
+  total: number;
+  onClick: (i: number) => void;
+}> = ({ activeIndex, prevIndex, total, onClick }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const dotRefs = useRef<HTMLDivElement[]>([]);
+  const [positions, setPositions] = useState<number[]>([]);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const update = () => {
+      const baseLeft = containerRef.current!.getBoundingClientRect().left;
+      const newPositions = dotRefs.current.map((el) =>
+        el ? el.getBoundingClientRect().left - baseLeft + el.offsetWidth / 2 : 0
+      );
+      setPositions(newPositions);
+    };
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
+  const DOT = 12; // base dot width
+  const PILL = 40; // pill width
+
+  const start = positions[prevIndex] ?? 0;
+  const end = positions[activeIndex] ?? 0;
+  const minLeft = Math.min(start, end);
+  const bridgeWidth = Math.abs(end - start) + PILL;
+
+  return (
+    <div ref={containerRef} className="relative flex items-center gap-3 mt-8">
+      {/* Static dots */}
+      {Array.from({ length: total }).map((_, i) => (
+        <div
+          key={i}
+          ref={(el) => {
+            if (el) dotRefs.current[i] = el;
+          }}
+          onClick={() => onClick(i)}
+          className="h-2 w-3 rounded-full bg-white/25 hover:bg-white/40 transition-colors"
+        />
+      ))}
+
+      {/* Animated runner pill */}
+      {positions.length === total && (
+        <motion.div
+          key={`${prevIndex}-${activeIndex}`}
+          className="absolute top-0 h-2 rounded-full bg-white"
+          initial={{ left: start - PILL / 2, width: PILL }}
+          animate={{
+            left: [start - PILL / 2, minLeft - PILL / 2, end - PILL / 2],
+            width: [PILL, bridgeWidth, PILL],
+          }}
+          transition={{
+            duration: 0.45,
+            ease: ["easeInOut", "linear", "easeInOut"],
+            times: [0, 0.5, 1],
+          }}
+        />
+      )}
+    </div>
+  );
+};
 
 const Clients: React.FC = () => {
   const [index, setIndex] = useState(0);
+  const [direction, setDirection] = useState(1);
+  const prevIndex = useRef(0);
+
+  const go = (dir: 1 | -1) => {
+    setDirection(dir);
+    setIndex((i) => {
+      prevIndex.current = i;
+      return (i + dir + testimonials.length) % testimonials.length;
+    });
+  };
+
   const [hovering, setHovering] = useState(false);
   const reducedMotion = usePrefersReducedMotion();
   const visible = useRef(true);
@@ -87,9 +151,6 @@ const Clients: React.FC = () => {
     if (!visible.current) return;
     setIndex((i) => (i + 1) % testimonials.length);
   }, [autoplayTick]);
-
-  const go = (dir: 1 | -1) =>
-    setIndex((i) => (i + dir + testimonials.length) % testimonials.length);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -171,13 +232,10 @@ const Clients: React.FC = () => {
                 <AnimatePresence mode="wait" initial={false}>
                   <motion.div
                     key={index}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{
-                      duration: reducedMotion ? 0 : 0.4,
-                      ease: "easeOut",
-                    }}
+                    initial={{ opacity: 0, x: direction === 1 ? 30 : -30 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: direction === 1 ? -30 : 30 }}
+                    transition={{ duration: 0.45, ease: "easeInOut" }}
                   >
                     <div className="flex items-start gap-4 md:gap-6">
                       <Avatar src={item.imgUrl} alt={item.name} />
@@ -219,15 +277,16 @@ const Clients: React.FC = () => {
                       </a>
                     </div>
 
-                    <div className="mt-8 flex items-center gap-2">
-                      {testimonials.map((_, i) => (
-                        <Indicator
-                          key={i}
-                          active={i === index}
-                          onClick={() => setIndex(i)}
-                          label={`Show testimonial ${i + 1}`}
-                        />
-                      ))}
+                    <div className="relative">
+                      <IndicatorBar
+                        activeIndex={index}
+                        prevIndex={useRef(index).current}
+                        total={testimonials.length}
+                        onClick={(i) => {
+                          prevIndex.current = index;
+                          setIndex(i);
+                        }}
+                      />
                     </div>
                   </motion.div>
                 </AnimatePresence>
@@ -235,7 +294,7 @@ const Clients: React.FC = () => {
             </GlassCard>
           </div>
 
-          <div className="md:col-span-5 lg:col-span-4 grid grid-cols-1 gap-4">
+          <div className="hidden md:grid md:col-span-5 lg:col-span-4 grid-cols-1 gap-4">
             {testimonials.slice(0, 4).map((t, i) => (
               <button
                 key={i}
