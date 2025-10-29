@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Disallow internal system folders
+Disallow: /api/
+Disallow: /_next/
+Disallow: /404
+
+Sitemap: https://tanveersingh.dev/sitemap.xml
