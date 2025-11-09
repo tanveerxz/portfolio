@@ -23,11 +23,7 @@ import {
   Handshake,
 } from "lucide-react";
 
-const socialMedia = [
-  { id: 1, img: "/link.svg", url: "https://linkedin.com" },
-  { id: 2, img: "/git.svg", url: "https://github.com" },
-  { id: 3, img: "/twit.svg", url: "https://twitter.com" },
-];
+import { socialMedia } from "@/data";
 
 declare global {
   interface Window {
