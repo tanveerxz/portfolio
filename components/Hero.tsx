@@ -133,7 +133,7 @@ const Hero = () => {
                   <span className="text-sm md:text-[0.95rem]">
                     Trusted by{" "}
                     <span className="text-white/90 font-medium">
-                      50+ clients
+                      30+ clients
                     </span>{" "}
                     — 5★ average
                   </span>
