@@ -1,0 +1,276 @@
+{
+  "version": 1,
+  "project": {
+    "name": "portfolio",
+    "productType": null,
+    "stack": [
+      "nextjs",
+      "react",
+      "shadcn",
+      "tailwind-v3"
+    ]
+  },
+  "sources": {
+    "tokens": [
+      "app/globals.css"
+    ],
+    "components": [],
+    "assets": [],
+    "instructions": [
+      "DESIGN.md",
+      "PRODUCT.md"
+    ]
+  },
+  "design": {
+    "colorMode": "light",
+    "colors": {
+      "--text-primary": {
+        "value": "#edeef2",
+        "source": "app/globals.css"
+      },
+      "--text-secondary": {
+        "value": "#b3b7c2",
+        "source": "app/globals.css"
+      },
+      "--accent": {
+        "value": "#c2c8fa",
+        "source": "app/globals.css"
+      },
+      "--accent-hover": {
+        "value": "#d9ddff",
+        "source": "app/globals.css"
+      },
+      "--control-border": {
+        "value": "#707684",
+        "source": "app/globals.css"
+      },
+      "--accent-flagship": {
+        "value": "var(--accent)",
+        "source": "app/globals.css"
+      },
+      "--accent-flagship-hover": {
+        "value": "var(--accent-hover)",
+        "source": "app/globals.css"
+      },
+      "--border-subtle": {
+        "value": "var(--hairline)",
+        "source": "app/globals.css"
+      },
+      "--border-default": {
+        "value": "var(--hairline)",
+        "source": "app/globals.css"
+      },
+      "--border-strong": {
+        "value": "rgba(224, 229, 244, 0.28)",
+        "source": "app/globals.css"
+      },
+      "--border-control": {
+        "value": "var(--control-border)",
+        "source": "app/globals.css"
+      },
+      "--danger-border": {
+        "value": "color-mix(in srgb, var(--warning) 72%, transparent)",
+        "source": "app/globals.css"
+      },
+      "--focus-ring": {
+        "value": "var(--focus)",
+        "source": "app/globals.css"
+      }
+    },
+    "typography": {
+      "--text-tertiary": {
+        "value": "#9096a4",
+        "source": "app/globals.css"
+      },
+      "--text-inverse": {
+        "value": "#0b0d12",
+        "source": "app/globals.css"
+      },
+      "--font-sans": {
+        "value": "var(--font-manrope), ui-sans-serif, system-ui, -apple-system,\n      \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif",
+        "source": "app/globals.css"
+      },
+      "--font-mono": {
+        "value": "var(--font-jetbrains-mono), ui-monospace, SFMono-Regular,\n      \"SF Mono\", Menlo, Consolas, monospace",
+        "source": "app/globals.css"
+      },
+      "--text-display": {
+        "value": "clamp(3.4rem, 7.3vw, 7.25rem)",
+        "source": "app/globals.css"
+      },
+      "--text-h1": {
+        "value": "clamp(3.4rem, 7.3vw, 7.25rem)",
+        "source": "app/globals.css"
+      },
+      "--text-h2": {
+        "value": "clamp(2.5rem, 5vw, 5rem)",
+        "source": "app/globals.css"
+      },
+      "--text-h3": {
+        "value": "clamp(1.5rem, 2.5vw, 2.4rem)",
+        "source": "app/globals.css"
+      },
+      "--text-body-lg": {
+        "value": "1.125rem",
+        "source": "app/globals.css"
+      },
+      "--text-body": {
+        "value": "1rem",
+        "source": "app/globals.css"
+      },
+      "--text-sm": {
+        "value": "0.875rem",
+        "source": "app/globals.css"
+      },
+      "--text-mono": {
+        "value": "0.8125rem",
+        "source": "app/globals.css"
+      }
+    },
+    "spacing": {
+      "--space-1": {
+        "value": "0.25rem",
+        "source": "app/globals.css"
+      },
+      "--space-2": {
+        "value": "0.5rem",
+        "source": "app/globals.css"
+      },
+      "--space-3": {
+        "value": "0.75rem",
+        "source": "app/globals.css"
+      },
+      "--space-4": {
+        "value": "1rem",
+        "source": "app/globals.css"
+      },
+      "--space-5": {
+        "value": "clamp(1.5rem, 5vw, 5.5rem)",
+        "source": "app/globals.css"
+      },
+      "--space-6": {
+        "value": "1.5rem",
+        "source": "app/globals.css"
+      },
+      "--space-8": {
+        "value": "2rem",
+        "source": "app/globals.css"
+      },
+      "--space-12": {
+        "value": "3rem",
+        "source": "app/globals.css"
+      },
+      "--space-16": {
+        "value": "4rem",
+        "source": "app/globals.css"
+      },
+      "--space-18": {
+        "value": "4.5rem",
+        "source": "app/globals.css"
+      },
+      "--space-24": {
+        "value": "6rem",
+        "source": "app/globals.css"
+      },
+      "--space-28": {
+        "value": "7rem",
+        "source": "app/globals.css"
+      },
+      "--space-32": {
+        "value": "8rem",
+        "source": "app/globals.css"
+      },
+      "--space-40": {
+        "value": "10rem",
+        "source": "app/globals.css"
+      },
+      "--container-max": {
+        "value": "1440px",
+        "source": "app/globals.css"
+      },
+      "--container-pad": {
+        "value": "clamp(24px, 5vw, 88px)",
+        "source": "app/globals.css"
+      }
+    },
+    "radius": {},
+    "shadows": {
+      "--shadow-sm": {
+        "value": "0 8px 20px -16px rgba(0, 0, 0, 0.72)",
+        "source": "app/globals.css"
+      },
+      "--shadow-md": {
+        "value": "0 20px 48px -30px rgba(0, 0, 0, 0.78)",
+        "source": "app/globals.css"
+      },
+      "--shadow-lg": {
+        "value": "0 36px 80px -48px rgba(0, 0, 0, 0.82)",
+        "source": "app/globals.css"
+      }
+    },
+    "motion": {
+      "--ease-standard": {
+        "value": "cubic-bezier(0.2, 0, 0, 1)",
+        "source": "app/globals.css"
+      },
+      "--ease-out": {
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "source": "app/globals.css"
+      },
+      "--ease-in-out": {
+        "value": "cubic-bezier(0.65, 0, 0.35, 1)",
+        "source": "app/globals.css"
+      },
+      "--ease-emphasized": {
+        "value": "cubic-bezier(0.05, 0.7, 0.1, 1)",
+        "source": "app/globals.css"
+      }
+    },
+    "density": "unknown"
+  },
+  "components": {
+    "installed": [],
+    "preferredPrimitives": [],
+    "patterns": []
+  },
+  "constraints": {
+    "must": [],
+    "avoid": []
+  },
+  "decisions": [],
+  "evidence": [
+    {
+      "fact": "design.colorMode:light",
+      "source": "app/globals.css"
+    },
+    {
+      "fact": "design.tokens",
+      "source": "app/globals.css"
+    },
+    {
+      "fact": "project.instructions",
+      "source": "DESIGN.md"
+    },
+    {
+      "fact": "project.instructions",
+      "source": "PRODUCT.md"
+    },
+    {
+      "fact": "project.stack:nextjs",
+      "source": "package.json"
+    },
+    {
+      "fact": "project.stack:react",
+      "source": "package.json"
+    },
+    {
+      "fact": "project.stack:shadcn",
+      "source": "components.json"
+    },
+    {
+      "fact": "project.stack:tailwind-v3",
+      "source": "package.json"
+    }
+  ],
+  "generatedAt": "2026-09-21T15:09:46.823Z"
+}

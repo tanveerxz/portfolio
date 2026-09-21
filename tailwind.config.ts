@@ -1,204 +1,170 @@
 import type { Config } from "tailwindcss";
 
-const svgToDataUri = require("mini-svg-data-uri");
-
-const colors = require("tailwindcss/colors");
-const {
-  default: flattenColorPalette,
-} = require("tailwindcss/lib/util/flattenColorPalette");
-
+/**
+ * Tailwind consumes the CSS custom properties defined in `app/globals.css`.
+ * It never declares a colour, size, radius, shadow or z-index of its own.
+ * Contract: build/00-foundation.md §3.
+ *
+ * Several scales below are REPLACED rather than extended (`colors`,
+ * `spacing`, `fontSize`, `borderRadius`, `boxShadow`, `zIndex`). That is
+ * deliberate: it makes `bg-slate-800`, `text-4xl`, `p-7` and `z-[999]` fail
+ * to compile instead of merely failing review.
+ */
 const config = {
-  darkMode: ["class"],
   content: [
-    "./pages/**/*.{ts,tsx}",
-    "./components/**/*.{ts,tsx}",
     "./app/**/*.{ts,tsx}",
-    "./src/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./config/**/*.{ts,tsx}",
     "./data/**/*.{ts,tsx}",
+    "./lib/**/*.{ts,tsx}",
   ],
-  prefix: "",
   theme: {
-    container: {
-      center: true,
-      padding: "2rem",
-      screens: {
-        "2xl": "1400px",
+    /* Replaced, not extended — only the permitted steps exist. */
+    colors: {
+      transparent: "transparent",
+      current: "currentColor",
+      inherit: "inherit",
+
+      surface: {
+        0: "var(--surface-0)",
+        1: "var(--surface-1)",
+        2: "var(--surface-2)",
+        3: "var(--surface-3)",
+        glass: "var(--surface-glass)",
       },
+
+      /* Text tokens, named to mirror --text-* */
+      primary: "var(--text-primary)",
+      secondary: "var(--text-secondary)",
+      tertiary: "var(--text-tertiary)",
+      inverse: "var(--text-inverse)",
+
+      accent: {
+        DEFAULT: "var(--accent)",
+        hover: "var(--accent-hover)",
+      },
+      flagship: {
+        DEFAULT: "var(--accent-flagship)",
+        hover: "var(--accent-flagship-hover)",
+      },
+
+      focus: "var(--focus-ring)",
+      danger: "var(--danger)",
     },
+
+    spacing: {
+      0: "0px",
+      px: "1px",
+      1: "var(--space-1)",
+      2: "var(--space-2)",
+      3: "var(--space-3)",
+      4: "var(--space-4)",
+      5: "var(--space-5)",
+      6: "var(--space-6)",
+      8: "var(--space-8)",
+      12: "var(--space-12)",
+      16: "var(--space-16)",
+      24: "var(--space-24)",
+      32: "var(--space-32)",
+    },
+
+    /* The entire type scale. Size, leading, tracking and weight travel
+     * together so a heading is never chosen for its size (§1). */
+    fontSize: {
+      display: [
+        "var(--text-display)",
+        { lineHeight: "1.02", letterSpacing: "-0.03em", fontWeight: "600" },
+      ],
+      h1: [
+        "var(--text-h1)",
+        { lineHeight: "1.06", letterSpacing: "-0.025em", fontWeight: "600" },
+      ],
+      h2: [
+        "var(--text-h2)",
+        { lineHeight: "1.12", letterSpacing: "-0.02em", fontWeight: "600" },
+      ],
+      h3: [
+        "var(--text-h3)",
+        { lineHeight: "1.28", letterSpacing: "-0.01em", fontWeight: "600" },
+      ],
+      "body-lg": ["var(--text-body-lg)", { lineHeight: "1.65" }],
+      body: ["var(--text-body)", { lineHeight: "1.7" }],
+      sm: ["var(--text-sm)", { lineHeight: "1.6" }],
+      mono: [
+        "var(--text-mono)",
+        { lineHeight: "1.5", letterSpacing: "0.02em", fontWeight: "500" },
+      ],
+    },
+
+    borderRadius: {
+      none: "0px",
+      DEFAULT: "var(--r-md)",
+      sm: "var(--r-sm)",
+      md: "var(--r-md)",
+      lg: "var(--r-lg)",
+      xl: "var(--r-xl)",
+      full: "var(--r-full)",
+    },
+
+    boxShadow: {
+      none: "none",
+      sm: "var(--shadow-sm)",
+      md: "var(--shadow-md)",
+      lg: "var(--shadow-lg)",
+    },
+
+    zIndex: {
+      auto: "auto",
+      base: "var(--z-base)",
+      raised: "var(--z-raised)",
+      sticky: "var(--z-sticky)",
+      nav: "var(--z-nav)",
+      overlay: "var(--z-overlay)",
+      modal: "var(--z-modal)",
+    },
+
     extend: {
-      colors: {
-        black: {
-          DEFAULT: "#000",
-          100: "#000319",
-          200: "rgba(17, 25, 40, 0.75)",
-          300: "rgba(255, 255, 255, 0.125)",
-        },
-        white: {
-          DEFAULT: "#FFF",
-          100: "#BEC1DD",
-          200: "#C1C2D3",
-        },
-        blue: {
-          "100": "#E4ECFF",
-        },
-        purple: "#CBACF9",
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
-        primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
-        },
-        secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
-        },
-        destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
-        },
-        muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
-        },
-        accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
-        },
-        popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
-        },
-        card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
-        },
+      fontFamily: {
+        sans: "var(--font-sans)",
+        mono: "var(--font-mono)",
       },
-      borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+
+      /* borderColor inherits every colour above; these add the
+       * border-specific alpha tokens and the bare `border` default. */
+      borderColor: {
+        DEFAULT: "var(--border-default)",
+        subtle: "var(--border-subtle)",
+        default: "var(--border-default)",
+        strong: "var(--border-strong)",
+        control: "var(--border-control)",
+        danger: "var(--danger-border)",
       },
-      keyframes: {
-        "accordion-down": {
-          from: { height: "0" },
-          to: { height: "var(--radix-accordion-content-height)" },
-        },
-        "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: "0" },
-        },
-        spotlight: {
-          "0%": {
-            opacity: "0",
-            transform: "translate(-72%, -62%) scale(0.5)",
-          },
-          "100%": {
-            opacity: "1",
-            transform: "translate(-50%,-40%) scale(1)",
-          },
-        },
-        shimmer: {
-          from: {
-            backgroundPosition: "0 0",
-          },
-          to: {
-            backgroundPosition: "-200% 0",
-          },
-        },
-        moveHorizontal: {
-          "0%": {
-            transform: "translateX(-50%) translateY(-10%)",
-          },
-          "50%": {
-            transform: "translateX(50%) translateY(10%)",
-          },
-          "100%": {
-            transform: "translateX(-50%) translateY(-10%)",
-          },
-        },
-        moveInCircle: {
-          "0%": {
-            transform: "rotate(0deg)",
-          },
-          "50%": {
-            transform: "rotate(180deg)",
-          },
-          "100%": {
-            transform: "rotate(360deg)",
-          },
-        },
-        moveVertical: {
-          "0%": {
-            transform: "translateY(-50%)",
-          },
-          "50%": {
-            transform: "translateY(50%)",
-          },
-          "100%": {
-            transform: "translateY(-50%)",
-          },
-        },
-        scroll: {
-          to: {
-            transform: "translate(calc(-50% - 0.5rem))",
-          },
-        },
+
+      maxWidth: {
+        /* §3 prose measure — so `max-w-[68ch]` is never written by hand. */
+        prose: "68ch",
       },
-      animation: {
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
-        spotlight: "spotlight 2s ease .75s 1 forwards",
-        shimmer: "shimmer 2s linear infinite",
-        first: "moveVertical 30s ease infinite",
-        second: "moveInCircle 20s reverse infinite",
-        third: "moveInCircle 40s linear infinite",
-        fourth: "moveHorizontal 40s ease infinite",
-        fifth: "moveInCircle 20s ease infinite",
-        scroll:
-          "scroll var(--animation-duration, 40s) var(--animation-direction, forwards) linear infinite",
+
+      transitionTimingFunction: {
+        DEFAULT: "var(--ease-standard)",
+        linear: "linear",
+        standard: "var(--ease-standard)",
+        out: "var(--ease-out)",
+        "in-out": "var(--ease-in-out)",
+        emphasized: "var(--ease-emphasized)",
+      },
+
+      transitionDuration: {
+        DEFAULT: "var(--dur-base)",
+        fast: "var(--dur-fast)",
+        base: "var(--dur-base)",
+        slow: "var(--dur-slow)",
+        entrance: "var(--dur-entrance)",
+        choreo: "var(--dur-choreo)",
       },
     },
   },
-  plugins: [
-    require("tailwindcss-animate"),
-    addVariablesForColors,
-    function ({ matchUtilities, theme }: any) {
-      matchUtilities(
-        {
-          "bg-grid": (value: any) => ({
-            backgroundImage: `url("${svgToDataUri(
-              `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="100" height="100" fill="none" stroke="${value}"><path d="M0 .5H31.5V32"/></svg>`
-            )}")`,
-          }),
-          "bg-grid-small": (value: any) => ({
-            backgroundImage: `url("${svgToDataUri(
-              `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="8" height="8" fill="none" stroke="${value}"><path d="M0 .5H31.5V32"/></svg>`
-            )}")`,
-          }),
-          "bg-dot": (value: any) => ({
-            backgroundImage: `url("${svgToDataUri(
-              `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="none"><circle fill="${value}" id="pattern-circle" cx="10" cy="10" r="1.6257413380501518"></circle></svg>`
-            )}")`,
-          }),
-        },
-        { values: flattenColorPalette(theme("backgroundColor")), type: "color" }
-      );
-    },
-  ],
+  plugins: [],
 } satisfies Config;
-
-function addVariablesForColors({ addBase, theme }: any) {
-  let allColors = flattenColorPalette(theme("colors"));
-  let newVars = Object.fromEntries(
-    Object.entries(allColors).map(([key, val]) => [`--${key}`, val])
-  );
-
-  addBase({
-    ":root": newVars,
-  });
-}
 
 export default config;

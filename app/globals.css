@@ -4,82 +4,267 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
+    color-scheme: dark;
 
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    --surface-0: #0b0d12;
+    --surface-1: #12151c;
+    --surface-2: #1a1e27;
+    --surface-3: #242933;
+    --surface-warm: #181715;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
+    --text-primary: #edeef2;
+    --text-secondary: #b3b7c2;
+    --text-tertiary: #9096a4;
+    --text-inverse: #0b0d12;
 
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
+    --accent: #c2c8fa;
+    --accent-hover: #d9ddff;
+    --success: #b9d3be;
+    --warning: #e6c49b;
+    --hairline: rgba(224, 229, 244, 0.16);
+    --control-border: #707684;
+    --focus: #d9ddff;
 
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
+    /* Compatibility aliases consumed by current Tailwind config and partials. */
+    --accent-flagship: var(--accent);
+    --accent-flagship-hover: var(--accent-hover);
+    --border-subtle: var(--hairline);
+    --border-default: var(--hairline);
+    --border-strong: rgba(224, 229, 244, 0.28);
+    --border-control: var(--control-border);
+    --danger: var(--warning);
+    --danger-border: color-mix(in srgb, var(--warning) 72%, transparent);
+    --focus-ring: var(--focus);
+    --surface-glass: color-mix(in srgb, var(--surface-1) 78%, transparent);
 
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
+    --font-sans: var(--font-manrope), ui-sans-serif, system-ui, -apple-system,
+      "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-display: var(--font-instrument-sans), var(--font-manrope),
+      ui-sans-serif, system-ui, sans-serif;
+    --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular,
+      "SF Mono", Menlo, Consolas, monospace;
 
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
+    --text-display: clamp(3.4rem, 7.3vw, 7.25rem);
+    --text-h1: clamp(3.4rem, 7.3vw, 7.25rem);
+    --text-h2: clamp(2.5rem, 5vw, 5rem);
+    --text-h3: clamp(1.5rem, 2.5vw, 2.4rem);
+    --text-body-lg: 1.125rem;
+    --text-body: 1rem;
+    --text-sm: 0.875rem;
+    --text-mono: 0.8125rem;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: clamp(1.5rem, 5vw, 5.5rem);
+    --space-6: 1.5rem;
+    --space-8: 2rem;
+    --space-12: 3rem;
+    --space-16: 4rem;
+    --space-18: 4.5rem;
+    --space-24: 6rem;
+    --space-28: 7rem;
+    --space-32: 8rem;
+    --space-40: 10rem;
 
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 10% 3.9%;
+    --r-sm: 8px;
+    --r-md: 8px;
+    --r-lg: 14px;
+    --r-xl: 14px;
+    --r-full: 9999px;
 
-    --radius: 0.5rem;
+    --shadow-sm: 0 8px 20px -16px rgba(0, 0, 0, 0.72);
+    --shadow-md: 0 20px 48px -30px rgba(0, 0, 0, 0.78);
+    --shadow-lg: 0 36px 80px -48px rgba(0, 0, 0, 0.82);
+
+    --z-canvas: 0;
+    --z-content: 1;
+    --z-base: 1;
+    --z-raised: 10;
+    --z-sticky: 20;
+    --z-nav: 30;
+    --z-controls: 40;
+    --z-overlay: 40;
+    --z-skip: 50;
+    --z-modal: 50;
+
+    --nav-height: 68px;
+    --container-max: 1440px;
+    --container-pad: clamp(24px, 5vw, 88px);
+
+    --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+    --ease-emphasized: cubic-bezier(0.05, 0.7, 0.1, 1);
+
+    --dur-fast: 150ms;
+    --dur-base: 240ms;
+    --dur-slow: 400ms;
+    --dur-entrance: 600ms;
+    --dur-choreo: 800ms;
   }
 
-  .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
-
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
+  @media (min-width: 768px) {
+    :root {
+      --nav-height: 76px;
+    }
   }
-}
 
-@layer base {
-  * {
-    @apply border-border !scroll-smooth;
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
   }
+
+  html {
+    min-height: 100%;
+    background: var(--surface-0);
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: calc(var(--nav-height) + var(--space-6));
+  }
+
   body {
-    @apply bg-background text-foreground;
+    min-height: 100%;
+    margin: 0;
+    background: var(--surface-0);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
-  button {
-    @apply active:outline-none;
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+  }
+
+  body::selection,
+  ::selection {
+    background: var(--accent-hover);
+    color: var(--text-inverse);
+  }
+
+  main {
+    position: relative;
+    z-index: var(--z-content);
+  }
+
+  :where(a) {
+    color: inherit;
+    text-underline-offset: 0.18em;
+    text-decoration-thickness: from-font;
+  }
+
+  :where(button, input, textarea, select) {
+    font: inherit;
+  }
+
+  :where(img, svg, canvas, video) {
+    display: block;
+    max-width: 100%;
+  }
+
+  :where(code, kbd, samp, pre, .numeric, [data-numeric]) {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+
+  :where(
+      a[href],
+      button,
+      input,
+      textarea,
+      select,
+      summary,
+      [tabindex]:not([tabindex="-1"])
+    ):focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 4px;
   }
 }
 
-@layer utilities {
-  .heading {
-    @apply font-bold text-4xl md:text-5xl text-center;
+@layer components {
+  .container {
+    width: 100%;
+    max-width: var(--container-max);
+    margin-inline: auto;
+    padding-inline: var(--container-pad);
+  }
+
+  .surface-glass {
+    background: rgba(18, 21, 28, 0.78);
+  }
+
+  @supports (background: color-mix(in srgb, white 50%, transparent)) {
+    .surface-glass {
+      background: color-mix(in srgb, var(--surface-1) 78%, transparent);
+    }
+  }
+
+  .prose {
+    max-width: 60ch;
+    color: var(--text-secondary);
+  }
+
+  .prose > * + * {
+    margin-top: var(--space-4);
+  }
+
+  .prose strong {
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+
+  .prose a {
+    color: var(--accent-hover);
+    text-decoration-line: underline;
+    transition: color var(--dur-fast) var(--ease-standard);
+  }
+
+  .prose a:hover {
+    color: var(--text-primary);
+  }
+
+  .prose ul,
+  .prose ol {
+    padding-left: var(--space-6);
+  }
+
+  .prose li + li {
+    margin-top: var(--space-2);
+  }
+
+  .prose code {
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-sm);
+    background: var(--surface-2);
+    color: var(--text-primary);
+    font-size: 0.9em;
+    padding: 0.15em 0.4em;
+  }
+}
+
+[data-focus-ring][data-focus-ring][data-focus-ring]:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 4px;
+}
+
+[data-focus-ring]:focus:not(:focus-visible) {
+  outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
   }
 }
