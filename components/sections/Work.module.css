@@ -1,17 +1,391 @@
-.work{position:relative;padding-block:clamp(126px,14vw,196px);scroll-margin-top:96px;overflow:clip}.work::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 75% 18%,rgba(194,200,250,.07),transparent 26%)}
-.header{position:relative;margin-bottom:clamp(104px,12vw,176px)}
-.header::after{content:"";position:absolute;left:0;bottom:-32px;width:min(34vw,420px);height:1px;background:var(--hairline)}
-.heading{max-width:9ch;margin:0;font-family:var(--font-display);font-size:clamp(4rem,8.5vw,9rem);font-weight:500;line-height:.86;letter-spacing:-.055em}
-.feature{position:relative;display:grid;grid-template-columns:minmax(340px,.78fr) minmax(520px,1.22fr);column-gap:clamp(54px,8vw,128px);row-gap:48px;min-height:92svh;align-items:center;padding-bottom:clamp(118px,14vw,190px);border-bottom:1px solid var(--hairline)}
-.featureCopy{position:relative;z-index:2;align-self:center}.featureTitle,.projectTitle{margin:0;font-family:var(--font-display);font-weight:500;letter-spacing:-.045em}.featureTitle{font-size:clamp(3.7rem,6.4vw,7rem);line-height:.9}
-.featureLead{margin:32px 0 36px;font-family:var(--font-display);font-size:clamp(1.7rem,2.6vw,3rem);font-weight:430;line-height:1.12;letter-spacing:-.035em;color:var(--text-primary)}
-.description,.credit,.context,.recognition,.usage{color:var(--text-secondary);line-height:1.65}.description{max-width:51ch}.description+.description{margin-top:18px}.credit{margin-top:28px}.credit a{color:var(--accent-hover);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:5px}
-.art{position:relative;pointer-events:none;min-height:320px}.art::before{content:"";position:absolute;inset:8%;border:1px solid rgba(224,229,244,.07);border-radius:50%}.featureArt{min-height:680px}.poster{width:100%;height:100%}
-.recognition{grid-column:1/-1;display:grid;grid-template-columns:.75fr 2fr;gap:32px;padding-top:28px;border-top:1px solid var(--hairline)}.recognition p{margin:0}.recognitionTitle{color:var(--text-primary);font-weight:600}
-.projectPair{display:grid;grid-template-columns:1.24fr .76fr;gap:0;padding-block:clamp(126px,14vw,190px);border-bottom:1px solid var(--hairline)}
-.hukam,.argus{display:grid;grid-template-rows:auto 1fr;min-height:760px}.hukam{padding-right:clamp(42px,6vw,92px)}.argus{padding-left:clamp(42px,6vw,92px);border-left:1px solid var(--hairline)}
-.projectTitle{font-size:clamp(2.8rem,5vw,5.6rem);line-height:.94}.projectCopy>.description{margin-top:26px}.usage{display:flex;flex-wrap:wrap;gap:18px 32px;margin-top:34px}.usage span{font-family:var(--font-mono);font-size:.78rem;font-variant-numeric:tabular-nums;color:var(--text-primary)}.context{margin-top:22px;max-width:40ch}
-.hukamArt,.argusArt{align-self:end;min-height:450px;margin-top:42px}
-.scoofy{display:grid;grid-template-columns:.72fr .7fr 1.1fr;gap:clamp(34px,6vw,96px);align-items:center;min-height:76svh;padding-top:clamp(118px,13vw,182px)}.scoofyCopy p{margin:0}.scoofyArt{min-height:460px}
-@media(max-width:980px){.feature{grid-template-columns:1fr;min-height:auto}.featureArt{min-height:520px;order:-1}.projectPair{grid-template-columns:1fr;gap:108px}.hukam,.argus{min-height:auto}.hukam{padding-right:0}.argus{padding-left:0;padding-top:108px;border-left:0;border-top:1px solid var(--hairline)}.hukamArt,.argusArt{min-height:420px}.scoofy{grid-template-columns:1fr 1fr;min-height:auto}.scoofyArt{grid-column:1/-1;grid-row:1;min-height:440px}}
-@media(max-width:620px){.work{padding-block:96px}.header{margin-bottom:94px}.heading{font-size:clamp(4rem,19vw,6.2rem)}.featureArt{min-height:390px}.featureTitle{font-size:clamp(3.5rem,16vw,5rem)}.recognition{grid-template-columns:1fr}.projectPair{padding-block:104px}.projectTitle{font-size:clamp(2.9rem,14vw,4.8rem)}.hukamArt,.argusArt,.scoofyArt{min-height:320px}.scoofy{grid-template-columns:1fr;gap:28px;padding-top:104px}.scoofyArt{grid-column:1;min-height:340px}}
+/* ==========================================================================
+   Work — Act III (fragmented). A confident list of real systems, not a grid
+   of empty panels: height comes from content and orb art, never from a
+   min-height. Transforms and opacity only (Reveal); everything else static.
+   ========================================================================== */
+
+.work {
+  position: relative;
+  padding-block: var(--space-section) calc(var(--space-section) + var(--space-block));
+  scroll-margin-top: 96px;
+  overflow: clip;
+}
+
+.work::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(55% 45% at 82% 8%, rgb(var(--glow-rgb) / 0.07), transparent 70%),
+    radial-gradient(45% 40% at 6% 92%, rgb(var(--glow-rgb) / 0.05), transparent 70%);
+}
+
+.header {
+  position: relative;
+  margin-bottom: var(--space-block);
+  padding-bottom: clamp(24px, 3vw, 40px);
+  border-bottom: 1px solid var(--hairline);
+}
+
+.heading {
+  max-width: 10ch;
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 540;
+  font-size: var(--step-6);
+  line-height: 0.88;
+  letter-spacing: var(--tracking-heading);
+}
+
+/* ---- Feature: Pollen Mesh -------------------------------------------------- */
+.featureBeam {
+  display: block;
+  border-radius: var(--r-xl);
+  margin-bottom: var(--space-block);
+}
+
+.feature {
+  position: relative;
+  display: grid;
+  gap: clamp(32px, 5vw, 56px);
+  padding: clamp(28px, 4vw, 56px);
+  border-radius: var(--r-xl);
+  /* No flat fill: the narrative orb layer sits fixed behind <main>, and any
+     opaque/semi-opaque background here would paint over the featureArt
+     orb slot. The radial accent is translucent and fades well before it
+     reaches the art column, so the orb reads at full strength. */
+  background: radial-gradient(70% 60% at 20% 0%, rgb(var(--glow-rgb) / 0.08), transparent 70%);
+}
+
+.featureArt {
+  min-height: clamp(220px, 30vw, 340px);
+}
+
+/* featureArt reads wider on desktop, so give it a slightly larger circle
+   than the 3-up cards -- still an absolute clamp(), so it stays exactly
+   circular regardless of the track's aspect ratio. */
+.featureArt::before {
+  width: clamp(140px, 18vw, 280px);
+}
+
+.featureCopy {
+  display: grid;
+  align-content: start;
+  gap: 4px;
+}
+
+.featureTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 540;
+  font-size: var(--step-4);
+  line-height: 0.94;
+  letter-spacing: var(--tracking-heading);
+}
+
+.featureLead {
+  margin: 20px 0 0;
+  max-width: 32ch;
+  font-family: var(--font-display);
+  font-weight: 460;
+  font-size: var(--step-1);
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+.description {
+  max-width: 54ch;
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--step-0);
+  line-height: 1.65;
+}
+
+.featureCopy > .description {
+  margin-top: 24px;
+}
+
+.credit {
+  margin: 22px 0 0;
+  color: var(--text-secondary);
+  font-size: var(--step--1);
+  line-height: 1.6;
+}
+
+.credit a {
+  /* Above the .visit stretched click-layer (z-index 1), so this independent
+     link keeps working even though the whole card is also a link target. */
+  position: relative;
+  z-index: 2;
+  color: var(--accent-hover);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+
+.recognition {
+  margin: 16px 0 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--hairline);
+  max-width: 46ch;
+  color: var(--text-secondary);
+  font-size: var(--step--1);
+  line-height: 1.6;
+}
+
+/* ---- Visit link: one real <a> per linked project, stretched over its whole
+   card. Its own visible box is a small pill; ::after (position:absolute,
+   inset:0) is NOT positioned itself, so it takes its containing block from
+   the nearest positioned ancestor (.feature or .card > article) instead of
+   from this anchor, and covers the full card while staying fully invisible
+   (no fill) — the click target grows, nothing paints over the orb. ----- */
+.visit {
+  /* Deliberately NOT positioned: ::after below takes its containing block
+     from the ancestor card (.feature / .card > article), not from this
+     anchor, so the stretched click target covers the whole card. */
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 20px;
+  padding: 10px 16px 10px 18px;
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--r-full);
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: var(--step--1);
+  font-weight: 520;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  transition:
+    border-color var(--dur-fast) var(--ease-out-quint),
+    background-color var(--dur-fast) var(--ease-out-quint);
+}
+
+.visit::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.visit:hover,
+.visit:focus-visible {
+  border-color: var(--accent-hover);
+  background: rgb(var(--glow-rgb) / 0.08);
+}
+
+.visitArrow {
+  display: inline-block;
+  font-size: 0.9em;
+  transition: transform var(--dur-fast) var(--ease-out-quint);
+}
+
+:global(html[data-motion="full"]) .visit:hover .visitArrow,
+:global(html[data-motion="full"]) .visit:focus-visible .visitArrow {
+  transform: translateX(3px);
+}
+
+/* ---- Grid: HukamConnect / ArgusAI / Scoofy --------------------------------- */
+/* Gutter hairlines are drawn with borders on the cards themselves, never a
+   background fill behind the grid: the narrative orb layer is fixed behind
+   <main>, and any opaque/semi-opaque fill here would paint over a project's
+   [data-orb-anchor] slot. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--hairline);
+  border-left: 1px solid var(--hairline);
+}
+
+.card {
+  position: relative;
+  min-width: 0;
+  border-right: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
+}
+
+.card:last-child {
+  border-right: 0;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(120% 70% at 50% -10%, rgb(var(--glow-rgb) / 0.06), transparent 65%);
+}
+
+.card > article {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(24px, 2.6vw, 36px);
+}
+
+.art {
+  position: relative;
+  pointer-events: none;
+  min-height: clamp(180px, 20vw, 280px);
+  margin-bottom: clamp(20px, 2.4vw, 32px);
+  transition: transform var(--dur-slow) var(--ease-out-quint);
+}
+
+.art::before {
+  /* A soft, always-circular light behind the orb (no outline). Translucent,
+     so the orb stays visible. Sized in viewport units, not a percentage of
+     `.art`: `.art` only sets min-height (never a definite height), and its
+     card tracks range from near-square (mobile, one column) to much wider
+     than tall (desktop, three columns) -- any single width-of-container or
+     height-of-container percentage resolves to an ellipse in one of those
+     shapes. clamp()ing an absolute size sidesteps the container's aspect
+     ratio entirely, so the circle is exact everywhere. */
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: clamp(120px, 16vw, 220px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(var(--glow-rgb) / 0.06) 0%, transparent 68%);
+  opacity: 0.7;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  transition: opacity var(--dur-slow) var(--ease-out-quint);
+}
+
+/* Orb "wake": hovering/focusing a project's .visit link brightens its glow
+   and nudges the slot slightly larger — transform/opacity/box-shadow only,
+   never a fill, so the fixed orb canvas underneath is never dimmed or
+   covered. Scoped to the card that actually contains a .visit link, so
+   ArgusAI/Scoofy (no link) never react. Disabled under reduced motion. */
+:global(html[data-motion="full"]) .card:has(.visit:hover) .art,
+:global(html[data-motion="full"]) .card:has(.visit:focus-visible) .art,
+:global(html[data-motion="full"]) .feature:has(.visit:hover) .featureArt,
+:global(html[data-motion="full"]) .feature:has(.visit:focus-visible) .featureArt {
+  transform: scale(1.035);
+}
+
+:global(html[data-motion="full"]) .card:has(.visit:hover) .art::before,
+:global(html[data-motion="full"]) .card:has(.visit:focus-visible) .art::before,
+:global(html[data-motion="full"]) .feature:has(.visit:hover) .featureArt::before,
+:global(html[data-motion="full"]) .feature:has(.visit:focus-visible) .featureArt::before {
+  opacity: 1;
+  background: radial-gradient(circle, rgb(var(--glow-rgb) / 0.12) 0%, transparent 70%);
+}
+
+.poster {
+  width: 100%;
+  height: 100%;
+}
+
+.cardTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 520;
+  font-size: var(--step-2);
+  line-height: 1.02;
+  letter-spacing: var(--tracking-title);
+}
+
+.card .description {
+  margin-top: 14px;
+  max-width: none;
+}
+
+.usage {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 24px;
+  margin: auto 0 0;
+  padding-top: 20px;
+}
+
+.usage span {
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+}
+
+.context {
+  margin: auto 0 0;
+  padding-top: 20px;
+  max-width: 34ch;
+  color: var(--text-tertiary);
+  font-size: var(--step--1);
+  line-height: 1.55;
+}
+
+/* ---- Layout shifts ---------------------------------------------------------- */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .feature {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: center;
+  }
+
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .grid > .card:nth-child(2) {
+    border-right: 0;
+  }
+
+  .grid > .card:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .grid > .card:last-child > article {
+    flex-direction: row;
+    align-items: center;
+    gap: clamp(24px, 4vw, 48px);
+  }
+
+  .grid > .card:last-child .art {
+    flex: 0 0 clamp(160px, 24vw, 220px);
+    margin-bottom: 0;
+  }
+}
+
+@media (min-width: 1024px) {
+  .feature {
+    grid-template-columns: minmax(360px, 0.86fr) minmax(0, 1.14fr);
+    align-items: center;
+  }
+
+  .featureArt {
+    order: 2;
+    min-height: clamp(260px, 22vw, 380px);
+  }
+
+  .featureCopy {
+    order: 1;
+  }
+}
+
+@media (max-width: 639px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+    border-left: 0;
+  }
+
+  .card {
+    border-right: 0;
+  }
+
+  .work {
+    padding-block: calc(var(--space-section) * 0.72) var(--space-section);
+  }
+
+  .heading {
+    font-size: clamp(3.4rem, 15vw, 4.6rem);
+  }
+}

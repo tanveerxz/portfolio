@@ -1,26 +1,45 @@
 import { OrbPoster } from "@/components/narrative/OrbPoster";
-import { ProofBeam } from "@/components/effects/ProofBeam";
 import { Button } from "@/components/primitives/Button";
-import { FLAGSHIP, FLAGSHIP_HREF } from "@/config/flagship";
+import {
+  FLAGSHIP,
+  FLAGSHIP_CHAPTERS,
+  FLAGSHIP_HREF,
+  FLAGSHIP_STORY,
+  INDEPENDENCE_RULE,
+} from "@/config/flagship";
 
+import {
+  AttestArtifact,
+  MapArtifact,
+  ReplayArtifact,
+  ReviewArtifact,
+} from "./flagship/Artifacts";
 import styles from "./Flagship.module.css";
 
-const stages = [
-  {
-    title: "Run both",
-    body: "The COBOL system and migrated candidate run against the same replayed behaviour.",
-  },
-  {
-    title: "Compare behaviour",
-    body: "Fidelity Replay checks the outputs and state transitions for meaningful differences.",
-  },
-  {
-    title: "Verify before shipping",
-    body: "Migration only moves forward when the new system proves behavioural equivalence.",
-  },
-] as const;
+const ARTIFACTS = [MapArtifact, ReviewArtifact, ReplayArtifact, AttestArtifact];
 
+type Style = React.CSSProperties & Record<`--${string}`, string | number>;
+
+/**
+ * Act II — active thinking. How LegacyLift works, told by the orbs.
+ *
+ * A sticky stage (`.verification-stage`) holds one frame. The shared
+ * narrative orb flies into the frame's orb cell and becomes the program being
+ * migrated; four chapters play over it as the runway scrolls:
+ *
+ *   01 understand  codebase map around the orb (ACCTINT → INTCALC …)
+ *   02 rewrite     COBOL beside Python, a person approves
+ *   03 replay      legacy orb + candidate orb, rows agree field by field
+ *   04 attest      100.0% ✓ · signed ed25519, the section's one border-beam
+ *
+ * The NarrativeController splits the runway evenly across the four
+ * `data-verification-step`s and writes `data-verification-phase` on the
+ * stage; the orb engine follows `data-orb-states` on the same split. Without JS or with reduced motion
+ * the same chapters render as an ordinary reading sequence, every artifact in
+ * its final state.
+ */
 export function Flagship() {
+  const breaks = [0, ...FLAGSHIP_CHAPTERS.map((chapter) => chapter.until)];
   return (
     <section
       id="flagship"
@@ -29,77 +48,105 @@ export function Flagship() {
       className={styles.flagship}
     >
       <div className={styles.container}>
-        <div className={`${styles.stage} verification-stage`}>
-          <div className={styles.copy}>
-            <h2 id="flagship-heading" className={styles.heading}>
-              Migration needs proof.
-            </h2>
-            <p className={styles.lead}>
-              {FLAGSHIP.name} migrates enterprise legacy codebases, primarily
-              COBOL, to modern languages. Its differentiator is{" "}
-              {FLAGSHIP.engine}: a differential verification engine that proves
-              behavioural equivalence before migrated code ships.
-            </p>
-            <Button
-              href={FLAGSHIP_HREF}
-              variant="secondary"
-              size="md"
-              className={styles.caseLink}
-            >
-              Read the case study
-            </Button>
+        <header className={styles.intro}>
+          <h2 id="flagship-heading" className={styles.heading}>
+            {FLAGSHIP_STORY.headline}{" "}
+            <span className={`${styles.turn} t-serif`}>{FLAGSHIP_STORY.headlineTurn}</span>
+          </h2>
+          <div className={styles.introBody}>
+            <p className={styles.lead}>{FLAGSHIP_STORY.lead}</p>
+            <p className={styles.audience}>{FLAGSHIP_STORY.audience}</p>
           </div>
+        </header>
 
-          <div className={styles.explainer}>
-            <ProofBeam className={styles.visualBeam}>
-              <figure
-                className={styles.visual}
+        <div className={styles.track}>
+          <div className={`${styles.stage} verification-stage`} data-verification-phase="0">
+            <div className={styles.frame} data-verification-visual="" aria-hidden="true">
+              <div
+                className={styles.frameOrb}
                 data-orb-anchor="active-thinking"
-                data-verification-visual=""
-                aria-labelledby="flagship-visual-caption"
+                data-orb-states={FLAGSHIP_CHAPTERS.map((chapter) => chapter.orb).join(",")}
               >
-                <div className={styles.visualChrome} aria-hidden="true">
-                  <span>Legacy</span>
-                  <span>Candidate</span>
-                </div>
-                <OrbPoster state="active-thinking" className={styles.poster} />
-                <figcaption
-                  id="flagship-visual-caption"
-                  className={styles.caption}
-                >
-                  Illustrative verification scene, not a live replay or product
-                  screenshot.
-                </figcaption>
-              </figure>
-            </ProofBeam>
+                <OrbPoster state="active-thinking" orbState="searching" />
+              </div>
+            </div>
 
-            <div className={styles.steps}>
-              {stages.map((stage, index) => (
-                <article
-                  key={stage.title}
-                  className={styles.step}
-                  data-verification-step={index}
-                  aria-labelledby={`verification-step-${index}`}
-                >
-                  <h3 id={`verification-step-${index}`}>{stage.title}</h3>
-                  <p>{stage.body}</p>
-                </article>
+            <ol className={styles.chapters}>
+              {FLAGSHIP_CHAPTERS.map((chapter, index) => {
+                const Artifact = ARTIFACTS[index];
+                return (
+                  <li
+                    key={chapter.id}
+                    className={styles.chapter}
+                    data-verification-step={index}
+                    aria-labelledby={`flagship-chapter-${index}`}
+                  >
+                    <div className={styles.chapterText}>
+                      <h3 id={`flagship-chapter-${index}`} className={styles.chapterTitle}>
+                        <span className={styles.chapterNumber} aria-hidden="true">
+                          {String(index + 1).padStart(2, "0")}
+                        </span>
+                        {chapter.title}
+                      </h3>
+                      <p className={styles.chapterBody}>{chapter.body}</p>
+                    </div>
+                    <div className={styles.chapterArtifact}>
+                      <Artifact />
+                    </div>
+                  </li>
+                );
+              })}
+            </ol>
+
+            <div className={styles.progress} aria-hidden="true" data-verification-progress="">
+              {FLAGSHIP_CHAPTERS.map((chapter, index) => (
+                <span
+                  key={chapter.id}
+                  style={{ "--from": breaks[index], "--to": breaks[index + 1] } as Style}
+                />
               ))}
             </div>
           </div>
+        </div>
+      </div>
 
-          <div className={styles.proofGrid} aria-label="LegacyLift proof points">
-            <p>
-              Caught a real overflow truncation bug on an actual COBOL program
-              during migration.
+      <div className={styles.coda}>
+        <div className={styles.rule}>
+          <p className={styles.ruleStatement}>
+            {INDEPENDENCE_RULE.statement.map((part, index) =>
+              index % 2 === 1 ? (
+                <em key={index} className="t-serif">
+                  {part}
+                </em>
+              ) : (
+                <span key={index}>{part}</span>
+              ),
+            )}{" "}
+            <span className={styles.ruleTurn}>{INDEPENDENCE_RULE.turn}</span>
+          </p>
+          <p className={styles.ruleBody}>
+            <strong>The Independence Rule.</strong> {INDEPENDENCE_RULE.body}
+          </p>
+        </div>
+
+        <div className={styles.proof}>
+          <div className={styles.proofLead}>
+            <h3 className={styles.proofMain}>It found the bug nobody would notice.</h3>
+            <p className={styles.proofBody}>
+              COBOL silently cuts off numbers that overflow their field. A modern
+              rewrite doesn&rsquo;t, so the new system quietly returns different
+              numbers. On a real COBOL program, {FLAGSHIP.name} caught exactly
+              that, before it shipped.
             </p>
+          </div>
+          <div className={styles.proofSide}>
             <p>
-              BYOK architecture: client source never touches LegacyLift
+              Bring your own key. Client source never touches {FLAGSHIP.name}{" "}
               infrastructure.
             </p>
-            <p>
-              Accepted into the 1Foundry accelerator, Theme 1 for deeptech.
-            </p>
+            <Button href={FLAGSHIP_HREF} variant="secondary" size="md" arrow>
+              Read the case study
+            </Button>
           </div>
         </div>
       </div>

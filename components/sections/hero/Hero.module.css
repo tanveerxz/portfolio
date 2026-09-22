@@ -1,22 +1,451 @@
-.hero{position:relative;min-height:112svh;color:var(--text-primary);scroll-margin-top:96px;overflow:clip;border-bottom:1px solid rgba(224,229,244,.1)}
-.hero::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(circle at 78% 40%,rgba(194,200,250,.12),transparent 38%)}
-.hero::after{content:"";position:absolute;inset:76px var(--container-pad) auto;height:1px;background:linear-gradient(90deg,transparent,rgba(224,229,244,.14) 22%,rgba(224,229,244,.14) 78%,transparent);pointer-events:none}
-.container{position:relative;z-index:1;box-sizing:border-box;width:100%;max-width:1600px;min-height:112svh;margin-inline:auto;padding:clamp(124px,16svh,188px) var(--container-pad) clamp(72px,9svh,112px);display:flex;flex-direction:column;justify-content:space-between}
-.copy{position:relative;z-index:2;width:100%}
-.heading{position:relative;margin:0;font-family:var(--font-display);font-weight:520;line-height:.82;letter-spacing:-.055em;text-wrap:balance}
-.heading span{display:block}
-.name{font-size:clamp(3.4rem,7.1vw,7rem);color:var(--text-secondary)}
-.mission{width:max-content;max-width:100%;margin-top:.05em;font-size:clamp(4.8rem,10.4vw,10.25rem);color:var(--text-primary)}
-.intro{display:grid;grid-template-columns:minmax(280px,440px) auto;gap:40px;align-items:end;margin-top:clamp(54px,7vw,96px)}
-.bio{max-width:39ch;margin:0;color:var(--text-secondary);font-size:clamp(1.05rem,1.35vw,1.28rem);line-height:1.62;text-wrap:pretty}
-.actions{display:flex;justify-content:flex-start}
-.cta{position:relative;border-radius:var(--r-full);background:var(--accent);color:var(--text-inverse);box-shadow:0 18px 54px -22px rgba(194,200,250,.82)}
-.cta:hover{background:var(--accent-hover)}
-.orbSlot{position:absolute;z-index:0;top:clamp(96px,11svh,136px);right:clamp(-270px,-10vw,-90px);width:min(72vw,980px);aspect-ratio:1;pointer-events:none}
-.orbSlot::before{content:"";position:absolute;inset:4%;border:1px solid rgba(224,229,244,.07);border-radius:50%}
-.orbSlot::after{content:"";position:absolute;inset:18%;z-index:-1;border-radius:50%;background:rgba(194,200,250,.13);filter:blur(72px)}
-.poster{width:100%;height:100%}
-.frameNote{position:relative;z-index:2;display:flex;justify-content:space-between;gap:32px;margin-top:88px;padding-top:18px;border-top:1px solid var(--hairline);color:var(--text-tertiary);font-size:.74rem;letter-spacing:.035em}
-@media(max-width:1050px){.container{min-height:105svh;padding-top:128px}.mission{width:min-content}.orbSlot{top:26%;right:-28vw;width:min(104vw,820px)}.intro{grid-template-columns:minmax(0,1fr);max-width:480px}.frameNote{margin-top:120px}}
-@media(max-width:680px){.hero{min-height:auto}.container{min-height:auto;padding-top:112px;padding-bottom:72px}.heading{line-height:.88}.name{font-size:clamp(3.2rem,15vw,5rem)}.mission{font-size:clamp(4.35rem,19.2vw,6.8rem)}.intro{margin-top:40px;gap:30px}.actions{justify-content:flex-start}.orbSlot{position:relative;top:auto;right:auto;width:118vw;margin:12px 0 -14vw -12vw}.frameNote{margin-top:18px}.frameNote span:last-child{display:none}}
-@media(prefers-reduced-motion:reduce){.hero{min-height:auto}.container{min-height:auto}}
+/* ==========================================================================
+   Hero — Act I (dormant). Mobile-first. See DESIGN.md › Hero.
+   Never give this section an opaque background: the narrative canvas is
+   fixed behind <main> and must show through.
+   ========================================================================== */
+.hero {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  color: var(--text-primary);
+  scroll-margin-top: 96px;
+}
+
+/* Stage light: static gradients only (no filters). */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(60% 46% at 74% 34%, rgb(var(--glow-rgb) / 0.09), transparent 72%),
+    radial-gradient(46% 38% at 6% 102%, rgb(var(--glow-rgb) / 0.05), transparent 70%);
+}
+
+/* The 4 / 8 / 12 column lines of the grid system, faint, fading at the ends. */
+.columns {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--container-pad);
+  display: grid;
+  grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
+  column-gap: var(--grid-gutter);
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 18%, #000 64%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0%, #000 18%, #000 64%, transparent 100%);
+  animation: fade 2400ms var(--ease-out) 100ms backwards;
+}
+
+.columns span {
+  border-left: 1px solid rgb(var(--line-rgb) / 0.045);
+}
+
+.columns span:nth-child(n + 5) {
+  display: none;
+}
+
+.columns span:nth-child(4) {
+  border-right: 1px solid rgb(var(--line-rgb) / 0.045);
+}
+
+.light {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  width: 760px;
+  height: 760px;
+  margin: -380px 0 0 -380px;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle, rgb(var(--glow-rgb) / 0.085) 0%, rgb(var(--glow-rgb) / 0.03) 34%, transparent 64%);
+  opacity: 0;
+  transition: opacity 900ms var(--ease-out);
+  will-change: transform;
+}
+
+.light[data-on="true"] {
+  opacity: 1;
+}
+
+/* ---- Layout -------------------------------------------------------------- */
+.inner {
+  position: relative;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding: clamp(20px, 3.5svh, 44px) var(--container-pad) clamp(40px, 6svh, 72px);
+  display: grid;
+  grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
+  column-gap: var(--grid-gutter);
+  align-content: start;
+}
+
+/* ---- Ledger: two owner facts. Fixed tracks, so a late mono font swap can
+   never change the row count and shift the headline (CLS). ----------------- */
+.ledger {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  display: grid;
+  grid-template-columns: repeat(2, max-content);
+  gap: 14px 40px;
+  margin: 0 0 clamp(28px, 5svh, 48px);
+  padding: 0;
+  list-style: none;
+}
+
+.fact {
+  display: grid;
+  gap: 4px;
+  animation: rise 900ms var(--ease-out) calc(260ms + var(--d, 0) * 90ms) backwards;
+}
+
+.factValue {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-primary);
+  font-size: var(--step--1);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+/* ---- Heading (LCP — never animate its box, opacity or transform) ---------- */
+.heading {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  margin: 0;
+  font-family: var(--font-display);
+  /* Phones: 15vw keeps "LegacyLift." on one line down to 320px and makes the
+     headline the largest text block (the LCP element). */
+  font-size: 15vw;
+  font-weight: 560;
+  line-height: 0.9;
+  letter-spacing: var(--tracking-display);
+}
+
+.lineName {
+  color: var(--silver-lo);
+  /* One pass of light across the silver, ending muted. Visible from frame 1. */
+  background: linear-gradient(
+      100deg,
+      var(--silver-lo) 0%,
+      var(--silver-lo) 42%,
+      var(--silver-hi) 50%,
+      var(--silver-lo) 58%,
+      var(--silver-lo) 100%
+    )
+    100% 0 / 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: sweep 2400ms var(--ease-in-out) 180ms both;
+}
+
+.lineMission {
+  color: var(--text-primary);
+}
+
+.serif {
+  margin-right: 0.04em;
+  font-size: 1.08em;
+  line-height: 0;
+  color: var(--text-secondary);
+}
+
+.metal {
+  white-space: nowrap;
+}
+
+.rule {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  height: 1px;
+  margin-top: clamp(24px, 3.4svh, 40px);
+  background: linear-gradient(90deg, var(--hairline-strong), var(--hairline) 60%, transparent);
+  transform-origin: 0 50%;
+  animation: draw 1500ms var(--ease-in-out) 320ms backwards;
+}
+
+/* ---- Base row: bio, action, scroll light ----------------------------------- */
+.base {
+  grid-column: 1 / -1;
+  grid-row: 4;
+  display: grid;
+  gap: 24px;
+  justify-items: start;
+  padding-top: clamp(20px, 3svh, 32px);
+}
+
+.bio {
+  max-width: 36ch;
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--step-0);
+  line-height: 1.5;
+  letter-spacing: -0.012em;
+  animation: rise 900ms var(--ease-out) 520ms backwards;
+}
+
+.actions {
+  display: flex;
+  animation: rise 900ms var(--ease-out) 640ms backwards;
+}
+
+.scrollTrack {
+  display: none;
+}
+
+/* ---- Orb slot (anchor for the shared narrative canvas) -------------------- */
+.orbSlot {
+  position: relative;
+  grid-column: 1 / -1;
+  grid-row: 5;
+  justify-self: center;
+  width: min(100%, 520px);
+  aspect-ratio: 1;
+  margin-top: clamp(32px, 6svh, 56px);
+  pointer-events: none;
+}
+
+.orbSlot::before {
+  content: "";
+  position: absolute;
+  inset: 3%;
+  border: 1px solid rgb(var(--line-rgb) / 0.07);
+  border-radius: 50%;
+  animation: ring-in 1800ms var(--ease-out) 120ms backwards;
+}
+
+.orbSlot::after {
+  content: "";
+  position: absolute;
+  inset: 8%;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(var(--glow-rgb) / 0.13) 0%, rgb(var(--glow-rgb) / 0.04) 45%, transparent 70%);
+  animation: fade 2000ms var(--ease-out) 200ms backwards;
+}
+
+.poster {
+  width: 100%;
+  height: 100%;
+}
+
+/* ==========================================================================
+   Tablet (768+)
+   ========================================================================== */
+@media (min-width: 768px) {
+  .heading {
+    font-size: clamp(3.1rem, 1.8077rem + 6.4103vw, 9.5rem);
+  }
+
+  .columns span:nth-child(n + 5) {
+    display: block;
+  }
+
+  .columns span:nth-child(n + 9) {
+    display: none;
+  }
+
+  .columns span:nth-child(4) {
+    border-right: 0;
+  }
+
+  .columns span:nth-child(8) {
+    border-right: 1px solid rgb(var(--line-rgb) / 0.045);
+  }
+
+  .base {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    column-gap: 40px;
+  }
+
+  .bio {
+    font-size: var(--step-1);
+    line-height: 1.45;
+  }
+
+  .orbSlot {
+    width: min(78%, 560px);
+  }
+}
+
+/* ==========================================================================
+   Desktop (1024+): ledger + orb stage, full-width declaration, base row.
+   ========================================================================== */
+@media (min-width: 1024px) {
+  .columns span:nth-child(n + 9) {
+    display: block;
+  }
+
+  .columns span:nth-child(8) {
+    border-right: 0;
+  }
+
+  .columns span:nth-child(12) {
+    border-right: 1px solid rgb(var(--line-rgb) / 0.045);
+  }
+
+  .inner {
+    min-height: max(660px, calc(100svh - var(--nav-height)));
+    grid-template-rows: minmax(0, 1fr) auto auto auto;
+    padding-top: clamp(16px, 2.6svh, 36px);
+  }
+
+  .ledger {
+    grid-column: 1 / span 3;
+    align-self: start;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    margin: 0;
+  }
+
+  .fact {
+    grid-template-columns: 7.5rem 1fr;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-top: 1px solid var(--hairline);
+  }
+
+  .fact:last-child {
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  /* Spans the stage AND the declaration row: the circle's empty lower-left
+     corner tucks behind the end of the headline. */
+  .orbSlot {
+    grid-column: 5 / -1;
+    grid-row: 1 / span 2;
+    align-self: stretch;
+    justify-self: end;
+    width: auto;
+    height: 100%;
+    min-height: 420px;
+    max-height: 700px;
+    margin: 0 calc(var(--container-pad) * -0.35) 0 0;
+  }
+
+  .heading {
+    margin-top: clamp(8px, 2svh, 24px);
+  }
+
+  .base {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--grid-gutter);
+    align-items: center;
+  }
+
+  .bio {
+    grid-column: 1 / span 5;
+  }
+
+  .actions {
+    grid-column: 7 / span 4;
+  }
+
+  .scrollTrack {
+    grid-column: 12 / span 1;
+    justify-self: end;
+    position: relative;
+    display: block;
+    width: 1px;
+    height: 48px;
+    overflow: hidden;
+    background: var(--hairline);
+    animation: fade 1200ms var(--ease-out) 1000ms backwards;
+  }
+
+  .scrollTrack::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent, var(--accent), transparent);
+    transform: translateY(-100%);
+    animation: scroll-hint 2400ms var(--ease-in-out) 1600ms infinite;
+  }
+
+  .hero[data-inview="false"] .scrollTrack::after {
+    animation-play-state: paused;
+  }
+}
+
+@media (min-width: 1680px) {
+  .orbSlot {
+    max-height: 760px;
+  }
+}
+
+/* ==========================================================================
+   Choreography (CSS only, ends visible; collapses under reduced motion)
+   ========================================================================== */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes draw {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes ring-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes sweep {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+
+@keyframes scroll-hint {
+  0% {
+    transform: translateY(-100%);
+  }
+  60%,
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+@media (forced-colors: active) {
+  .lineName {
+    -webkit-text-fill-color: currentColor;
+    background: none;
+  }
+}

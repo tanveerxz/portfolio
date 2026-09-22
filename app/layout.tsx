@@ -4,7 +4,10 @@ import { fontVariables } from "@/lib/fonts";
 import { SiteFooter } from "@/components/shell/SiteFooter";
 import { SiteHeader } from "@/components/shell/SiteHeader";
 import { SkipLink } from "@/components/shell/SkipLink";
+import { RevealRoot } from "@/components/effects/RevealRoot";
+import { SmoothAnchors } from "@/components/shell/SmoothAnchors";
 import { SITE } from "@/config/site";
+import { THEME_COLOR, themeBoot } from "@/lib/theme-boot";
 
 const description = "Tanveer is an 18-year-old self-taught full-stack developer building LegacyLift full-time during a gap year.";
 
@@ -19,7 +22,9 @@ export const metadata: Metadata = {
   alternates: { canonical: SITE.url },
 };
 
-export const viewport: Viewport = { themeColor: "#0b0d12", colorScheme: "dark" };
+// Server default is dark; the theme boot script rewrites both meta tags when
+// the visitor has opted into light (see lib/theme.ts).
+export const viewport: Viewport = { themeColor: THEME_COLOR.dark, colorScheme: "dark" };
 
 const jsonLd = { "@context": "https://schema.org", "@graph": [
   { "@type": "Person", name: SITE.name, url: SITE.url, jobTitle: "Founder and full-stack developer", description },
@@ -31,13 +36,18 @@ const motionBoot = `(function(){try{var p=localStorage.getItem('portfolio-motion
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={fontVariables} suppressHydrationWarning>
-      <head><script dangerouslySetInnerHTML={{ __html: motionBoot }} /></head>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeBoot }} />
+        <script dangerouslySetInnerHTML={{ __html: motionBoot }} />
+      </head>
       <body className="font-sans">
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
         <SkipLink />
         <SiteHeader />
         {children}
         <SiteFooter />
+        <RevealRoot />
+        <SmoothAnchors />
       </body>
     </html>
   );

@@ -42,6 +42,7 @@ async function inspectLayout(page, name) {
     webgl: document.documentElement.dataset.webgl,
     motion: document.documentElement.dataset.motion,
     qa: window.__portfolioQA,
+    orbStats: window.__orbStats ? { frames: window.__orbStats.frames, paints: window.__orbStats.paints } : null,
     canvas: [...document.querySelectorAll('canvas')].map(el => ({ width: el.width, height: el.height, data: {...el.dataset} })),
   }));
   report.metrics[name] = layout;
@@ -87,10 +88,14 @@ try {
     report.metrics[name] = await page.evaluate(() => ({ phase: document.querySelector('#flagship')?.dataset.verificationPhase, canvas: [...document.querySelectorAll('canvas')].map(c => ({...c.dataset})), root: {...document.documentElement.dataset} }));
   }
   await moveTo(page,'contact',.8);
-  const settledStart=await page.locator('canvas').evaluateAll(nodes=>nodes.map(node=>Number(node.dataset.frames||0)));
+  // The engine no longer writes a per-frame canvas.dataset.frames; it exposes
+  // a single window.__orbStats = { frames, paints[] } debug counter instead
+  // (components/narrative/OrbCanvas.tsx), and there are several orb canvases
+  // (central + project + candidate) plus independent <AmbientOrb> canvases.
+  const settledStart=await page.evaluate(()=>window.__orbStats?.frames ?? null);
   await pause(900);
-  const settledEnd=await page.locator('canvas').evaluateAll(nodes=>nodes.map(node=>Number(node.dataset.frames||0)));
-  check('settled scene stops its render loop',settledStart.length===1&&settledEnd[0]-settledStart[0]<=2,{settledStart,settledEnd});
+  const settledEnd=await page.evaluate(()=>window.__orbStats?.frames ?? null);
+  check('settled scene stops its render loop',settledStart!==null&&settledEnd-settledStart<=2,{settledStart,settledEnd});
   await page.evaluate(() => window.scrollTo({top:0,behavior:'instant'}));
   await pause(800);
   const axe = await new AxeBuilder({ page }).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();
@@ -100,14 +105,31 @@ try {
   check('skip link first focus', await page.evaluate(() => document.activeElement?.getAttribute('href') === '#main'));
   await page.keyboard.press('Enter');
   check('skip moves focus into main', await page.evaluate(() => document.activeElement?.id === 'main'));
-  const motionButton = page.getByRole('button', {name: /motion|animation/i}).first();
-  check('motion control present', await motionButton.count() > 0);
-  if (await motionButton.count()) {
-    await motionButton.click(); await pause(500);
-    check('manual pause removes WebGL', await page.locator('canvas').count() === 0);
-    await page.reload({waitUntil:'networkidle'});
-    check('manual preference persists', await page.locator('canvas').count() === 0);
-  }
+  // The MotionToggle button is hidden from the header for now (owner
+  // request, QA session 2; SHOW_MOTION_TOGGLE in components/shell/
+  // SiteHeader.tsx), but the underlying feature (html[data-motion], the
+  // 'portfolio-motion' localStorage key, the boot script in app/layout.tsx)
+  // is still fully wired, so drive it directly instead of clicking a button.
+  await page.evaluate(() => {
+    document.documentElement.dataset.motion = 'reduced';
+    localStorage.setItem('portfolio-motion', 'reduced');
+    window.dispatchEvent(new CustomEvent('portfolio:motion-change', { detail: { motion: 'reduced' } }));
+  });
+  await pause(500);
+  // AmbientOrb accents keep their <canvas> mounted under manual reduced
+  // motion too (a still paint), so assert no animation instead of no
+  // canvases -- same reasoning as the OS reduced-motion check below.
+  const pausedA = await page.locator('canvas').evaluateAll(nodes => nodes.map(node => node.toDataURL()));
+  await pause(700);
+  const pausedB = await page.locator('canvas').evaluateAll(nodes => nodes.map(node => node.toDataURL()));
+  check(
+    'manual pause: no orb animates (a still paint is OK)',
+    pausedA.length === pausedB.length && pausedA.every((data, index) => data === pausedB[index]),
+    { canvases: pausedA.length },
+  );
+  check('manual pause removes narrative WebGL layer', await page.evaluate(() => document.documentElement.dataset.orbRenderer === 'unavailable'));
+  await page.reload({waitUntil:'networkidle'});
+  check('manual preference persists', await page.evaluate(() => document.documentElement.dataset.motion === 'reduced'));
   const mobile = await browser.newContext({ viewport: {width:390,height:844}, deviceScaleFactor:2, isMobile:true, hasTouch:true, reducedMotion:'reduce' });
   await instrument(mobile);
   const phone = await mobile.newPage();
@@ -115,8 +137,26 @@ try {
   await phone.goto(baseURL,{waitUntil:'networkidle'});
   await phone.evaluate(()=>document.fonts.ready);
   const small=await inspectLayout(phone,'mobile-reduced');
-  check('reduced motion creates no context', small.qa.contexts===0 && small.canvases===0);
-  check('reduced narrative compact', await phone.locator('#flagship').evaluate(el=>el.offsetHeight) < 2300);
+  check('reduced motion creates no WebGL context', small.qa.contexts===0);
+  // Orb canvases (narrative + AmbientOrb accents) are allowed to exist under
+  // reduced motion -- they paint one still frame -- but none may keep
+  // animating. Compare each canvas's pixels across a pause instead of
+  // requiring zero canvases.
+  const reducedBefore = await phone.locator('canvas').evaluateAll(nodes => nodes.map(node => node.toDataURL()));
+  await pause(700);
+  const reducedAfter = await phone.locator('canvas').evaluateAll(nodes => nodes.map(node => node.toDataURL()));
+  check(
+    'reduced motion: no orb animates (a still paint is OK)',
+    reducedBefore.length === reducedAfter.length && reducedBefore.every((data, index) => data === reducedAfter[index]),
+    { canvases: reducedBefore.length },
+  );
+  // Budget raised from 2300 (QA session 2): the static stack is intro + 4
+  // real chapters (each with body copy and an artifact visual) + the coda
+  // (Independence Rule + proof), all genuine content, not dead space -- see
+  // .impeccable/review/mobile-full.png. Measured ~4030-4160px at 390 wide
+  // depending on font metrics; 4400 leaves headroom without hiding a real
+  // regression if a chapter balloons.
+  check('reduced narrative compact', await phone.locator('#flagship').evaluate(el=>el.offsetHeight) < 4400);
   await shot(phone,'mobile');
   await shot(phone,'mobile-full',true);
   const phoneAxe=await new AxeBuilder({page:phone}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();
@@ -125,7 +165,7 @@ try {
   await phone.goto(`${baseURL}/legacylift`,{waitUntil:'networkidle'});
   await inspectLayout(phone,'case-mobile');
   await shot(phone,'case-mobile',true);
-  check('case study source facts', await phone.getByText('A real program.',{exact:false}).count()>0);
+  check('case study source facts', await phone.getByText('On a real COBOL program',{exact:false}).count()>0);
   const noJS=await browser.newContext({javaScriptEnabled:false,viewport:{width:1440,height:960}});
   const staticPage=await noJS.newPage();
   await staticPage.goto(baseURL,{waitUntil:'networkidle'});

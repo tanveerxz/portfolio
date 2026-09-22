@@ -1,0 +1,95 @@
+/* ==========================================================================
+   Density through real content — DESIGN.md › Density. Fact strips and stat
+   rows for figures the owner supplied. No decorative text.
+   ========================================================================== */
+
+/* ---- MetaStrip -------------------------------------------------------------- */
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0;
+  border-block: 1px solid var(--hairline);
+}
+
+.metaItem {
+  display: grid;
+  gap: 4px;
+  padding: 12px 20px 12px 0;
+  margin: 0 20px 0 0;
+}
+
+.metaItem + .metaItem {
+  padding-left: 20px;
+  border-left: 1px solid var(--hairline);
+}
+
+.metaItem dt {
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.metaItem dd {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: var(--step--1);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+/* ---- Stat + StatRow ------------------------------------------------------------ */
+.statRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--hairline);
+}
+
+.statRow > * {
+  padding: 18px 20px 4px 0;
+}
+
+.statRow > * + * {
+  padding-left: 20px;
+  border-left: 1px solid var(--hairline);
+}
+
+.statValue {
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: var(--step-4);
+  font-weight: 500;
+  line-height: 0.95;
+  letter-spacing: -0.045em;
+  font-variant-numeric: tabular-nums;
+}
+
+.statValue[data-tone="flagship"] {
+  color: var(--accent-hover);
+}
+
+.statLabel {
+  color: var(--text-secondary);
+  font-size: var(--step--1);
+  line-height: 1.4;
+}
+
+.statDetail {
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  letter-spacing: 0.02em;
+}
+
+@media (max-width: 599px) {
+  .statRow > * + * {
+    padding-left: 0;
+    border-left: 0;
+    border-top: 1px solid var(--hairline);
+  }
+}

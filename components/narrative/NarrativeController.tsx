@@ -1,5 +1,6 @@
 "use client";
 
+import type { ScrollRequest } from "@/components/shell/SmoothAnchors";
 import {
   Component,
   lazy,
@@ -10,7 +11,13 @@ import {
 } from "react";
 import type Lenis from "lenis";
 
-import { tickNarrative, updateNarrative } from "@/lib/narrative-state";
+import {
+  hasFrameDemand,
+  notifyLayoutChange,
+  subscribeFrameDemand,
+  tickNarrative,
+  updateNarrative,
+} from "@/lib/narrative-state";
 
 const OrbCanvas = lazy(() =>
   import("./OrbCanvas").then((module) => ({ default: module.OrbCanvas })),
@@ -136,9 +143,11 @@ export function NarrativeController() {
       let lenis: LenisInstance | undefined;
       let lenisRequest = 0;
       let tickerAttached = false;
-      let dirty = true;
-      let quietUntil = 0;
+      let syncRequested = true;
       let currentAct: Act = "dormant";
+      // Last values written to the DOM; writes are skipped when unchanged.
+      let writtenProgress = "";
+      let writtenPhase = "";
       let refreshTimer: ReturnType<typeof setTimeout> | undefined;
       const navigationTimers = new Set<ReturnType<typeof setTimeout>>();
       const visibleSections = new Set<HTMLElement>();
@@ -150,12 +159,25 @@ export function NarrativeController() {
       const flagship = sections.find((section) => section.act === "active-thinking")?.element;
       const stage = flagship?.querySelector<HTMLElement>(".verification-stage");
       const visual = flagship?.querySelector<HTMLElement>("[data-verification-visual]");
+      // data-verification-phase goes on all three. The custom property is
+      // written every scrolled frame and inherits, so every write re-styles the
+      // target's whole subtree (the stage is ~270 nodes: ~20 ms a frame at 1x).
+      // Elements marked [data-verification-progress] opt in as the only
+      // targets (the progress bars that read it); otherwise stage + visual.
       const verificationTargets = [flagship, stage, visual].filter(
         (element): element is HTMLElement => Boolean(element),
       );
+      const optedIn = Array.from(
+        flagship?.querySelectorAll<HTMLElement>("[data-verification-progress]") ?? [],
+      );
+      const progressTargets = optedIn.length
+        ? optedIn
+        : [stage, visual].filter((element): element is HTMLElement => Boolean(element));
       const steps = Array.from(
         flagship?.querySelectorAll<HTMLElement>("[data-verification-step]") ?? [],
       );
+      // Phases = distinct step values (3 by default), split evenly across progress.
+      const phaseCount = Math.max(1, new Set(steps.map((step) => step.dataset.verificationStep)).size || 3);
 
       function inViewport(element: HTMLElement) {
         const rect = element.getBoundingClientRect();
@@ -178,8 +200,9 @@ export function NarrativeController() {
           tickerAttached = true;
         }
       }
-      function invalidate() {
-        dirty = true;
+      /** Coalesce: any number of scroll/trigger events → one sync per frame. */
+      function requestSync() {
+        syncRequested = true;
         wake();
       }
       function frame(time: number) {
@@ -188,17 +211,19 @@ export function NarrativeController() {
           return;
         }
         lenis?.raf(time * 1000);
-        const quietAct = currentAct === "warm" || currentAct === "settled";
-        const movingQuietAct = quietAct && performance.now() < quietUntil;
-        const render = sceneVisible() && (!quietAct || dirty || movingQuietAct);
-        if (render) tickNarrative(time);
-        dirty = false;
-        const continuousScene = sceneVisible() && !quietAct;
-        if (!continuousScene && !movingQuietAct && !lenis?.isScrolling) detachTicker();
+        if (syncRequested) {
+          syncRequested = false;
+          sync();
+        }
+        if (sceneVisible()) tickNarrative(time);
+        // Detach when no layer wants frames and Lenis has settled; scroll,
+        // wheel, state changes and new frame demand re-attach via wake().
+        if (!hasFrameDemand() && !lenis?.isScrolling && !syncRequested) detachTicker();
       }
 
       function sync() {
         if (!ready || cancelled) return;
+        // Single DOM read per frame, before any writes below.
         const y = window.scrollY;
         let range = ranges[0];
         for (const candidate of ranges) {
@@ -209,16 +234,22 @@ export function NarrativeController() {
         const verification = verificationTrigger
           ? clamp((y - verificationTrigger.start) / Math.max(1, verificationTrigger.end - verificationTrigger.start))
           : 0;
-        const phase = verification < 0.3 ? "0" : verification < 0.65 ? "1" : "2";
-        verificationTargets.forEach((element) => {
-          element.style.setProperty("--verification-progress", verification.toFixed(5));
-          element.dataset.verificationPhase = phase;
-        });
-        steps.forEach((element) => {
-          element.dataset.verificationActive = String(element.dataset.verificationStep === phase);
-        });
-        if ((range.act === "warm" || range.act === "settled") && currentAct !== range.act) {
-          quietUntil = performance.now() + 1200;
+        const phase = String(Math.min(phaseCount - 1, Math.floor(verification * phaseCount)));
+        const progressValue = verification.toFixed(4);
+        if (progressValue !== writtenProgress) {
+          writtenProgress = progressValue;
+          progressTargets.forEach((element) => {
+            element.style.setProperty("--verification-progress", progressValue);
+          });
+        }
+        if (phase !== writtenPhase) {
+          writtenPhase = phase;
+          verificationTargets.forEach((element) => {
+            element.dataset.verificationPhase = phase;
+          });
+          steps.forEach((element) => {
+            element.dataset.verificationActive = String(element.dataset.verificationStep === phase);
+          });
         }
         currentAct = range.act;
         updateNarrative({
@@ -229,8 +260,8 @@ export function NarrativeController() {
           fragmentation: currentAct === "fragmented" ? 1 : 0,
           visible: sceneVisible(),
           reducedMotion: false,
+          scroll: y,
         });
-        invalidate();
       }
 
       // These triggers measure only. CSS owns the sticky verification stage.
@@ -240,27 +271,47 @@ export function NarrativeController() {
           start: act === "dormant" ? "top top" : "top 55%",
           end: "bottom 55%",
           invalidateOnRefresh: true,
-          onUpdate: sync,
-          onRefresh: sync,
+          onRefresh: requestSync,
         });
         ranges.push({ act, trigger });
         triggers.push(trigger);
       });
+      /**
+       * Verification progress spans exactly the sticky stage's runway: 0 when
+       * the stage sticks, 1 when its containing block releases it. Computed
+       * from the containing block (never the stuck box). When the stage has no
+       * runway (not sticky, or its parent is no taller than it), progress
+       * falls back to the section passing the 55% line.
+       */
+      function verificationRange(): [number, number] {
+        const y = window.scrollY;
+        const vh = window.innerHeight;
+        const container = stage?.parentElement;
+        const style = stage ? getComputedStyle(stage) : null;
+        if (stage && container && style?.position === "sticky") {
+          const box = container.getBoundingClientRect();
+          const containerStyle = getComputedStyle(container);
+          const contentTop = box.top + (parseFloat(containerStyle.paddingTop) || 0) + (parseFloat(containerStyle.borderTopWidth) || 0);
+          const contentBottom = box.bottom - (parseFloat(containerStyle.paddingBottom) || 0) - (parseFloat(containerStyle.borderBottomWidth) || 0);
+          const inset = parseFloat(style.top) || 0;
+          const naturalTop = contentTop + (parseFloat(style.marginTop) || 0);
+          const runway = contentBottom - naturalTop - stage.offsetHeight;
+          if (runway > Math.max(40, vh * 0.1)) {
+            const start = y + naturalTop - inset;
+            return [start, start + runway];
+          }
+        }
+        const section = flagship!.getBoundingClientRect();
+        return [y + section.top - vh * 0.55, y + section.bottom - vh * 0.55];
+      }
       if (flagship) {
+        let range: [number, number] = [0, 1];
         verificationTrigger = ScrollTrigger.create({
           trigger: flagship,
-          start: () => {
-            const style = stage ? getComputedStyle(stage) : null;
-            return style?.position === "sticky"
-              ? `top top+=${Math.max(0, parseFloat(style.top) || 0)}`
-              : "top 55%";
-          },
-          end: () => stage && getComputedStyle(stage).position === "sticky"
-            ? "bottom bottom"
-            : "bottom 55%",
+          start: () => (range = verificationRange())[0],
+          end: () => range[1],
           invalidateOnRefresh: true,
-          onUpdate: sync,
-          onRefresh: sync,
+          onRefresh: requestSync,
         });
         triggers.push(verificationTrigger);
       }
@@ -275,7 +326,7 @@ export function NarrativeController() {
             });
             updateNarrative({ visible: sceneVisible() });
             if (!visibleSections.size) detachTicker();
-            else invalidate();
+            else requestSync();
           }, { threshold: 0 })
         : null;
       sections.forEach(({ element }) => observer?.observe(element));
@@ -285,7 +336,8 @@ export function NarrativeController() {
         lenis?.resize();
         // Refresh only our measurements; never pin, unpin, or kill another owner.
         triggers.forEach((trigger) => trigger.refresh());
-        sync();
+        requestSync();
+        notifyLayoutChange();
       }
       function scheduleRefresh() {
         if (refreshTimer) clearTimeout(refreshTimer);
@@ -298,8 +350,7 @@ export function NarrativeController() {
             else visibleSections.delete(element);
           });
         }
-        ScrollTrigger.update();
-        sync();
+        requestSync();
       }
       function onVisibility() {
         updateNarrative({ visible: sceneVisible() });
@@ -330,6 +381,8 @@ export function NarrativeController() {
         }
       }
       function onAnchorClick(event: MouseEvent) {
+        // SmoothAnchors already resolved it (and prevented the native jump).
+        if (event.defaultPrevented) return;
         if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
         const anchor = event.target instanceof Element ? event.target.closest("a[href]") : null;
         if (!(anchor instanceof HTMLAnchorElement) || anchor.download || (anchor.target && anchor.target !== "_self")) return;
@@ -337,6 +390,18 @@ export function NarrativeController() {
         if (url.origin === location.origin && url.pathname === location.pathname && url.search === location.search && url.hash) {
           reconcileNativeNavigation();
         }
+      }
+      function onScrollRequest(event: Event) {
+        const request = (event as CustomEvent<ScrollRequest>).detail;
+        if (!lenis || !request) return;
+        request.handled = true;
+        const distance = Math.abs(request.top - window.scrollY);
+        wake();
+        lenis.scrollTo(request.top, {
+          duration: Math.min(1.8, Math.max(0.9, distance / 2600)),
+          easing: (t: number) => (t < 0.5 ? 8 * t ** 4 : 1 - (-2 * t + 2) ** 4 / 2),
+          onComplete: request.done,
+        });
       }
       async function configureLenis() {
         const request = ++lenisRequest;
@@ -358,7 +423,7 @@ export function NarrativeController() {
           });
           lenis.on("scroll", onScroll);
           if (document.hidden) lenis.stop();
-          invalidate();
+          wake();
         } catch {
           // Native wheel/touch scrolling and ScrollTrigger remain operational.
         }
@@ -368,14 +433,15 @@ export function NarrativeController() {
         ? new ResizeObserver(scheduleRefresh)
         : null;
       sections.forEach(({ element }) => resizeObserver?.observe(element));
-      // A marks first render availability. A successful late mount gets a frame
-      // even if contact has already settled while its chunk was loading.
-      const rendererObserver = new MutationObserver(invalidate);
-      rendererObserver.observe(root, { attributes: true, attributeFilter: ["data-orb-renderer"] });
+      // Render layers (a late-mounting OrbCanvas included) wake the ticker by
+      // raising frame demand; nothing polls.
+      const stopDemand = subscribeFrameDemand(wake);
       document.addEventListener("visibilitychange", onVisibility);
       document.addEventListener("click", onAnchorClick);
-      window.addEventListener("wheel", invalidate, { passive: true });
-      window.addEventListener("touchstart", invalidate, { passive: true });
+      window.addEventListener("portfolio:scrollto", onScrollRequest);
+      window.addEventListener("wheel", wake, { passive: true });
+      window.addEventListener("touchstart", wake, { passive: true });
+      window.addEventListener("scroll", onScroll, { passive: true });
       window.addEventListener("resize", scheduleRefresh, { passive: true });
       window.addEventListener("hashchange", reconcileNativeNavigation);
       window.addEventListener("popstate", reconcileNativeNavigation);
@@ -388,21 +454,25 @@ export function NarrativeController() {
         lenis?.destroy();
         observer?.disconnect();
         resizeObserver?.disconnect();
-        rendererObserver.disconnect();
+        stopDemand();
         triggers.forEach((trigger) => trigger.kill());
         if (refreshTimer) clearTimeout(refreshTimer);
         navigationTimers.forEach(clearTimeout);
         document.removeEventListener("visibilitychange", onVisibility);
         document.removeEventListener("click", onAnchorClick);
-        window.removeEventListener("wheel", invalidate);
-        window.removeEventListener("touchstart", invalidate);
+        window.removeEventListener("wheel", wake);
+        window.removeEventListener("touchstart", wake);
+        window.removeEventListener("scroll", onScroll);
         window.removeEventListener("resize", scheduleRefresh);
+        window.removeEventListener("portfolio:scrollto", onScrollRequest);
         window.removeEventListener("hashchange", reconcileNativeNavigation);
         window.removeEventListener("popstate", reconcileNativeNavigation);
         window.removeEventListener("pageshow", reconcileNativeNavigation);
         finePointer.removeEventListener("change", configureLenis);
-        verificationTargets.forEach((element) => {
+        progressTargets.forEach((element) => {
           element.style.removeProperty("--verification-progress");
+        });
+        verificationTargets.forEach((element) => {
           delete element.dataset.verificationPhase;
         });
         steps.forEach((element) => delete element.dataset.verificationActive);

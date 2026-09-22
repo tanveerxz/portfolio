@@ -1,27 +1,473 @@
-.flagship{position:relative;min-height:250svh;padding-block:clamp(96px,10vw,144px);color:var(--text-primary);scroll-margin-top:96px;overflow:clip}
-.flagship::before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(11,13,18,0),rgba(18,21,28,.36) 42%,rgba(11,13,18,0))}
-.container{box-sizing:border-box;width:100%;max-width:1600px;margin-inline:auto;padding-inline:var(--container-pad)}
-.stage{--verification-progress:0;position:sticky;top:92px;min-height:calc(100svh - 116px);display:grid;grid-template-columns:minmax(300px,.72fr) minmax(620px,1.28fr);grid-template-rows:minmax(0,1fr) auto;column-gap:clamp(48px,6vw,112px);row-gap:30px;align-items:center}
-.copy{position:relative;z-index:2;max-width:560px}
-.heading{max-width:9ch;margin:0;font-family:var(--font-display);font-size:clamp(3.5rem,6.6vw,7rem);font-weight:500;line-height:.88;letter-spacing:-.052em;text-wrap:balance}
-.lead{max-width:45ch;margin:clamp(30px,3vw,44px) 0 0;color:var(--text-secondary);font-size:clamp(1rem,1.08vw,1.12rem);line-height:1.66;text-wrap:pretty}
-.caseLink{margin-top:clamp(28px,3vw,42px);border-radius:var(--r-full)}
-.explainer{display:grid;grid-template-columns:minmax(430px,1fr) minmax(190px,.42fr);gap:clamp(28px,3.5vw,54px);align-items:center;min-width:0}
-.visualBeam{width:100%;border-radius:28px}
-.visual{position:relative;width:100%;min-height:clamp(430px,55svh,590px);margin:0;border:1px solid rgba(224,229,244,.13);border-radius:28px;background:rgba(12,14,20,.58);overflow:hidden;pointer-events:none}
-.visual::before,.visual::after{content:"";position:absolute;inset:50% auto auto 50%;width:78%;height:1px;background:linear-gradient(90deg,transparent,rgba(217,221,255,.3),transparent);transform:translate(-50%,-50%) rotate(calc(-9deg + var(--verification-progress)*22deg));transform-origin:center;opacity:calc(.32 + var(--verification-progress)*.42)}
-.visual::after{transform:translate(-50%,-50%) rotate(calc(11deg - var(--verification-progress)*18deg));opacity:.22}
-.visualChrome{position:absolute;inset:20px 22px auto;display:flex;justify-content:space-between;color:var(--text-tertiary);font-family:var(--font-mono);font-size:.65rem;letter-spacing:.08em;text-transform:uppercase}
-.poster{width:100%;height:100%}
-.caption{position:absolute;right:22px;bottom:20px;max-width:34ch;margin:0;color:var(--text-tertiary);font-size:.74rem;line-height:1.5;text-align:right;pointer-events:auto}
-.steps{display:grid;align-self:stretch;align-content:center}
-.step{position:relative;min-height:126px;padding:22px 0 22px 22px;border-left:1px solid rgba(224,229,244,.16);color:var(--text-tertiary);opacity:.48;transition:opacity .45s var(--ease-out),transform .45s var(--ease-out)}
-.step::before{content:"";position:absolute;top:27px;left:-3px;width:5px;height:5px;border-radius:50%;background:var(--text-tertiary);box-shadow:0 0 0 0 rgba(194,200,250,0);transition:background-color .4s var(--ease-out),box-shadow .4s var(--ease-out),transform .4s var(--ease-out)}
-.step h3{margin:0;color:var(--text-primary);font-size:clamp(1.15rem,1.5vw,1.45rem);font-weight:540;line-height:1.16;letter-spacing:-.025em}.step p{max-width:27ch;margin:10px 0 0;font-size:.88rem;line-height:1.52;text-wrap:pretty}
-.step[data-verification-active="true"]{opacity:1;transform:translateX(4px)}.step[data-verification-active="true"]::before{background:var(--accent-hover);box-shadow:0 0 18px rgba(194,200,250,.78);transform:scale(1.45)}
-.proofGrid{grid-column:1/-1;display:grid;grid-template-columns:1.15fr 1fr 1fr;border-top:1px solid var(--hairline)}
-.proofGrid p{margin:0;padding:20px clamp(18px,2.5vw,38px) 0 0;color:var(--text-secondary);font-size:.86rem;line-height:1.52}.proofGrid p+p{padding-left:clamp(18px,2.5vw,38px);border-left:1px solid var(--hairline)}
-@media(max-width:1240px){.stage{grid-template-columns:minmax(280px,.72fr) minmax(520px,1.28fr);column-gap:42px}.explainer{grid-template-columns:1fr}.steps{grid-template-columns:repeat(3,1fr);gap:0}.step{min-height:auto;padding:18px 16px;border-top:1px solid var(--hairline);border-left:0}.step::before{top:-3px;left:18px}.step p{font-size:.8rem}.visual{min-height:450px}}
-@media(max-width:900px){.flagship{min-height:auto;padding-block:108px}.stage{position:relative;top:auto;min-height:auto;grid-template-columns:1fr;grid-template-rows:auto;gap:62px}.copy{max-width:740px}.explainer{grid-template-columns:1fr}.visual{min-height:clamp(390px,70vw,560px)}.proofGrid{grid-column:1;grid-template-columns:1fr}.proofGrid p{padding:18px 0}.proofGrid p+p{padding-left:0;border-left:0;border-top:1px solid var(--hairline)}}
-@media(max-width:620px){.flagship{padding-block:88px}.heading{font-size:clamp(3.2rem,15vw,5.6rem)}.visual{min-height:340px;border-radius:20px}.visualBeam{border-radius:20px}.visualChrome{inset:16px 16px auto}.caption{right:16px;bottom:14px;max-width:27ch}.steps{grid-template-columns:1fr}.step{padding:18px 0 18px 18px;border-top:0;border-left:1px solid var(--hairline)}.step::before{top:24px;left:-3px}.step p{font-size:.9rem}}
-@media(prefers-reduced-motion:reduce){.flagship{min-height:auto}.stage{position:relative;top:auto;min-height:auto}.step{opacity:1;transform:none}}
+/* ==========================================================================
+   Flagship — Act II (active thinking). How LegacyLift works, told by orbs.
+
+   Two layouts from one DOM:
+   - STATIC (no JS, reduced motion, short landscape screens): an ordinary
+     reading sequence. Each chapter is its text plus its artifact, final state.
+   - LIVE (html[data-motion="full"] and ≥ 560px tall): a sticky stage. All
+     chapters share one grid cell over one frame; `data-verification-phase` (written by
+     the NarrativeController) picks the visible one. The boot script sets data-motion before first paint, so the
+     layout never switches under the reader.
+
+   Runway rule: the stage's parent (.track) is the ONLY thing that sets the
+   scroll length. The controller maps 0..1 onto exactly that runway, and the
+   stage releases the moment the last chapter has had its share: no dead
+   scroll. .flagship stays a flex column with .container flex:1.
+   ========================================================================== */
+
+.flagship {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding-block: var(--space-section) 0;
+  color: var(--text-primary);
+  scroll-margin-top: 96px;
+  overflow: clip;
+}
+
+.flagship::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(70% 40% at 78% 30%, rgb(var(--glow-rgb) / 0.05), transparent 70%),
+    linear-gradient(180deg, rgb(var(--ground-rgb) / 0), rgb(var(--raised-rgb) / 0.4) 40%, rgb(var(--ground-rgb) / 0));
+}
+
+.container {
+  box-sizing: border-box;
+  flex: 1 0 auto;
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--container-pad);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---- Intro --------------------------------------------------------------- */
+.intro {
+  display: grid;
+  gap: clamp(28px, 4vw, 56px);
+  padding-bottom: clamp(56px, 8vw, 112px);
+}
+
+.heading {
+  max-width: 14ch;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.75rem, 1.6rem + 5vw, 6.5rem);
+  font-weight: 540;
+  line-height: 0.94;
+  letter-spacing: var(--tracking-heading);
+}
+
+.turn {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 1.06em;
+  letter-spacing: -0.03em;
+}
+
+.introBody {
+  display: grid;
+  gap: 20px;
+  max-width: 50ch;
+  align-content: end;
+}
+
+.lead {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--step-1);
+  line-height: 1.55;
+  letter-spacing: -0.01em;
+}
+
+.audience {
+  margin: 0;
+  padding-top: 18px;
+  border-top: 1px solid var(--hairline);
+  color: var(--text-tertiary);
+  font-size: var(--step--1);
+  line-height: 1.5;
+}
+
+@media (min-width: 1024px) {
+  .intro {
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+    align-items: end;
+  }
+}
+
+/* ---- Stage: STATIC reading sequence (default) ----------------------------- */
+.track {
+  position: relative;
+  flex: 1 0 auto;
+}
+
+.stage {
+  --verification-progress: 0;
+  --frame-pad: clamp(16px, 2.2vw, 32px);
+  position: relative;
+}
+
+.frame {
+  display: none;
+}
+
+.frameOrb {
+  position: relative;
+}
+
+.chapters {
+  display: grid;
+  gap: clamp(56px, 7vw, 96px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chapter {
+  display: grid;
+  gap: 28px;
+  align-items: center;
+}
+
+.chapterText {
+  max-width: 44ch;
+}
+
+.chapterTitle {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  font-size: var(--step-3);
+  font-weight: 520;
+  line-height: 1.04;
+  letter-spacing: var(--tracking-title);
+}
+
+.chapterNumber {
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  font-weight: 500;
+  letter-spacing: var(--tracking-label);
+  font-variant-numeric: tabular-nums;
+}
+
+.chapterBody {
+  margin: 18px 0 0;
+  color: var(--text-secondary);
+  font-size: var(--step-0);
+  line-height: 1.6;
+}
+
+.chapterArtifact {
+  position: relative;
+  min-width: 0;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-lg);
+  background: rgb(var(--ground-rgb) / 0.72);
+}
+
+.progress {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .chapter {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: clamp(40px, 5vw, 96px);
+  }
+}
+
+/* ---- Stage: LIVE sticky chapters ------------------------------------------ */
+@media (min-height: 560px) {
+  :global(html[data-motion="full"]) .track {
+    /* 4 chapters × ~60svh of runway, plus the stage's own height. */
+    min-height: calc(100svh + 240svh);
+  }
+
+  :global(html[data-motion="full"]) .stage {
+    position: sticky;
+    top: calc(var(--nav-height) + 12px);
+    height: calc(100svh - var(--nav-height) - 24px);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) auto auto;
+    row-gap: 18px;
+  }
+
+  :global(html[data-motion="full"]) .frame {
+    position: relative;
+    grid-area: 1 / 1 / 2 / 2;
+    min-height: 0;
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-xl);
+    background:
+      radial-gradient(60% 55% at 26% 30%, rgb(var(--glow-rgb) / 0.07), transparent 70%),
+      rgb(var(--ground-rgb) / calc(0.62 * var(--orb-veil, 1)));
+    /* Same internal grid as every artifact, so the orb cell lines up. */
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: minmax(0, 11fr) minmax(0, 9fr);
+    padding: var(--frame-pad);
+  }
+
+  :global(html[data-motion="full"]) .frameOrb {
+    grid-area: 1 / 1;
+    min-height: 0;
+  }
+
+  :global(html[data-motion="full"]) .chapters {
+    grid-area: 1 / 1 / 3 / 2;
+    display: grid;
+    grid-template-columns: subgrid;
+    grid-template-rows: subgrid;
+    /* normal = inherit the stage's gaps, so the artifact matches the frame. */
+    gap: normal;
+  }
+
+  :global(html[data-motion="full"]) .chapter {
+    grid-area: 1 / 1 / 3 / 2;
+    display: grid;
+    grid-template-columns: subgrid;
+    grid-template-rows: subgrid;
+    gap: normal;
+    align-items: stretch;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 420ms var(--ease-out);
+  }
+
+  :global(html[data-motion="full"]) .chapterArtifact {
+    grid-area: 1 / 1;
+    min-height: 0;
+    border: 0;
+    border-radius: var(--r-xl);
+    background: none;
+  }
+
+  :global(html[data-motion="full"]) .chapterText {
+    grid-area: 2 / 1;
+    align-self: start;
+    max-width: 46ch;
+    transform: translate3d(0, 14px, 0);
+    transition: transform 700ms var(--ease-out);
+  }
+
+  :global(html[data-motion="full"]) .chapterTitle {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: baseline;
+    gap: 12px;
+    font-size: clamp(1.35rem, 1rem + 1.6vw, 2.1rem);
+    line-height: 1.1;
+  }
+
+  :global(html[data-motion="full"]) .chapterBody {
+    margin-top: 10px;
+    font-size: var(--step--1);
+    line-height: 1.55;
+  }
+
+  /* The visible chapter. */
+  :global(html[data-motion="full"]) .stage[data-verification-phase="0"] .chapter[data-verification-step="0"],
+  :global(html[data-motion="full"]) .stage[data-verification-phase="1"] .chapter[data-verification-step="1"],
+  :global(html[data-motion="full"]) .stage[data-verification-phase="2"] .chapter[data-verification-step="2"],
+  :global(html[data-motion="full"]) .stage[data-verification-phase="3"] .chapter[data-verification-step="3"] {
+    opacity: 1;
+    pointer-events: auto;
+    transition-delay: 120ms;
+  }
+
+  :global(html[data-motion="full"]) .stage[data-verification-phase="0"] .chapter[data-verification-step="0"] .chapterText,
+  :global(html[data-motion="full"]) .stage[data-verification-phase="1"] .chapter[data-verification-step="1"] .chapterText,
+  :global(html[data-motion="full"]) .stage[data-verification-phase="2"] .chapter[data-verification-step="2"] .chapterText,
+  :global(html[data-motion="full"]) .stage[data-verification-phase="3"] .chapter[data-verification-step="3"] .chapterText {
+    transform: none;
+  }
+
+  /* Runway progress: four hairlines filling with the verification progress. */
+  :global(html[data-motion="full"]) .progress {
+    grid-area: 3 / 1;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+    max-width: 46ch;
+  }
+
+  :global(html[data-motion="full"]) .progress span {
+    position: relative;
+    height: 2px;
+    overflow: hidden;
+    border-radius: 2px;
+    background: var(--hairline);
+  }
+
+  :global(html[data-motion="full"]) .progress span::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+    transform-origin: 0 50%;
+    transform: scaleX(
+      clamp(0, calc((var(--verification-progress) - var(--from)) / (var(--to) - var(--from))), 1)
+    );
+  }
+}
+
+/* Desktop live: text left, frame right; progress under the text. */
+@media (min-width: 900px) and (min-height: 560px) {
+  :global(html[data-motion="full"]) .stage {
+    grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+    grid-template-rows: minmax(0, 1fr) auto;
+    column-gap: clamp(40px, 5vw, 96px);
+    row-gap: 0;
+    top: calc(var(--nav-height) + 16px);
+    height: calc(100svh - var(--nav-height) - 32px);
+  }
+
+  :global(html[data-motion="full"]) .frame {
+    grid-area: 1 / 2 / 3 / 3;
+  }
+
+  :global(html[data-motion="full"]) .chapters,
+  :global(html[data-motion="full"]) .chapter {
+    grid-area: 1 / 1 / 3 / 3;
+  }
+
+  :global(html[data-motion="full"]) .chapterArtifact {
+    grid-area: 1 / 2 / 3 / 3;
+  }
+
+  :global(html[data-motion="full"]) .chapterText {
+    grid-area: 1 / 1;
+    align-self: center;
+    transform: translate3d(0, 22px, 0);
+  }
+
+  :global(html[data-motion="full"]) .chapterTitle {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+    font-size: clamp(2rem, 1rem + 2.3vw, 3.4rem);
+    line-height: 1.02;
+  }
+
+  :global(html[data-motion="full"]) .chapterBody {
+    margin-top: 22px;
+    font-size: var(--step-0);
+    line-height: 1.6;
+  }
+
+  :global(html[data-motion="full"]) .progress {
+    grid-area: 2 / 1;
+    align-self: end;
+    padding-bottom: 6px;
+  }
+}
+
+/* ---- Coda: the Independence Rule and the proof point ----------------------- */
+.coda {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding: clamp(96px, 12vw, 176px) var(--container-pad) clamp(72px, 8vw, 120px);
+}
+
+.rule {
+  display: grid;
+  gap: clamp(28px, 3vw, 44px);
+  max-width: 1100px;
+}
+
+.ruleStatement {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 1.2rem + 3.4vw, 4.4rem);
+  font-weight: 520;
+  line-height: 1.02;
+  letter-spacing: var(--tracking-heading);
+  text-wrap: balance;
+}
+
+.ruleStatement em {
+  font-size: 1.08em;
+  color: var(--text-primary);
+}
+
+.ruleTurn {
+  color: var(--text-tertiary);
+}
+
+.ruleBody {
+  max-width: 56ch;
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--step-0);
+  line-height: 1.65;
+}
+
+.ruleBody strong {
+  color: var(--text-primary);
+  font-weight: 560;
+}
+
+.proof {
+  display: grid;
+  gap: 32px;
+  margin-top: clamp(72px, 9vw, 136px);
+  padding-top: clamp(28px, 3vw, 40px);
+  border-top: 1px solid var(--hairline);
+}
+
+.proofMain {
+  max-width: 24ch;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--step-3);
+  font-weight: 520;
+  line-height: 1.08;
+  letter-spacing: var(--tracking-title);
+}
+
+.proofLead {
+  display: grid;
+  gap: 20px;
+  align-content: start;
+}
+
+.proofBody {
+  max-width: 46ch;
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--step-1);
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
+.proofSide {
+  display: grid;
+  gap: 28px;
+  align-content: start;
+  justify-items: start;
+}
+
+.proofSide p {
+  max-width: 36ch;
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--step-0);
+  line-height: 1.6;
+}
+
+@media (min-width: 900px) {
+  .proof {
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.7fr);
+    gap: clamp(40px, 6vw, 112px);
+  }
+}

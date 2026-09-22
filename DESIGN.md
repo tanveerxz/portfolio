@@ -1,199 +1,202 @@
 ---
 name: Tanveer Portfolio
-description: A precise, cinematic portfolio built around a continuous silver reasoning object.
+description: Silver Thought v2 — a cinematic, restrained portfolio built around one reasoning object.
 colors:
   silver-ink: "#edeef2"
   muted-silver: "#b3b7c2"
   quiet-silver: "#9096a4"
+  silver-hi: "#f6f7fa"
+  silver-lo: "#858a98"
   void-charcoal: "#0b0d12"
   raised-charcoal: "#12151c"
   panel-charcoal: "#1a1e27"
   warm-charcoal: "#181715"
   reflected-periwinkle: "#c2c8fa"
   bright-periwinkle: "#d9ddff"
-  hairline: "rgba(224, 229, 244, 0.16)"
+  hairline: "rgba(224, 229, 244, 0.14)"
 typography:
-  display:
-    fontFamily: "Manrope, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "clamp(3.4rem, 7.3vw, 7.25rem)"
-    fontWeight: 500
-    lineHeight: 1.02
-    letterSpacing: "-0.035em"
-  headline:
-    fontFamily: "Manrope, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "clamp(2.5rem, 5vw, 5rem)"
-    fontWeight: 500
-    lineHeight: 1.08
-    letterSpacing: "-0.035em"
-  title:
-    fontFamily: "Manrope, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "clamp(1.5rem, 2.5vw, 2.4rem)"
-    fontWeight: 500
-    lineHeight: 1.28
-    letterSpacing: "-0.03em"
-  body:
-    fontFamily: "Manrope, ui-sans-serif, system-ui, sans-serif"
-    fontSize: "1rem"
-    fontWeight: 400
-    lineHeight: 1.65
-  numeric:
-    fontFamily: "JetBrains Mono, ui-monospace, monospace"
-    fontSize: "0.8125rem"
-    fontWeight: 500
-    lineHeight: 1.5
-    letterSpacing: "0.02em"
-rounded:
-  control: "8px"
-  container: "14px"
-  pill: "9999px"
-spacing:
-  xs: "4px"
-  sm: "8px"
-  md: "16px"
-  lg: "24px"
-  xl: "32px"
-  section-sm: "96px"
-  section-lg: "160px"
-components:
-  button-primary:
-    backgroundColor: "{colors.reflected-periwinkle}"
-    textColor: "{colors.void-charcoal}"
-    typography: "{typography.body}"
-    rounded: "{rounded.pill}"
-    padding: "12px 24px"
-  button-secondary:
-    backgroundColor: "{colors.panel-charcoal}"
-    textColor: "{colors.silver-ink}"
-    typography: "{typography.body}"
-    rounded: "{rounded.pill}"
-    padding: "12px 16px"
+  display: "Inter Tight (variable), 500–600, tracking -0.055em"
+  voice: "Instrument Serif italic — 1–3 emphasis words per section only"
+  mono: "JetBrains Mono — real facts/figures/labels of facts only"
 ---
 
-# Design System: Tanveer Portfolio
+# Design System: Silver Thought v2
 
-## Overview
+## North star
 
-**Creative North Star: "Silver Thought"**
+A dark editorial stage for one continuous reasoning object. Huge precise
+grotesk type, one italic serif "thought" word, silver material, periwinkle
+reflected light. Space is filled with **craft** — scale, the orb, light, grain,
+hairline structure, beam and motion — **never with extra text**.
 
-The interface behaves like a dark editorial stage for one continuous reasoning object. Precise type and generous negative space carry the factual story while silver filaments move from dormant potential through verification, fragmentation, human warmth, and rest. The visual language is technical without resembling a dashboard: there are no decorative panels around every fact, and the dimensional object is the only deliberately spectacular element.
+## The content rule (owner-mandated, overrides everything)
 
-The system is quiet, cinematic, and exact. Warmth appears only when the story turns toward people; pale periwinkle is reflected light and action emphasis, never a competing multicolour brand layer.
+- Only the owner's words and facts from `build/content-source.md`.
+- **No filler text**: no colophons, no talk about the site's fonts/tech, no
+  decorative mono annotations, fake coordinates, figure numbers, registration
+  labels, "scroll"/"scroll to begin" captions, invented chapter labels, or
+  tickers of tech names.
+- Small text (mono labels, meta strips, stats) exists **only** when it carries a
+  real supplied fact (e.g. HukamConnect "300+ active users").
+- Never mention 1Foundry or any accelerator. Never state a grade.
 
-**Key Characteristics:**
+## Tokens (all in `app/globals.css`, mapped in `tailwind.config.ts`)
 
-- Charcoal fields with luminous silver and restrained periwinkle.
-- Oversized editorial headings paired with calm, narrow prose measures.
-- One persistent filament object whose state follows the narrative.
-- Hairline structure and open layouts instead of stacked cards.
-- Motion is reversible, optional, and absent from essential meaning.
+- Ground: `--surface-0..3`, `--surface-warm` (leadership only).
+- Ink: `--text-primary` 16.9:1, `--text-secondary` 9.9:1, `--text-tertiary`
+  6.5:1 (smallest permitted text colour). `--ink-ghost` decorative only.
+- Light: `--accent` / `--accent-hover` (action, focus, reflected light),
+  `--silver-hi/mid/lo`, `--silver-text` (gradient = the static metal material),
+  `--silver-edge`. Periwinkle is never a large fill.
+- Hairlines: `--hairline`, `--hairline-strong`.
+- Fluid type (360→1920): `--step--2` 11.5–12.5 · `--step--1` 13.5–15 ·
+  `--step-0` 16–18 · `--step-1` 18–22 · `--step-2` 22–30 · `--step-3` 28–44 ·
+  `--step-4` 40–80 · `--step-5` 52–152 · `--step-6` 64–256.
+- Tracking: `--tracking-mega/display/heading/title/label`.
+- Space: `--space-*` (4px base), `--space-section` 88–216, `--space-block` 48–104.
+- Grid: `.container` (max 1680, pad `--container-pad` 20–88), `.grid-system`
+  = 4 / 8 / 12 columns (<768 / 768+ / 1024+), gutter `--grid-gutter`.
+- Radius: `--r-xs 4`, `--r-sm 8`, `--r-md 12`, `--r-lg 20`, `--r-xl 28`, pills `--r-full`.
+- Motion: `--ease-out` (expo, arrivals), `--ease-out-quint` (hover/UI),
+  `--ease-in-out` (scene/menu), `--ease-spring` (linear() spring);
+  `--dur-instant 90 / fast 160 / base 260 / slow 480 / entrance 900 / choreo 1400`,
+  `--stagger 70ms`.
+- Layers: canvas 0, content 1, sticky 20, grain 25, nav 30, controls 40, skip 50.
 
-## Colors
+## Themes: dark default, light as an owner-requested exploration
 
-The palette is nearly monochrome; small temperature shifts signal narrative state rather than decoration.
+Silver Thought is a dark stage and dark stays the default. At the owner's
+request (2026-09-22) there is an opt-in **light theme** so he can see how it
+looks; this replaces the old "never go light" rule. Treat light as an
+exploration until the owner decides to keep it.
 
-### Primary
+- Mechanism: `html[data-theme="dark" | "light"]`, set before first paint by
+  `themeBoot` (`lib/theme-boot.ts`, inlined in `app/layout.tsx`). Only
+  localStorage `portfolio-theme` can select light; the OS preference is
+  ignored. The server always renders dark. `setTheme()` (`lib/theme.ts`)
+  persists, rewrites the `theme-color` / `color-scheme` meta tags, fires
+  `portfolio:theme-change` and crossfades via the View Transitions API
+  (skipped under reduced motion). `useTheme()` for client components.
+- Toggle: `components/shell/ThemeToggle.tsx`, in the header controls slot at
+  every width (moon glyph in dark opening into a sun in light). Name "Light
+  theme", state `aria-pressed`.
+- Light palette: pale silver paper (`--surface-0` #f1f0ec), graphite ink
+  (#16181d / #43474f / #5a5e68), silver rendered as polished graphite
+  (`--silver-*`, metal-fx burned toward graphite), periwinkle deepened to
+  #4a50b0 for AA, hairlines as dark alpha, a warm paper Community field
+  (#f4ede3) with stone seats.
+- Every token has a light value under `:root[data-theme="light"]` in
+  `app/globals.css`. Modules never hardcode colour: use the tokens, or the
+  channel tokens with a per-use alpha, `rgb(var(--glow-rgb) / 0.08)`
+  (`--glow/line/ground/raised/panel/deep/shade/sheen/warm-rgb`).
+- Orbs: the canvas painter reads `--orb-ink` once and again only when the theme
+  changes (never per frame); posters mix `--orb-ink` toward `--orb-ink-far`;
+  halos use `--orb-halo-in/mid`. Translucent fields laid over a live orb slot
+  multiply their alpha by `--orb-veil` (1 dark, 0.35 light), because a paper
+  veil washes dark dots out far faster than a charcoal one dims light dots.
+- border-beam follows the theme (`theme="light"`); liquid-gooey fills read
+  `--nav-fill` / `--nav-indicator`.
 
-- **Reflected Periwinkle:** Reserved for primary actions, focus, and the coolest highlights on the reasoning object.
+## Type roles (global classes)
 
-### Neutral
+`.t-mega`, `.t-display`, `.t-h2`, `.t-h3`, `.t-h4`, `.t-lead`, `.t-body`,
+`.t-small`, `.t-label` (mono facts), `.t-serif` (italic voice), `.text-silver`,
+`.measure` (60ch), `.measure-narrow` (42ch), `.hairline`, `.link-draw`,
+`.visually-hidden`, `.section-pad`.
+One h1 (hero), h2 per section, h3 per article. No eyebrows above headings.
 
-- **Void Charcoal:** The primary page field and highest-contrast inverse text.
-- **Raised Charcoal:** Translucent navigation and secondary control surfaces.
-- **Panel Charcoal:** Secondary button fills and occasional tonal separation.
-- **Warm Charcoal:** The leadership field, where the technical object recedes.
-- **Silver Ink:** Display and high-priority text.
-- **Muted Silver:** Body copy and navigation.
-- **Quiet Silver:** Supporting and footer text.
-- **Hairline:** Dividers and control outlines that organize without boxing content.
+## Components & APIs
 
-### Named Rules
+- `Button` (`components/primitives/Button.tsx`): `variant` primary | silver |
+  secondary | ghost | link (+ legacy flagship), `size` sm 44 / md 48 / lg 56,
+  `href`, `external`, `arrow`, `magnetic`, `effect` "none" | "beam" | "metal",
+  `beamTone` "ocean" (default) | "mono". Focus ring is structural.
+- `Card` (`primitives/Card.tsx`): add `beam="travel" | "breathe"`, `beamTone`.
+- `MetaStrip` (`primitives/Density.tsx`), `Stat` + `StatRow`
+  (`primitives/Stat.tsx`): real facts/figures only.
+- `Reveal` (`as`, `kind` up | fade | mask, `delay`, `y`) and `SplitLines`
+  (`as`, `lines: ReactNode[]`, `delay`) from `components/effects/Reveal.tsx`.
+  Server components; `RevealRoot` (in layout) observes them. Visible without JS
+  / reduced motion; never use on the hero h1.
+- `Magnetic` (`effects/Magnetic.tsx`): wraps one control; fine pointer + motion only.
+- `ThinkingDot` (`effects/ThinkingDot.tsx`, `state`, `size` 20 | 64): wrapper of
+  the engine's shared `AmbientOrb` (`components/narrative/AmbientOrb`). Never
+  use thinking-orbs' own `<ThinkingOrb>`.
+- `Beam`, `BeamRule`, `ProofBeam` (`effects/beam/*`, `effects/ProofBeam.tsx`).
+- `MetalWord`, `MetalRing` (`effects/metal/*`).
+- Liquid: `useLiquid(enabled)` (`effects/liquid/useLiquid.ts`).
+- Gate helpers (`effects/runtime.ts`): `useEffectGate(ref, "low"|"high")`,
+  `useMotionMode`, `useAwake(ref, restMs, wakeRef?)`, `useLatch`, `?fx=all` QA override.
 
-**The Reflected Light Rule.** Periwinkle belongs to action, focus, and optical reflection; it does not become a large background field.
+## Effect rules (libraries.dev)
 
-**The Temperature Shift Rule.** Human stories may warm the charcoal ground, but the site never flips into a separate light theme.
+Budget: **max one heavy effect per viewport** (metal, gooey morph, or a
+travelling beam on a large surface); **≤ 2 beams visible at once**; ≤ 2 WebGL
+contexts page-wide (orb engine + metal-fx's single shared context).
 
-## Typography
+**metal-fx** — silver preset only (global). `MetalWord` on ONE word in the
+hero h1 (done). `MetalRing` reserved for the Contact section's single email
+action. Nothing else. Tier "high" only (≥768px, WebGL2 without perf caveat,
+≥4 cores/4 GB). Mounts once, never unmounts (metal-fx context-loss bug);
+pauses when offscreen and 9 s after last activity. Don't use proximity
+reflections, `useMetalTextReflection`, bend or cursor light (GPU readbacks).
 
-**Display Font:** Manrope (with a system sans-serif fallback)
-**Body Font:** Manrope (with a system sans-serif fallback)
-**Label/Mono Font:** JetBrains Mono (with a system monospace fallback)
+**border-beam** — always via `Beam`/`Button effect="beam"`/`Card beam`/
+`BeamRule`/`ProofBeam`; never import `border-beam` directly (its SSR `<style>`
+breaks hydration of the whole page). Tones: `ocean` (periwinkle, primary) or
+`mono` (silver). Kinds: `travel` (featured card/surface), `compact` (buttons),
+`underline` via `BeamRule` (section dividers, max one per section), `breathe`
+(quiet featured), `halo` (once, final action). Beams rest after 7 s (`rest`)
+and wake on hover/focus; use `rest={0}` only for a beam that *is* the content
+(flagship proof visual, dividers).
 
-**Character:** Manrope provides broad, precise editorial forms without separating display and body into competing personalities. JetBrains Mono appears only where numeric or code-like information benefits from tabular rhythm.
+**thinking-orbs** — the narrative object (engine-owned) plus `ThinkingDot` /
+`AmbientOrb` accents: 20px inline status glyphs, 48–120px marginal orbs.
+3–6 per page max.
 
-### Hierarchy
+**liquid-gooey** — navigation only: desktop nav hover indicator (move) and the
+mobile menu morph. Not for content.
 
-- **Display** (500, fluid 54.4–116px, 1.02): Identity and first-view statements; keep desktop hero copy to two conceptual lines.
-- **Headline** (500, fluid 40–80px, 1.08): Section declarations with substantial space before supporting detail.
-- **Title** (500, fluid 24–38.4px, 1.28): Project and verification-step names.
-- **Body** (400, 16–18px, 1.65): Explanations, usually held between 35 and 60 characters per line.
-- **Label** (500, 13px, 0.02em): Numeric or code-adjacent facts, never ornamental overlines.
+## Density: fill space with craft
 
-### Named Rules
+Use: headline scale (`t-mega`/`t-display`), orbs (`ThinkingDot size 64`,
+orb slots), hairline structure (`.hairline`, `BeamRule`), the faint 4/8/12
+column lines (see hero `.columns`), static radial "stage light" gradients,
+grain (global), pointer light (hero pattern), reveals, and the owner's real
+facts as `MetaStrip`/`StatRow`. Per viewport: 1 heavy effect + ≤ 3 small
+accents. No new text.
 
-**The Declaration Rule.** Headings state the idea directly; do not add a small introductory label above them.
+## Hero (reference implementation, `components/sections/hero`)
 
-## Layout
+Ledger (Founder · LegacyLift / Status · orb "Building full-time") top-left,
+orb slot right spanning stage + headline rows, h1 "Tanveer." (silver sweep)
+/ "Building" (serif) "LegacyLift." (metal), hairline, bio left + beam CTA,
+a 1px scroll light at far right. Mobile: ledger → h1 → rule → bio/CTA → orb.
+h1 lines are inline spans + `<br>` so the whole h1 is the single LCP candidate
+— never add `position`, `transform`, `opacity` animation or `will-change` to
+h1 descendants.
 
-The page uses a centered 1440px maximum container with fluid side padding from 24px to 88px. Desktop sections alternate broad two-column compositions, asymmetrical project groupings, and open single-column moments. Major vertical intervals range from 112px to 160px; mobile uses 72px to 96px and collapses every composition into natural reading order.
+## Performance rules
 
-The fixed visual canvas sits behind content and aligns its geometry to reserved art slots. Those slots remain sized in static and reduced-motion modes, preventing layout shifts. The header is 76px on desktop and 68px on mobile.
+- Heavy libraries are dynamic imports behind `useEffectGate` (motion full +
+  idle + near viewport + device tier). Nothing effect-related is in the LCP path.
+- No `backdrop-filter` over the orb canvas; no blend modes on big layers.
+- Looping CSS animations must pause offscreen (pattern: IO sets
+  `data-inview`, CSS sets `animation-play-state: paused`).
+- Write DOM attributes on scroll only when the value changes.
+- Scroll progress uses CSS `animation-timeline: scroll()` (no JS).
 
-## Elevation & Depth
+## Accessibility
 
-Depth is optical rather than card-based. The page uses translucent header glass, filament luminance, subtle control borders, and a single ambient glow under the primary hero action. Content surfaces stay flat; separators and temperature changes establish hierarchy.
+Skip link first; `#main` focus target. Focus: 2px `--focus`, 4px offset.
+Targets ≥ 44px. `html[data-motion]` (toggle + OS) collapses all motion;
+reveals/entrances end visible without JS. Decorative art `aria-hidden`.
+Mobile menu is a disclosure (Escape, outside click, focus return, inert when closed);
+the footer repeats navigation for no-JS.
 
-### Shadow Vocabulary
+## Do / Don't
 
-- **Action glow** (`0 18px 42px -20px rgba(194, 200, 250, 0.72)`): Used only under the first primary action.
-- **Orb depth** (`drop-shadow(0 20px 38px rgba(5, 7, 13, 0.7))`): Gives the reduced-motion poster enough separation from the field.
-
-### Named Rules
-
-**The Optical Depth Rule.** Dimensionality belongs to the reasoning object and active controls, not to stacks of floating content cards.
-
-## Shapes
-
-Most content is unboxed and rectilinear. Hairlines make divisions; 8px corners belong to compact panels and mobile navigation; 14px corners are available for larger containers. Actions and header controls use full pills. The recurring circular silhouette is reserved for the filament object and its derived project forms.
-
-## Components
-
-### Buttons
-
-- **Shape:** Full pill with a minimum 44px target.
-- **Primary:** Periwinkle fill, charcoal text, and 12px by 24px padding.
-- **Hover / Focus:** A brighter periwinkle hover and a 2px visible focus outline with 4px offset.
-- **Secondary / Ghost:** Secondary uses a charcoal fill plus hairline border; ghost stays transparent until hover.
-
-### Cards / Containers
-
-- **Corner Style:** Content generally has no enclosing card; larger containers use 14px only when a real surface is needed.
-- **Background:** Inherits the section field.
-- **Shadow Strategy:** None for ordinary content.
-- **Border:** Single hairline divisions between related facts or projects.
-- **Internal Padding:** Spacing follows the 8/16/24/32px rhythm.
-
-### Navigation
-
-The desktop header centers four plain-language anchors. Links use muted silver, 44px targets, pill hover fields, and no persistent active decoration. Mobile replaces the anchor row with a compact menu panel while preserving the separate motion control.
-
-### Reasoning Object
-
-The signature object is one Three.js filament system and one conceptual object. Its state is dormant, active-thinking, fragmented, warm/receded, or settled. Static posters preserve the same state grammar when motion or WebGL is unavailable. It is decorative and never carries essential text.
-
-## Do's and Don'ts
-
-### Do:
-
-- **Do** keep factual copy visible without JavaScript, WebGL, or motion.
-- **Do** reserve generous negative space around large declarations and optical forms.
-- **Do** use one periwinkle action as the dominant control in a viewport.
-- **Do** let project layouts vary while retaining the same silver material family.
-- **Do** honor the 44px target and visible focus treatment on every control.
-
-### Don't:
-
-- **Don't** wrap ordinary facts in repeated cards or equal feature grids.
-- **Don't** introduce unrelated accent colours or a light-theme interlude.
-- **Don't** add ornamental labels above self-explanatory headings.
-- **Don't** make essential meaning depend on animation, hover, or the canvas.
-- **Don't** duplicate the reasoning object with additional WebGL contexts.
+Do keep one periwinkle action per viewport, let the orb carry spectacle, and
+vary composition by section. Don't add filler text, repeat card grids, extra
+accent colours, a second metal word, or a hardcoded colour that skips the
+light theme.

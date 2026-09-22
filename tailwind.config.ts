@@ -94,10 +94,22 @@ const config = {
         "var(--text-mono)",
         { lineHeight: "1.5", letterSpacing: "0.02em", fontWeight: "500" },
       ],
+      /* Fluid scale steps (DESIGN.md › Typography). Prefer the .t-* role
+       * classes in CSS modules; these exist for utility-first markup. */
+      "step--2": ["var(--step--2)", { lineHeight: "1.4" }],
+      "step--1": ["var(--step--1)", { lineHeight: "1.55" }],
+      "step-0": ["var(--step-0)", { lineHeight: "1.62" }],
+      "step-1": ["var(--step-1)", { lineHeight: "1.5" }],
+      "step-2": ["var(--step-2)", { lineHeight: "1.15" }],
+      "step-3": ["var(--step-3)", { lineHeight: "1.05" }],
+      "step-4": ["var(--step-4)", { lineHeight: "0.95" }],
+      "step-5": ["var(--step-5)", { lineHeight: "0.88" }],
+      "step-6": ["var(--step-6)", { lineHeight: "0.8" }],
     },
 
     borderRadius: {
       none: "0px",
+      xs: "var(--r-xs)",
       DEFAULT: "var(--r-md)",
       sm: "var(--r-sm)",
       md: "var(--r-md)",
@@ -126,6 +138,8 @@ const config = {
     extend: {
       fontFamily: {
         sans: "var(--font-sans)",
+        display: "var(--font-display)",
+        serif: "var(--font-serif)",
         mono: "var(--font-mono)",
       },
 
@@ -142,7 +156,8 @@ const config = {
 
       maxWidth: {
         /* §3 prose measure — so `max-w-[68ch]` is never written by hand. */
-        prose: "68ch",
+        prose: "60ch",
+        narrow: "42ch",
       },
 
       transitionTimingFunction: {
@@ -150,12 +165,15 @@ const config = {
         linear: "linear",
         standard: "var(--ease-standard)",
         out: "var(--ease-out)",
+        "out-quint": "var(--ease-out-quint)",
+        spring: "var(--ease-spring)",
         "in-out": "var(--ease-in-out)",
         emphasized: "var(--ease-emphasized)",
       },
 
       transitionDuration: {
         DEFAULT: "var(--dur-base)",
+        instant: "var(--dur-instant)",
         fast: "var(--dur-fast)",
         base: "var(--dur-base)",
         slow: "var(--dur-slow)",

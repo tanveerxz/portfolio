@@ -50,7 +50,9 @@ For inquiries or feedback, feel free to reach out via:
 
 ## 📄 License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+Copyright (c) 2024-2026 Tanveer Singh. All rights reserved. This project is
+proprietary: the source is visible for reference, but no licence to copy,
+modify or reuse it is granted. See the [LICENSE](LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 

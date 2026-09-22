@@ -1,0 +1,69 @@
+.host {
+  position: relative;
+  isolation: isolate;
+}
+
+/* Static edge for every tier: a 1px hairline that the live beam rides on.
+   Painted ABOVE the content: wrapped surfaces are usually opaque. */
+.host::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px var(--hairline);
+  pointer-events: none;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  border-radius: inherit;
+}
+
+/* BorderBeam's wrapper, stretched over the content (its stroke is masked to
+   the border band, so the content stays clean). The outward "halo" kind is
+   the exception: it blooms behind the surface. */
+.layer {
+  position: absolute !important;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.host[data-beam-host="halo"] .layer {
+  z-index: 0;
+}
+
+.shape {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+}
+
+@media (forced-colors: active) {
+  .layer {
+    display: none;
+  }
+}
+
+/* ---- BeamRule ------------------------------------------------------------ */
+.rule {
+  display: block;
+  width: 100%;
+  height: 1px;
+}
+
+/* The line beam rides the bottom edge; the host hairline is the rule itself. */
+.rule::before {
+  box-shadow: none;
+  background: var(--hairline);
+}
+
+.ruleLine {
+  display: block;
+  height: 1px;
+}

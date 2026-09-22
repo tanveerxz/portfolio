@@ -11,6 +11,7 @@
 
 # next.js
 /.next/
+/.next-*/
 /out/
 
 # production
@@ -36,3 +37,6 @@ next-env.d.ts
 
 # Sentry Config File
 .sentryclirc
+
+# design tooling output (screenshots, caches, design system snapshot)
+/.impeccable/

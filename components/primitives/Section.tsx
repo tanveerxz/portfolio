@@ -23,8 +23,6 @@ export interface SectionProps {
   id: string;
   /** Rendered as this section's `<h2>`. Required. */
   title: string;
-  /** Small mono label above the heading. */
-  eyebrow?: string;
   /** Intro paragraph rendered at the §3 prose measure. */
   lead?: ReactNode;
   /** Buttons or links rendered under the header. */
@@ -46,7 +44,6 @@ export interface SectionProps {
 export function Section({
   id,
   title,
-  eyebrow,
   lead,
   actions,
   titleVisuallyHidden = false,
@@ -63,24 +60,20 @@ export function Section({
     <section
       id={id}
       aria-labelledby={headingId}
-      className={cn("relative scroll-mt-24 py-24 md:py-32", className)}
+      className={cn("section-pad relative scroll-mt-24", className)}
     >
       <div
         className={cn(
-          "mx-auto w-full max-w-6xl px-5 sm:px-8",
+          "container",
           containerClassName,
         )}
       >
         <header className={cn("flex flex-col gap-4", headerClassName)}>
-          {eyebrow ? (
-            <p className="text-mono uppercase text-tertiary">{eyebrow}</p>
-          ) : null}
-
           <h2
             id={headingId}
             className={cn(
-              "text-h2",
-              tone === "flagship" ? "text-flagship" : "text-primary",
+              "t-h2",
+              tone === "flagship" && "text-flagship",
               titleVisuallyHidden && "sr-only",
             )}
           >

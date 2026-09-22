@@ -1,7 +1,46 @@
+import { Beam } from "@/components/effects/beam/Beam";
 import { OrbPoster } from "@/components/narrative/OrbPoster";
+import { Reveal } from "@/components/effects/Reveal";
 import styles from "./Work.module.css";
 
-/** Project geometry is rendered by the shared narrative scene, never here. */
+/**
+ * A project's live link, made "alive" without any extra JS or a second
+ * focusable target: this anchor's `::after` is stretched (via CSS) to cover
+ * its whole ancestor card, so the entire card is clickable, but there is
+ * still exactly one link per project. Any other real link inside the same
+ * card (e.g. Pollen Mesh's collaborator credit) is lifted above the stretch
+ * layer with its own `z-index` in Work.module.css, so it keeps working.
+ * ArgusAI and Scoofy have no supplied link — they render no `<VisitLink>`
+ * and no disabled/placeholder link UI at all.
+ */
+function VisitLink({ href, label }: { href: string; label: string }) {
+  return (
+    <a href={href} target="_blank" rel="noreferrer noopener" className={styles.visit}>
+      {label}
+      <span className={styles.visitArrow} aria-hidden="true">
+        →
+      </span>
+      <span className="visually-hidden"> (opens in a new tab)</span>
+    </a>
+  );
+}
+
+/**
+ * Act III — fragmented. Server component.
+ *
+ * Pollen Mesh leads as the featured build, then the remaining projects in
+ * the order fixed by build/content-source.md. Each project owns one of the
+ * engine's four project orb anchors (`data-orb-project="0..3"`); the engine
+ * assigns connecting / weaving / listening / composing to 0–3, and each
+ * project below was chosen to fit that state rather than fight it:
+ *   0 connecting — Pollen Mesh links organisations without sharing raw data.
+ *   1 weaving    — HukamConnect threads many Gurdwaras into one platform.
+ *   2 listening  — ArgusAI matches spoken deliveries to purchase orders.
+ *   3 composing  — Scoofy, a storefront built one interface at a time.
+ * Geometry for those orbs is rendered by the shared narrative scene; this
+ * file only reserves the anchors and renders their static poster fallback.
+ * Every fact traces to build/content-source.md; nothing here is invented.
+ */
 export function WhatIBuild() {
   return (
     <section
@@ -12,83 +51,94 @@ export function WhatIBuild() {
     >
       <div className="container">
         <header className={styles.header}>
-          <h2 id="work-heading" className={styles.heading}>
+          <Reveal as="h2" id="work-heading" className={styles.heading}>
             What I build.
-          </h2>
+          </Reveal>
         </header>
 
-        <article className={styles.feature} aria-labelledby="pollen-heading">
-          <div className={styles.featureCopy}>
-            <h3 id="pollen-heading" className={styles.featureTitle}>
-              Pollen Mesh
-            </h3>
-            <p className={styles.featureLead}>
-              Shared threat intelligence.
-              <br />
-              Without sharing raw data.
-            </p>
-            <p className={styles.description}>
-              A privacy-preserving, federated threat-intelligence system.
-              Organisations detect coordinated attacks across company boundaries
-              by sharing only matched, hashed attack signatures, gated behind two
-              rounds of human approval.
-            </p>
-            <p className={styles.description}>
-              Built in a single day at Cambridge’s Collaborative Agent Hackathon,
-              hosted by Flower Labs.
-            </p>
-            <p className={styles.credit}>
-              Built with{" "}
-              <a href="https://www.linkedin.com/in/rxshri99">
-                Shritesh Jamulkar
-              </a>
-              , Software Engineer at Booking.com.
-            </p>
-          </div>
-          <div
-            className={`${styles.art} ${styles.featureArt}`}
-            data-orb-anchor="fragmented"
-            data-orb-project="0"
-            aria-hidden="true"
-          >
-            <OrbPoster state="fragmented" orbState="connecting" className={styles.poster} />
-          </div>
-          <div className={styles.recognition}>
-            <p className={styles.recognitionTitle}>Honourable Mention</p>
-            <p>
-              Later featured by name in Flower Labs’ official Flower Monthly
-              announcement.
-            </p>
-          </div>
-        </article>
+        <Beam
+          kind="travel"
+          tone="ocean"
+          strength={0.85}
+          radius={28}
+          className={styles.featureBeam}
+        >
+          <Reveal as="article" className={styles.feature} aria-labelledby="pollen-heading">
+            <div
+              className={`${styles.art} ${styles.featureArt}`}
+              data-orb-anchor="fragmented"
+              data-orb-project="0"
+              aria-hidden="true"
+            >
+              <OrbPoster state="fragmented" orbState="connecting" className={styles.poster} />
+            </div>
+            <div className={styles.featureCopy}>
+              <h3 id="pollen-heading" className={styles.featureTitle}>
+                Pollen Mesh
+              </h3>
+              <p className={styles.featureLead}>
+                Shared threat intelligence, without sharing raw data.
+              </p>
+              <p className={styles.description}>
+                A privacy-preserving, federated threat-intelligence system.
+                Organisations detect coordinated attacks across company
+                boundaries by sharing only matched, hashed attack signatures,
+                gated behind two rounds of human approval. Built in a single
+                day at Cambridge&rsquo;s Collaborative Agent Hackathon, hosted
+                by Flower Labs.
+              </p>
+              <p className={styles.credit}>
+                Built with{" "}
+                <a href="https://www.linkedin.com/in/rxshri99">Shritesh Jamulkar</a>,
+                Software Engineer at Booking.com.
+              </p>
+              <p className={styles.recognition}>
+                Won an Honourable Mention, later featured by name in Flower
+                Labs&rsquo; official Flower Monthly announcement.
+              </p>
+              <VisitLink href="https://flower.ai/apps/tanveer/pollen-mesh-agent" label="Visit Pollen Mesh" />
+            </div>
+          </Reveal>
+        </Beam>
 
-        <div className={styles.projectPair}>
-          <article className={styles.hukam} aria-labelledby="hukam-heading">
-            <div className={styles.projectCopy}>
-              <h3 id="hukam-heading" className={styles.projectTitle}>
+        <ol className={styles.grid}>
+          <Reveal as="li" delay={40} className={styles.card}>
+            <article aria-labelledby="hukam-heading">
+              <div
+                className={styles.art}
+                data-orb-anchor="fragmented"
+                data-orb-project="1"
+                aria-hidden="true"
+              >
+                <OrbPoster state="fragmented" orbState="weaving" className={styles.poster} />
+              </div>
+              <h3 id="hukam-heading" className={styles.cardTitle}>
                 HukamConnect
               </h3>
               <p className={styles.description}>
-                A multi-tenant platform for Gurdwaras.
+                I architected and deployed a multi-tenant platform for
+                Sikh Gurdwaras, pairing NFC hardware with a Firestore backend
+                for real-time content distribution and engagement tracking.
               </p>
               <p className={styles.usage}>
                 <span>300+ active users</span>
                 <span>2,000+ monthly visits</span>
               </p>
-            </div>
-            <div
-              className={`${styles.art} ${styles.hukamArt}`}
-              data-orb-anchor="fragmented"
-              data-orb-project="1"
-              aria-hidden="true"
-            >
-              <OrbPoster state="fragmented" orbState="weaving" className={styles.poster} />
-            </div>
-          </article>
+              <VisitLink href="https://hukamconnect.com" label="hukamconnect.com" />
+            </article>
+          </Reveal>
 
-          <article className={styles.argus} aria-labelledby="argus-heading">
-            <div className={styles.projectCopy}>
-              <h3 id="argus-heading" className={styles.projectTitle}>
+          <Reveal as="li" delay={90} className={styles.card}>
+            <article aria-labelledby="argus-heading">
+              <div
+                className={styles.art}
+                data-orb-anchor="fragmented"
+                data-orb-project="2"
+                aria-hidden="true"
+              >
+                <OrbPoster state="fragmented" orbState="listening" className={styles.poster} />
+              </div>
+              <h3 id="argus-heading" className={styles.cardTitle}>
                 ArgusAI
               </h3>
               <p className={styles.description}>
@@ -97,40 +147,35 @@ export function WhatIBuild() {
                 exceptions.
               </p>
               <p className={styles.context}>
-                Built at the {"{Tech: Europe}"} Agentic AI Hack, hosted by Conduct
-                and Google DeepMind.
+                Built at the {"{Tech: Europe}"} Agentic AI Hack, hosted by
+                Conduct and Google DeepMind.
               </p>
-            </div>
-            <div
-              className={`${styles.art} ${styles.argusArt}`}
-              data-orb-anchor="fragmented"
-              data-orb-project="2"
-              aria-hidden="true"
-            >
-              <OrbPoster state="fragmented" orbState="listening" className={styles.poster} />
-            </div>
-          </article>
-        </div>
+            </article>
+          </Reveal>
 
-        <article className={styles.scoofy} aria-labelledby="scoofy-heading">
-          <h3 id="scoofy-heading" className={styles.projectTitle}>
-            Scoofy
-          </h3>
-          <div className={styles.scoofyCopy}>
-            <p className={styles.description}>An AI e-commerce platform.</p>
-            <p className={styles.context}>
-              Led frontend development for eight months.
-            </p>
-          </div>
-          <div
-            className={`${styles.art} ${styles.scoofyArt}`}
-            data-orb-anchor="fragmented"
-            data-orb-project="3"
-            aria-hidden="true"
-          >
-            <OrbPoster state="fragmented" orbState="composing" className={styles.poster} />
-          </div>
-        </article>
+          <Reveal as="li" delay={140} className={styles.card}>
+            <article aria-labelledby="scoofy-heading">
+              <div
+                className={styles.art}
+                data-orb-anchor="fragmented"
+                data-orb-project="3"
+                aria-hidden="true"
+              >
+                <OrbPoster state="fragmented" orbState="composing" className={styles.poster} />
+              </div>
+              <h3 id="scoofy-heading" className={styles.cardTitle}>
+                Scoofy
+              </h3>
+              <p className={styles.description}>
+                I owned the frontend architecture for this AI e-commerce
+                platform, rebuilding it in Next.js and TypeScript, closing a
+                six-month backlog in four, and shipping LLM-powered
+                recommendations and real-time data flows.
+              </p>
+              <p className={styles.context}>Head of Frontend Development · Feb–Oct 2025</p>
+            </article>
+          </Reveal>
+        </ol>
       </div>
     </section>
   );

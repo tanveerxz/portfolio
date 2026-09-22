@@ -1,27 +1,26 @@
 "use client";
 
-import { BorderBeam } from "border-beam";
 import type { ReactNode } from "react";
 
+import { Beam } from "./beam/Beam";
+
+/**
+ * The flagship verification visual's edge: a slow periwinkle light travelling
+ * the frame (one 7s lap). Thin preset over <Beam>
+ * kept for the Flagship section's existing import. New code uses <Beam>.
+ */
 export function ProofBeam({
   children,
   className,
+  radius = 28,
 }: {
   children: ReactNode;
   className?: string;
+  radius?: number;
 }) {
   return (
-    <BorderBeam
-      size="pulse-inner"
-      colorVariant="mono"
-      theme="dark"
-      staticColors
-      strength={0.72}
-      duration={3.8}
-      borderRadius={28}
-      className={className}
-    >
+    <Beam kind="travel" tone="ocean" strength={0.85} duration={7} radius={radius} rest={0} className={className}>
       {children}
-    </BorderBeam>
+    </Beam>
   );
 }

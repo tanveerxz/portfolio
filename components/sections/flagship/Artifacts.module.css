@@ -1,0 +1,677 @@
+/* ==========================================================================
+   The product's demo surfaces in the site's silver language.
+   Default = STATIC final state (no JS, reduced motion): every row agrees,
+   every gate is ticked. LIVE (html[data-motion="full"], ≥ 560px tall) adds
+   the "before" state and replays it each time a chapter becomes active.
+   Transforms and opacity only.
+   ========================================================================== */
+
+.artifact {
+  --pad: var(--frame-pad, 24px);
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  column-gap: 16px;
+  padding: var(--pad);
+  height: 100%;
+  color: var(--text-secondary);
+  font-size: var(--step--1);
+}
+
+/* ---- Orb cells ----------------------------------------------------------- */
+.orbCell {
+  position: relative;
+  grid-area: 1 / 1;
+  min-width: 0;
+  min-height: clamp(168px, 24vw, 260px);
+}
+
+.orbCell[data-cell="candidate"] {
+  grid-area: 1 / 2;
+}
+
+/* .candidate is the engine anchor (components/narrative/README.md §2): it
+   only reserves the space, the narrative layer paints the actual orb
+   frame-synced with the legacy orb at full opacity. */
+.staticOrb,
+.candidatePoster,
+.candidate {
+  position: absolute;
+  inset: 0 0 26px;
+}
+
+.orbLabel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0;
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  letter-spacing: var(--tracking-label);
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.mono,
+.node,
+.relation,
+.owner,
+.decisionFile,
+.decisionNote,
+.codePane,
+.replay,
+.signed,
+.gates {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.check {
+  display: inline-block;
+  width: 0.95em;
+  height: 0.95em;
+  vertical-align: -0.1em;
+  color: var(--success);
+}
+
+.detail {
+  grid-area: 2 / 1 / 3 / 3;
+  min-width: 0;
+  align-self: end;
+  padding-top: 16px;
+}
+
+/* ---- 01 Codebase map ------------------------------------------------------ */
+.links {
+  position: relative;
+  grid-area: 1 / 2;
+  display: grid;
+  align-content: center;
+  gap: 14px;
+  margin: 0;
+  padding: 0 0 26px;
+  list-style: none;
+}
+
+.links li {
+  position: relative;
+  display: grid;
+  justify-items: start;
+  gap: 4px;
+}
+
+/* A hairline from the program (the orb) to each program it touches. */
+.links li::before {
+  content: "";
+  position: absolute;
+  top: calc(100% - 14px);
+  right: calc(100% + 10px);
+  width: clamp(24px, 6vw, 96px);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--hairline-strong));
+  transform-origin: 100% 50%;
+}
+
+.relation {
+  color: var(--text-tertiary);
+  font-size: var(--step--2);
+  letter-spacing: 0.04em;
+}
+
+.node {
+  padding: 6px 12px;
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--r-full);
+  background: rgb(var(--panel-rgb) / 0.8);
+  color: var(--text-primary);
+  font-size: var(--step--2);
+  letter-spacing: 0.04em;
+}
+
+.detailHeading {
+  margin: 0 0 10px;
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  font-weight: 500;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.rules {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--hairline);
+}
+
+.rules li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--hairline);
+  color: var(--text-primary);
+  line-height: 1.35;
+}
+
+.owner {
+  flex: none;
+  color: var(--accent);
+  font-size: var(--step--2);
+  letter-spacing: 0.04em;
+}
+
+/* ---- 02 Review ------------------------------------------------------------ */
+.decision {
+  grid-area: 1 / 2;
+  display: grid;
+  align-content: center;
+  justify-items: start;
+  gap: 14px;
+  padding-bottom: 26px;
+  min-width: 0;
+}
+
+.decisionFile {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: var(--step--2);
+  letter-spacing: 0.06em;
+}
+
+.choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.choices span {
+  position: relative;
+  padding: 7px 14px;
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--r-full);
+  color: var(--text-secondary);
+  font-size: var(--step--2);
+  font-weight: 540;
+  line-height: 1.2;
+  isolation: isolate;
+}
+
+.choices span[data-choice="approve"] {
+  color: var(--text-inverse);
+  border-color: transparent;
+}
+
+.choices span[data-choice="approve"]::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--accent);
+}
+
+.decisionNote {
+  margin: 0;
+  color: var(--text-tertiary);
+  font-size: var(--step--2);
+}
+
+.code {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 10px;
+}
+
+.codePane {
+  min-width: 0;
+  margin: 0;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+  background: rgb(var(--deep-rgb) / 0.6);
+  overflow: hidden;
+}
+
+.codePane figcaption {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--hairline);
+  color: var(--text-tertiary);
+  font-size: var(--step--2);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.codePane pre {
+  display: grid;
+  margin: 0;
+  padding: 10px 12px 12px;
+  font-size: 0.75rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  overflow: hidden;
+}
+
+.codePane code {
+  font: inherit;
+  white-space: pre;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.migrated pre {
+  color: var(--text-primary);
+}
+
+/* ---- 03 Replay ------------------------------------------------------------ */
+.replay {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+  line-height: 1.2;
+}
+
+.replay th,
+.replay td {
+  padding: 9px 0;
+  border-bottom: 1px solid var(--hairline);
+  text-align: left;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.replay thead th {
+  padding-top: 0;
+  color: var(--text-tertiary);
+  font-size: var(--step--2);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.replay tbody th {
+  color: var(--text-primary);
+}
+
+.replay tbody td {
+  color: var(--text-secondary);
+}
+
+.replay .num {
+  text-align: right;
+}
+
+.replay abbr {
+  text-decoration: none;
+}
+
+.kindCol {
+  padding-left: 14px !important;
+}
+
+.delta {
+  position: relative;
+  width: 6.5em;
+}
+
+.agree {
+  color: var(--success);
+}
+
+.scan {
+  position: absolute;
+  top: 50%;
+  right: 1.2em;
+  width: 3em;
+  height: 2px;
+  margin-top: -1px;
+  opacity: 0;
+  background: radial-gradient(circle, var(--accent) 45%, transparent 55%) 0 0 / 0.6em 2px repeat-x;
+}
+
+/* ---- 04 Attest -------------------------------------------------------------- */
+.sealCell {
+  grid-area: 1 / 2;
+  display: grid;
+  align-content: center;
+  padding-bottom: 26px;
+  min-width: 0;
+}
+
+.sealBeam {
+  border-radius: 20px;
+}
+
+.seal {
+  display: grid;
+  gap: 6px;
+  padding: clamp(16px, 2vw, 28px);
+  border-radius: 20px;
+  background:
+    radial-gradient(90% 90% at 20% 0%, rgb(var(--glow-rgb) / 0.1), transparent 70%),
+    rgb(var(--raised-rgb) / 0.92);
+}
+
+.seal p {
+  margin: 0;
+}
+
+.score {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 1rem + 2.6vw, 3.6rem);
+  font-weight: 520;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+.score .check {
+  width: 0.5em;
+  height: 0.5em;
+}
+
+.scoreLabel {
+  color: var(--text-secondary);
+}
+
+.signed {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px !important;
+  color: var(--text-tertiary);
+  font-size: var(--step--2);
+  letter-spacing: 0.04em;
+}
+
+.signed svg {
+  width: 12px;
+  height: 12px;
+}
+
+.gates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin: 0;
+  padding: 12px 0;
+  border-block: 1px solid var(--hairline);
+  list-style: none;
+  color: var(--text-primary);
+  font-size: var(--step--2);
+  letter-spacing: 0.04em;
+}
+
+.gates li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ready {
+  margin: 12px 0 0;
+  color: var(--text-secondary);
+}
+
+/* ==========================================================================
+   LIVE
+   ========================================================================== */
+@media (min-height: 560px) {
+  :global(html[data-motion="full"]) .artifact {
+    grid-template-rows: minmax(0, 11fr) minmax(0, 9fr);
+  }
+
+  /* The shared narrative orb occupies the first orb cell. */
+  :global(html[data-motion="full"]) .staticOrb {
+    display: none;
+  }
+
+  :global(html[data-motion="full"]) .orbCell {
+    min-height: 0;
+  }
+
+  /* ---- Before states (chapter not active) --------------------------------- */
+  :global(html[data-motion="full"]) [data-artifact] .orbLabel,
+  :global(html[data-motion="full"]) [data-artifact] .node,
+  :global(html[data-motion="full"]) [data-artifact] .relation,
+  :global(html[data-motion="full"]) [data-artifact] .rules li,
+  :global(html[data-motion="full"]) [data-artifact] .decision > *,
+  :global(html[data-motion="full"]) [data-artifact] .codePane,
+  :global(html[data-motion="full"]) [data-artifact] .replay tbody tr,
+  :global(html[data-motion="full"]) [data-artifact] .agree,
+  :global(html[data-motion="full"]) [data-artifact] .gates li,
+  :global(html[data-motion="full"]) [data-artifact] .ready,
+  :global(html[data-motion="full"]) [data-artifact] .sealBeam,
+  :global(html[data-motion="full"]) [data-artifact="replay"] .orbCell[data-cell="candidate"] {
+    opacity: 0;
+    transition:
+      opacity 360ms var(--ease-out),
+      transform 700ms var(--ease-out);
+  }
+
+  :global(html[data-motion="full"]) [data-artifact] .links li::before {
+    opacity: 0;
+    transform: scaleX(0);
+    transition: opacity 300ms var(--ease-out), transform 700ms var(--ease-out);
+  }
+
+  :global(html[data-motion="full"]) [data-artifact] .node,
+  :global(html[data-motion="full"]) [data-artifact] .rules li,
+  :global(html[data-motion="full"]) [data-artifact] .decision > *,
+  :global(html[data-motion="full"]) [data-artifact] .replay tbody tr,
+  :global(html[data-motion="full"]) [data-artifact] .gates li {
+    transform: translate3d(0, 10px, 0);
+  }
+
+  :global(html[data-motion="full"]) [data-artifact] .codePane {
+    transform: translate3d(0, 16px, 0);
+  }
+
+  :global(html[data-motion="full"]) [data-artifact] .migrated code {
+    opacity: 0;
+    transform: translate3d(-8px, 0, 0);
+    transition: opacity 300ms var(--ease-out), transform 500ms var(--ease-out);
+  }
+
+  :global(html[data-motion="full"]) [data-artifact] .choices span[data-choice="approve"] {
+    color: var(--text-secondary);
+    border-color: var(--hairline-strong);
+    transition: color 300ms var(--ease-out);
+  }
+
+  :global(html[data-motion="full"]) [data-artifact] .choices span[data-choice="approve"]::before {
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 300ms var(--ease-out), transform 500ms var(--ease-spring, var(--ease-out));
+  }
+
+  :global(html[data-motion="full"]) [data-artifact] .sealBeam {
+    transform: scale(0.94);
+  }
+
+  :global(html[data-motion="full"]) [data-artifact="replay"] .orbCell[data-cell="candidate"] {
+    transform: translate3d(-24px, 0, 0);
+    transition: opacity 700ms var(--ease-out), transform 1100ms var(--ease-out);
+  }
+
+  /* ---- 01 active ------------------------------------------------------------ */
+  :global(html[data-motion="full"] .verification-stage[data-verification-phase="0"]) [data-artifact="map"] .orbLabel,
+  :global(html[data-motion="full"] .verification-stage[data-verification-phase="0"]) [data-artifact="map"] .relation,
+  :global(html[data-motion="full"] .verification-stage[data-verification-phase="0"]) [data-artifact="map"] .node,
+  :global(html[data-motion="full"] .verification-stage[data-verification-phase="0"]) [data-artifact="map"] .rules li {
+    opacity: 1;
+    transform: none;
+  }
+
+  :global(html[data-motion="full"] .verification-stage[data-verification-phase="0"]) [data-artifact="map"] .links li::before {
+    opacity: 1;
+    transform: none;
+    transition-delay: calc(200ms + var(--i) * 160ms);
+  }
+
+  :global(html[data-motion="full"] .verification-stage[data-verification-phase="0"]) [data-artifact="map"] .relation,
+  :global(html[data-motion="full"] .verification-stage[data-verification-phase="0"]) [data-artifact="map"] .node {
+    transition-delay: calc(420ms + var(--i) * 160ms);
+  }
+
+  :global(html[data-motion="full"] .verification-stage[data-verification-phase="0"]) [data-artifact="map"] .rules li {
+    transition-delay: calc(900ms + var(--i) * 180ms);
+  }
+
+  /* ---- 02 active ------------------------------------------------------------ */
+  :global(html[data-motion="full"] .verification-stage[data-verification-phase="1"]) [data-artifact="review"] .codePane,
+  :global(html[data-motion="full"] .verification-stage[data-verification-phase="1"]) [data-artifact="review"] .decision > *,
+  :global(html[data-motion="full"] .verification-stage[data-verification-phase="1"]) [data-artifact="review"] .migrated code {
+    opacity: 1;
+    transform: none;
+  }
+
+  :global(html[data-motion="full"] .verification-stage[data-verification-phase="1"]) [data-artifact="review"] .codePane + .codePane {
+    transition-delay: 160ms;
+  }
+
+  :global(html[data-motion="full"] .verification-stage[data-verification-phase="1"]) [data-artifact="review"] .migrated code {
+    transition-delay: calc(420ms + var(--i) * 170ms);
+  }
+
+  :global(html[data-motion="full"] .verification-stage[data-verification-phase="1"]) [data-artifact="review"] .decision > * {
+    transition-delay: 300ms;
+  }
+
+  /* The person approves once the rewrite has landed. */
+  :global(html[data-motion="full"] .verification-stage[data-verification-phase="1"]) [data-artifact="review"] .choices span[data-choice="approve"] {
+    color: var(--text-inverse);
+    transition-delay: 1500ms;
+  }
+
+  :global(html[data-motion="full"] .verification-stage[data-verification-phase="1"]) [data-artifact="review"] .choices span[data-choice="approve"]::before {
+    opacity: 1;
+    transform: none;
+    transition-delay: 1500ms;
+  }
+
+  /* ---- 03 active: rows replay, then agree field by field ------------------------ */
+  :global(html[data-motion="full"] .verification-stage[data-verification-phase="2"]) [data-artifact="replay"] .orbLabel,
+  :global(html[data-motion="full"] .verification-stage[data-verification-phase="2"]) [data-artifact="replay"] .orbCell[data-cell="candidate"],
+  :global(html[data-motion="full"] .verification-stage[data-verification-phase="2"]) [data-artifact="replay"] .replay tbody tr,
+  :global(html[data-motion="full"] .verification-stage[data-verification-phase="2"]) [data-artifact="replay"] .agree {
+    opacity: 1;
+    transform: none;
+  }
+
+  :global(html[data-motion="full"] .verification-stage[data-verification-phase="2"]) [data-artifact="replay"] .replay tbody tr {
+    transition-delay: calc(250ms + var(--i) * 90ms);
+  }
+
+  :global(html[data-motion="full"] .verification-stage[data-verification-phase="2"]) [data-artifact="replay"] .agree {
+    transition-delay: calc(1000ms + var(--i) * 420ms);
+  }
+
+  :global(html[data-motion="full"] .verification-stage[data-verification-phase="2"]) [data-artifact="replay"] .scan {
+    animation: scan 420ms steps(1, end) calc(700ms + var(--i) * 420ms) 1 both;
+  }
+
+  /* ---- 04 active -------------------------------------------------------------- */
+  :global(html[data-motion="full"] .verification-stage[data-verification-phase="3"]) [data-artifact="attest"] .sealBeam,
+  :global(html[data-motion="full"] .verification-stage[data-verification-phase="3"]) [data-artifact="attest"] .gates li,
+  :global(html[data-motion="full"] .verification-stage[data-verification-phase="3"]) [data-artifact="attest"] .ready {
+    opacity: 1;
+    transform: none;
+  }
+
+  :global(html[data-motion="full"] .verification-stage[data-verification-phase="3"]) [data-artifact="attest"] .sealBeam {
+    transition-delay: 200ms;
+    transition-duration: 600ms, 1000ms;
+  }
+
+  :global(html[data-motion="full"] .verification-stage[data-verification-phase="3"]) [data-artifact="attest"] .gates li {
+    transition-delay: calc(600ms + var(--i) * 110ms);
+  }
+
+  :global(html[data-motion="full"] .verification-stage[data-verification-phase="3"]) [data-artifact="attest"] .ready {
+    transition-delay: 1300ms;
+  }
+}
+
+/* A dotted "replaying" dash that shows while its row is being compared. */
+@keyframes scan {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* ---- Narrow frames ---------------------------------------------------------- */
+@media (max-width: 899px) {
+  .code {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .codePane figcaption {
+    padding: 6px 10px;
+  }
+
+  .codePane pre {
+    padding: 6px 10px 8px;
+    font-size: 0.7rem;
+    line-height: 1.5;
+  }
+
+  .kindCol {
+    display: none;
+  }
+
+  .replay th,
+  .replay td {
+    padding: 7px 0;
+  }
+}
+
+@media (max-width: 899px) and (min-height: 560px) {
+  :global(html[data-motion="full"]) .codePane code:nth-child(n + 4) {
+    display: none;
+  }
+}
+
+@media (max-height: 760px) and (min-height: 560px) {
+  :global(html[data-motion="full"]) .replay tbody tr:nth-child(n + 4) {
+    display: none;
+  }
+
+  :global(html[data-motion="full"]) .codePane code:nth-child(n + 4) {
+    display: none;
+  }
+
+  :global(html[data-motion="full"]) .ready {
+    display: none;
+  }
+}
+
+@media (max-width: 420px) {
+  .artifact {
+    column-gap: 10px;
+  }
+
+  .choices span {
+    padding: 6px 10px;
+  }
+
+  .node {
+    padding: 5px 9px;
+  }
+
+  .links li::before {
+    width: 18px;
+  }
+}

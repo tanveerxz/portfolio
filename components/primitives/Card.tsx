@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import { Beam, type BeamTone } from "@/components/effects/beam/Beam";
 import { cn } from "@/lib/utils";
 import {
   Surface,
@@ -49,6 +50,12 @@ export interface CardProps {
   padding?: SurfacePadding;
   /** Adds a hover affordance. Only ever changes chrome, never reveals content. */
   interactive?: boolean;
+  /**
+   * Border-beam treatment (DESIGN.md › Effects › border-beam). "travel" for the
+   * ONE featured card in a viewport, "breathe" for a quieter featured surface.
+   */
+  beam?: "travel" | "breathe";
+  beamTone?: BeamTone;
   className?: string;
   contentClassName?: string;
 }
@@ -66,10 +73,12 @@ export function Card({
   elevation,
   padding = "md",
   interactive = false,
+  beam,
+  beamTone = "ocean",
   className,
   contentClassName,
 }: CardProps) {
-  return (
+  const card = (
     <Surface
       as={as}
       tone={tone}
@@ -115,5 +124,12 @@ export function Card({
         ) : null}
       </div>
     </Surface>
+  );
+
+  if (!beam) return card;
+  return (
+    <Beam kind={beam} tone={beamTone} strength={0.85} duration={beam === "travel" ? 6 : undefined} radius={20}>
+      {card}
+    </Beam>
   );
 }

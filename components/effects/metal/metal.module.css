@@ -1,0 +1,119 @@
+/* ---- MetalWord ---------------------------------------------------------- */
+/* Inline and NOT positioned: a positioned inline gets its own paint layer and
+   Chrome would then score it as a separate LCP text candidate, splitting the
+   heading. Vertical padding on an inline box extends the painted background
+   (no glyph cropping with background-clip) without touching the line box. */
+.word {
+  display: inline;
+  padding-block: 0.08em 0.2em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* The static material: silver-lit glyphs. Exactly what users without WebGL2,
+   with reduced motion, on phones or before idle see. */
+.word[data-fallback="silver"] {
+  color: var(--text-primary);
+  background: var(--silver-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Placed in JS against the containing block (see placeLayer). */
+.textLayer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  opacity: 0;
+  animation: metal-in var(--dur-choreo) var(--ease-out) 120ms forwards;
+}
+
+/* ---- MetalRing ---------------------------------------------------------- */
+.ring {
+  position: relative;
+  display: inline-flex;
+  border-radius: var(--r-full);
+  isolation: isolate;
+}
+
+/* Static ring: a silver hairline gradient that reads as brushed metal. */
+.ring::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  padding: 1px;
+  border-radius: inherit;
+  background: var(--silver-edge);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  pointer-events: none;
+  transition: opacity var(--dur-slow) var(--ease-out);
+}
+
+.ring > :first-child {
+  position: relative;
+  z-index: 1;
+}
+
+.ringLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0;
+  animation: metal-in var(--dur-slow) var(--ease-out) forwards;
+}
+
+.textLayer[data-active="false"],
+.ringLayer[data-active="false"] {
+  visibility: hidden;
+}
+
+/* ---- metal-fx root normalisation ---------------------------------------- */
+.bare:global(.metal-fx-root) {
+  display: block;
+  background: transparent !important;
+}
+
+.bare:global(.metal-fx-root)::before,
+.bare:global(.metal-fx-root)::after {
+  box-shadow: none !important;
+}
+
+.bare :global(.metal-fx-inner) {
+  display: none !important;
+}
+
+.bare :global(.metal-fx-content) {
+  width: 100%;
+  height: 100%;
+}
+
+.shape {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.pill {
+  border-radius: 9999px;
+}
+
+@keyframes metal-in {
+  to {
+    opacity: 1;
+  }
+}
+
+@media (forced-colors: active) {
+  .textLayer,
+  .ringLayer {
+    display: none;
+  }
+}

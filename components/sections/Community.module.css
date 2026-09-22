@@ -1,9 +1,413 @@
-.section{position:relative;min-height:108svh;padding-block:clamp(122px,13vw,190px);background:#181715;color:var(--text-primary);scroll-margin-top:96px;overflow:clip}.section::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 78% 36%,rgba(230,196,155,.08),transparent 32%)}
-.container{position:relative;z-index:1;box-sizing:border-box;width:100%;max-width:1600px;margin-inline:auto;padding-inline:var(--container-pad)}
-.heading{max-width:12ch;margin:0 0 clamp(94px,11vw,156px);font-family:var(--font-display);font-size:clamp(4rem,8.5vw,9rem);font-weight:500;line-height:.86;letter-spacing:-.055em;text-wrap:balance}
-.leadership{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(340px,.65fr);gap:clamp(68px,9vw,148px);align-items:start}
-.organisation{margin:0 0 12px;font-family:var(--font-display);font-size:clamp(2rem,3.4vw,3.8rem);font-weight:500;line-height:1;letter-spacing:-.04em}.role,.storyText{color:#c1bdb7;font-size:1.0625rem;line-height:1.65}.role{margin:0}.statement{max-width:20ch;margin:clamp(52px,6vw,84px) 0 44px;font-family:var(--font-display);font-size:clamp(2.4rem,4.7vw,5.25rem);font-weight:440;line-height:1.02;letter-spacing:-.045em;text-wrap:pretty}
-.event{display:grid;grid-template-columns:.72fr .72fr 1fr;margin:0;border-top:1px solid rgba(224,229,244,.16)}.event div{padding:20px 24px 0 0}.event div+div{padding-left:24px;border-left:1px solid rgba(224,229,244,.16)}.event dt{color:#938f89;font-family:var(--font-mono);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase}.event dd{margin:8px 0 0;color:#d1cdc7;font-size:clamp(1rem,1.3vw,1.24rem);line-height:1.4}
-.support{display:grid;grid-template-rows:minmax(280px,1fr) auto;gap:46px;min-height:620px}.orbSlot{position:relative;width:min(100%,390px);aspect-ratio:1;justify-self:end;pointer-events:none}.orbSlot::before{content:"";position:absolute;inset:8%;border:1px solid rgba(230,196,155,.1);border-radius:50%}.story{padding-top:28px;border-top:1px solid rgba(224,229,244,.16)}.storyHeading{margin:0 0 18px;font-family:var(--font-display);font-size:clamp(1.8rem,2.6vw,2.8rem);font-weight:500;line-height:1.1;letter-spacing:-.035em}.storyText{max-width:36ch;margin:0;text-wrap:pretty}
-@media(max-width:900px){.section{min-height:auto}.leadership{grid-template-columns:1fr;gap:94px}.support{grid-template-columns:minmax(0,1fr) minmax(180px,.45fr);grid-template-rows:auto;min-height:auto;align-items:end}.orbSlot{grid-column:2;grid-row:1;width:100%}.story{grid-column:1;grid-row:1}}
-@media(max-width:620px){.section{padding-block:96px}.heading{margin-bottom:84px;font-size:clamp(4rem,19vw,6.2rem)}.statement{margin-top:42px;font-size:clamp(2.55rem,12vw,4.2rem)}.event{grid-template-columns:1fr}.event div{padding:18px 0}.event div+div{padding-left:0;border-top:1px solid rgba(224,229,244,.12);border-left:0}.support{grid-template-columns:1fr;gap:42px}.orbSlot{grid-column:1;grid-row:1;width:min(88vw,340px);justify-self:start}.story{grid-column:1;grid-row:2}}
+/* ==========================================================================
+   Community — Act IV (warm). See DESIGN.md › Colors › Temperature Shift Rule.
+   Never give this section an opaque background beyond the warm field itself:
+   the narrative canvas is fixed behind <main> and the orb anchor must stay
+   visible through it.
+   ========================================================================== */
+.section {
+  position: relative;
+  padding-block: clamp(96px, 10vw, 148px);
+  background: var(--surface-warm);
+  color: var(--text-primary);
+  scroll-margin-top: 96px;
+  overflow: clip;
+}
+
+.section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 78% 36%, rgb(var(--warm-rgb) / 0.08), transparent 32%);
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--container-max, 1600px);
+  margin-inline: auto;
+  padding-inline: var(--container-pad);
+}
+
+.heading {
+  max-width: 12ch;
+  margin: 0 0 clamp(72px, 8vw, 120px);
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 8.5vw, 9rem);
+  font-weight: 500;
+  line-height: 0.86;
+  letter-spacing: -0.055em;
+  text-wrap: balance;
+}
+
+.leadership {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(420px, 1fr);
+  gap: clamp(56px, 6vw, 96px);
+  align-items: stretch;
+}
+
+.organisation {
+  margin: 0 0 12px;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3.4vw, 3.8rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.role {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+}
+
+.statement {
+  max-width: 20ch;
+  margin: clamp(40px, 5vw, 64px) 0 36px;
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 4.7vw, 5.25rem);
+  font-weight: 440;
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+  text-wrap: pretty;
+}
+
+/* ---- The pass: event facts wrapped in a slow travelling border-beam ------ */
+.pass {
+  display: block;
+  margin-top: 8px;
+}
+
+.event {
+  position: relative;
+  display: grid;
+  grid-template-columns: 0.72fr 0.72fr 1fr;
+  margin: 0;
+  padding: 26px 30px;
+  background: rgb(var(--deep-rgb) / 0.32);
+}
+
+.event div {
+  padding: 0 24px 0 0;
+}
+
+.event div + div {
+  padding-left: 24px;
+  border-left: 1px solid var(--hairline);
+}
+
+.event dt {
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.event dd {
+  margin: 10px 0 0;
+  color: var(--text-primary);
+  font-size: clamp(1.05rem, 1.4vw, 1.3rem);
+  line-height: 1.4;
+}
+
+/* Ticket-stub notches punched through the beam's edge. Decorative, no text. */
+.event::before,
+.event::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--surface-warm);
+  box-shadow: inset 0 0 0 1px var(--hairline);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.event::before {
+  left: -8px;
+}
+
+.event::after {
+  right: -8px;
+}
+
+/* ---- Visual column: the 100-seat field, hub-centred on the shared orb --- */
+.visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+}
+
+.stage {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  aspect-ratio: 1;
+}
+
+/* A 10x10 field: one dot per developer, minus the centre 4x4 left open for
+   the hub. Visible at full opacity by default (no JS/motion dependency);
+   under full motion each dot fades/scales in with an index-based stagger
+   once the shared reveal system marks the grid as near-viewport. */
+.seats {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(10, 1fr);
+  gap: clamp(6px, 1.6vw, 16px);
+}
+
+.seat,
+.seatGap {
+  aspect-ratio: 1;
+  border-radius: 50%;
+}
+
+.seat {
+  background: var(--seat);
+  opacity: 0.78;
+  transform: none;
+}
+
+.seat:nth-child(5n) {
+  opacity: 0.95;
+}
+
+.seat:nth-child(7n) {
+  opacity: 0.6;
+}
+
+:global(html[data-motion="full"]) .seats[data-reveal] .seat {
+  opacity: 0;
+  transform: scale(0.25);
+  transition:
+    opacity 620ms var(--ease-out) calc(var(--i, 0) * 16ms),
+    transform 620ms var(--ease-out) calc(var(--i, 0) * 16ms);
+}
+
+:global(html[data-motion="full"]) .seats[data-reveal][data-revealed] .seat:nth-child(5n) {
+  opacity: 0.95;
+}
+
+:global(html[data-motion="full"]) .seats[data-reveal][data-revealed] .seat:nth-child(7n) {
+  opacity: 0.6;
+}
+
+:global(html[data-motion="full"]) .seats[data-reveal][data-revealed] .seat {
+  opacity: 0.78;
+  transform: none;
+}
+
+/* The hub: where the reasoning object sits, centred inside the seat ring. */
+.hub {
+  position: absolute;
+  top: 30%;
+  left: 30%;
+  width: 40%;
+  height: 40%;
+}
+
+.hub::before {
+  content: "";
+  position: absolute;
+  inset: -18%;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(var(--warm-rgb) / 0.16) 0%, rgb(var(--warm-rgb) / 0.05) 46%, transparent 72%);
+}
+
+.orbSlot {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.orbSlot :global([data-orb-poster]) {
+  width: 100%;
+  height: 100%;
+}
+
+/* A few thin lines from the hub toward the ring — the object "connecting"
+   the seats, echoed at human scale. Decorative, gently pulsing under full
+   motion; a static, visible line otherwise. */
+.link {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--len, 50%);
+  height: 1px;
+  transform-origin: 0 50%;
+  transform: rotate(var(--rot, 0deg));
+  background: linear-gradient(90deg, color-mix(in srgb, var(--warning) 65%, transparent), transparent);
+  opacity: 0.5;
+}
+
+:global(html[data-motion="full"]) .link {
+  animation: link-pulse 3.6s var(--ease-in-out, ease-in-out) var(--d, 0s) infinite;
+}
+
+/* Paused far offscreen, and while the person holds the lines at opacity 0
+   (!important beats the animation, so the pause is invisible). Changes are
+   rare (IntersectionObserver), so this :has() is not on a hot path. */
+.hub:has([data-near="false"]) .link,
+.hub:has([data-morph="person"]) .link {
+  animation-play-state: paused;
+}
+
+@keyframes link-pulse {
+  0%,
+  100% {
+    opacity: 0.22;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* ==========================================================================
+   Tablet / narrow desktop
+   ========================================================================== */
+@media (max-width: 900px) {
+  .leadership {
+    grid-template-columns: 1fr;
+    gap: 72px;
+  }
+
+  .visual {
+    order: -1;
+  }
+
+  .stage {
+    max-width: 420px;
+    margin-inline: auto;
+  }
+}
+
+/* ==========================================================================
+   Mobile
+   ========================================================================== */
+@media (max-width: 620px) {
+  .section {
+    padding-block: 88px;
+  }
+
+  .heading {
+    margin-bottom: 64px;
+    font-size: clamp(4rem, 19vw, 6.2rem);
+  }
+
+  .statement {
+    margin-top: 36px;
+    font-size: clamp(2.55rem, 12vw, 4.2rem);
+  }
+
+  .event {
+    grid-template-columns: 1fr;
+    padding: 22px 24px;
+  }
+
+  .event div {
+    padding: 14px 0;
+  }
+
+  .event div + div {
+    padding-left: 0;
+    border-top: 1px solid var(--hairline);
+    border-left: 0;
+  }
+
+  .event::before,
+  .event::after {
+    display: none;
+  }
+
+  .stage {
+    max-width: 340px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link {
+    animation: none;
+  }
+}
+
+/* Hub morph: the orb gathers, then resolves into a dotted person, one of
+   the hundred. Final state (person) is the default, so no-JS and reduced
+   motion show it; full motion starts on the orb and morphs on reveal. */
+.morph {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+
+.morphOrb,
+.person {
+  grid-area: 1 / 1;
+  width: 78%;
+  height: 78%;
+}
+
+.morphOrb {
+  opacity: 0;
+  transform: scale(0.35);
+}
+
+.person circle {
+  fill: var(--community-person);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+:global(html[data-motion="full"]) .morph[data-morph] .person circle {
+  transition-property: opacity, transform;
+}
+
+/* Away (or not yet reached): the orb, gathering. The person dissolves quickly
+   in reverse order, then the orb returns. */
+:global(html[data-motion="full"]) .morph[data-morph="orb"] .morphOrb {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.6s var(--ease-out) 0.35s, transform 0.8s var(--ease-out) 0.35s;
+}
+
+:global(html[data-motion="full"]) .morph[data-morph="orb"] .person circle {
+  opacity: 0;
+  transform: scale(0);
+  transition-duration: 0.3s, 0.35s;
+  transition-timing-function: var(--ease-out);
+  transition-delay: calc((var(--n, 120) - var(--i)) * 2ms);
+}
+
+/* In view: the orb holds for a beat, then resolves into one of the hundred. */
+:global(html[data-motion="full"]) .morph[data-morph="person"] .morphOrb {
+  opacity: 0;
+  transform: scale(0.35);
+  transition: opacity 0.6s var(--ease-out) 0.9s, transform 0.8s var(--ease-out) 0.9s;
+}
+
+:global(html[data-motion="full"]) .morph[data-morph="person"] .person circle {
+  opacity: 0.92;
+  transform: none;
+  transition-duration: 0.5s, 0.7s;
+  transition-timing-function: var(--ease-out), var(--ease-spring, cubic-bezier(0.34, 1.56, 0.64, 1));
+  transition-delay: calc(1.25s + var(--i) * 9ms);
+}
+
+/* Once the person has formed, the connecting lines step back. */
+.hub:has([data-morph="person"]) .link {
+  opacity: 0 !important;
+  transition: opacity 0.6s var(--ease-out) 1.3s;
+}

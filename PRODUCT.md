@@ -20,7 +20,7 @@ User-prescribed continuous five-act narrative, Three.js, Lenis, GSAP ScrollTrigg
 
 ## Evidence on Hand
 
-Owner-supplied content source. Launch film described but URL not supplied. Procedural geometry is illustrative, not a product screenshot.
+Owner-supplied content source. The launch film is never mentioned (owner removed it). Procedural geometry is illustrative, not a product screenshot.
 
 ## Accessibility & Inclusion
 

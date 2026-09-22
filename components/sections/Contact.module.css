@@ -1,5 +1,224 @@
-.section{position:relative;min-height:88svh;padding-block:clamp(126px,14vw,196px);color:var(--text-primary);scroll-margin-top:96px;overflow:clip}.section::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 78% 48%,rgba(194,200,250,.1),transparent 32%)}
-.container{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,.52fr);gap:64px;align-items:center;box-sizing:border-box;width:100%;max-width:1600px;min-height:54svh;margin-inline:auto;padding-inline:var(--container-pad)}
-.copy{position:relative;z-index:2;min-width:0}.heading{margin:0 0 clamp(42px,5vw,72px);font-family:var(--font-display);font-size:clamp(5rem,12vw,12.5rem);font-weight:500;line-height:.78;letter-spacing:-.065em;text-wrap:balance}.email{display:inline-flex;align-items:center;min-height:52px;max-width:100%;padding:10px 0;color:var(--text-secondary);font-family:var(--font-display);font-size:clamp(1.25rem,3.2vw,3.4rem);font-weight:430;line-height:1.35;letter-spacing:-.035em;text-decoration:none;overflow-wrap:anywhere}.email::after{content:"";align-self:flex-end;width:clamp(44px,8vw,132px);height:1px;margin:0 0 .42em 22px;background:var(--accent);transition:width .35s var(--ease-out),background-color .35s var(--ease-out)}.email:hover{color:var(--accent-hover)}.email:hover::after{width:clamp(72px,12vw,190px);background:var(--accent-hover)}.email:focus-visible{outline:2px solid var(--focus);outline-offset:7px;border-radius:4px}.orbSlot{position:relative;width:min(42vw,520px);aspect-ratio:1;justify-self:end;pointer-events:none}.orbSlot::before{content:"";position:absolute;inset:4%;border:1px solid rgba(224,229,244,.07);border-radius:50%}
-@media(max-width:860px){.section{min-height:auto}.container{grid-template-columns:1fr;min-height:auto;gap:72px}.orbSlot{width:min(72vw,420px);justify-self:end}}
-@media(max-width:620px){.section{padding-block:104px}.heading{font-size:clamp(5.2rem,24vw,8rem)}.email{font-size:clamp(1.15rem,5.8vw,1.75rem)}.email::after{display:none}.orbSlot{width:min(88vw,360px)}}
+/* Act V — settled. The closing crescendo: the orb comes to rest, one huge
+   editorial type moment, and the single contact path (the MetalRing /
+   halo-beam email action). Craft fills the frame — scale, the orb, light,
+   hairline structure — never more words. */
+
+.section {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: min(72svh, 720px);
+  padding-block: clamp(88px, 9vw, 168px);
+  color: var(--text-primary);
+  scroll-margin-top: 96px;
+  overflow: clip;
+}
+
+.section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 80% 46%, rgb(var(--glow-rgb) / 0.11), transparent 34%);
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.46fr);
+  gap: clamp(48px, 6vw, 96px);
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1680px;
+  margin-inline: auto;
+  padding-inline: var(--container-pad);
+}
+
+.copy {
+  position: relative;
+  z-index: 2;
+  min-width: 0;
+}
+
+/* The huge editorial moment. Sized past .t-mega on desktop; still a single
+   balanced block on phones. Transform/opacity are the only entrance channel
+   (Reveal is intentionally skipped here — the settled act is meant to be
+   still, not choreographed in). */
+.heading {
+  margin: 0 0 clamp(48px, 6vw, 88px);
+  font-family: var(--font-display);
+  font-size: clamp(4.75rem, 12vw, 13rem);
+  font-weight: 560;
+  line-height: 0.82;
+  letter-spacing: var(--tracking-mega);
+  text-wrap: balance;
+}
+
+.action {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.emailWrap {
+  display: inline-flex;
+  min-width: 0;
+}
+
+.emailButton {
+  max-width: 100%;
+}
+
+.copyButton {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-full);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition:
+    color var(--dur-base) var(--ease-out-quint),
+    border-color var(--dur-base) var(--ease-out-quint),
+    background-color var(--dur-base) var(--ease-out-quint);
+}
+
+.copyButton:hover {
+  color: var(--text-primary);
+  border-color: var(--hairline-strong);
+  background: var(--surface-2);
+}
+
+.copyIcon {
+  width: 18px;
+  height: 18px;
+  overflow: visible;
+}
+
+.copyIconOutline,
+.copyIconCheck {
+  stroke: currentColor;
+  transition:
+    opacity var(--dur-fast) var(--ease-out-quint),
+    transform var(--dur-fast) var(--ease-out-quint);
+  transform-origin: 50% 50%;
+}
+
+.copyIconCheck {
+  opacity: 0;
+  transform: scale(0.7);
+  color: var(--accent);
+}
+
+.copyButton[data-copied="true"] .copyIconOutline {
+  opacity: 0;
+}
+
+.copyButton[data-copied="true"] .copyIconCheck {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.copyButton[data-copied="true"] {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Announced to assistive tech only; visually the icon swap carries the
+   confirmation, so no extra caption text is added on screen. */
+.status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+.orbSlot {
+  position: relative;
+  z-index: 1;
+  width: min(40vw, 480px);
+  aspect-ratio: 1;
+  justify-self: end;
+  pointer-events: none;
+}
+
+.orbSlot::before {
+  content: "";
+  position: absolute;
+  inset: 5%;
+  border: 1px solid rgb(var(--line-rgb) / 0.07);
+  border-radius: 50%;
+}
+
+.poster {
+  width: 100%;
+  height: 100%;
+}
+
+@media (max-width: 1024px) {
+  .container {
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 0.4fr);
+  }
+}
+
+@media (max-width: 860px) {
+  .section {
+    min-height: auto;
+  }
+
+  .container {
+    grid-template-columns: 1fr;
+    gap: 72px;
+  }
+
+  .orbSlot {
+    width: min(70vw, 420px);
+    justify-self: end;
+  }
+}
+
+@media (max-width: 620px) {
+  .section {
+    min-height: auto;
+    padding-block: 96px;
+  }
+
+  .heading {
+    margin-bottom: 40px;
+    font-size: clamp(4.4rem, 20vw, 6.5rem);
+  }
+
+  .orbSlot {
+    width: min(84vw, 340px);
+  }
+}
+
+@media (max-width: 380px) {
+  .action {
+    gap: 10px;
+  }
+
+  .emailButton {
+    padding-inline: 20px;
+    font-size: var(--step--1);
+  }
+}
+
+@media (prefers-contrast: more) {
+  .copyButton {
+    border-color: var(--text-secondary);
+  }
+}

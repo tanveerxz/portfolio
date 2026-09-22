@@ -2,57 +2,142 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ==========================================================================
+   Silver Thought v2 — global tokens, reset, type utilities, motion system.
+   DESIGN.md is the human-readable contract for everything in this file.
+   Section styling lives in CSS modules; this file owns only the shared system.
+   ========================================================================== */
+
 @layer base {
   :root {
     color-scheme: dark;
 
-    --surface-0: #0b0d12;
-    --surface-1: #12151c;
-    --surface-2: #1a1e27;
-    --surface-3: #242933;
-    --surface-warm: #181715;
+    /* ---- Ground ---------------------------------------------------------- */
+    --surface-0: #0b0d12; /* void — page field */
+    --surface-1: #12151c; /* raised — chrome, pills */
+    --surface-2: #1a1e27; /* panel */
+    --surface-3: #242933; /* hover / pressed */
+    --surface-warm: #181715; /* leadership field only */
 
-    --text-primary: #edeef2;
-    --text-secondary: #b3b7c2;
-    --text-tertiary: #9096a4;
+    /* ---- Ink ------------------------------------------------------------- */
+    --text-primary: #edeef2; /* 16.9:1 on surface-0 */
+    --text-secondary: #b3b7c2; /* 9.9:1 */
+    --text-tertiary: #9096a4; /* 6.5:1 — smallest permitted text colour */
     --text-inverse: #0b0d12;
+    --ink-ghost: #3a3f4b; /* decorative only (aria-hidden wordmarks) */
 
-    --accent: #c2c8fa;
+    /* ---- Light ----------------------------------------------------------- */
+    --accent: #c2c8fa; /* reflected periwinkle — action + focus */
     --accent-hover: #d9ddff;
+    --accent-glow: rgba(194, 200, 250, 0.42);
+    --silver-hi: #f6f7fa;
+    --silver-mid: #c9ccd6;
+    --silver-lo: #858a98;
+    --silver-text: linear-gradient(
+      176deg,
+      var(--silver-hi) 8%,
+      #dfe1e8 42%,
+      var(--silver-mid) 64%,
+      #9ea3b0 100%
+    );
+    --silver-edge: linear-gradient(
+      135deg,
+      rgba(246, 247, 250, 0.9),
+      rgba(133, 138, 152, 0.28) 38%,
+      rgba(246, 247, 250, 0.55) 62%,
+      rgba(133, 138, 152, 0.2)
+    );
     --success: #b9d3be;
     --warning: #e6c49b;
-    --hairline: rgba(224, 229, 244, 0.16);
+
+    --hairline: rgba(224, 229, 244, 0.14);
+    --hairline-strong: rgba(224, 229, 244, 0.26);
     --control-border: #707684;
     --focus: #d9ddff;
 
-    /* Compatibility aliases consumed by current Tailwind config and partials. */
+    /* ---- Theme channels ---------------------------------------------------
+       Space-separated RGB so modules can vary alpha per use:
+       rgb(var(--glow-rgb) / 0.08). Every theme redefines all of them. */
+    --glow-rgb: 194 200 250; /* reflected periwinkle light */
+    --line-rgb: 224 229 244; /* hairlines, column lines, rings */
+    --ground-rgb: 11 13 18; /* page field (scrims, fades) */
+    --raised-rgb: 18 21 28; /* chrome / card field */
+    --panel-rgb: 26 30 39; /* panel field */
+    --deep-rgb: 6 7 10; /* recessed wells */
+    --shade-rgb: 0 0 0; /* drop shadows */
+    --sheen-rgb: 255 255 255; /* inset top highlights */
+    --warm-rgb: 230 196 155; /* Community warm light */
+
+    /* Chrome fills the liquid-gooey nav reads (fill accepts var()). */
+    --nav-fill: #1d212b;
+    --nav-indicator: #2a2f3b;
+    --wordmark: #2a2f3a;
+    --community-person: #ece4d8;
+    --seat: color-mix(in srgb, var(--silver-mid) 65%, var(--warning) 30%);
+
+    /* Orb engine ink: the canvas painter reads --orb-ink once per theme;
+       posters mix --orb-ink toward --orb-ink-far by each mark's depth. */
+    --orb-ink: rgb(237, 238, 242);
+    --orb-ink-far: #000;
+    --orb-ink-gain: 1;
+    --orb-halo-in: rgba(194, 200, 250, 0.12);
+    --orb-halo-mid: rgba(194, 200, 250, 0.045);
+    --orb-poster-shadow: rgba(5, 7, 13, 0.7);
+    --grain-opacity: 0.055;
+    /* Multiplier for translucent fields laid over a live orb slot: a paper
+       veil washes dark dots out far faster than a charcoal one dims light dots. */
+    --orb-veil: 1;
+
+    /* Compatibility aliases consumed by Tailwind config and existing modules. */
     --accent-flagship: var(--accent);
     --accent-flagship-hover: var(--accent-hover);
     --border-subtle: var(--hairline);
     --border-default: var(--hairline);
-    --border-strong: rgba(224, 229, 244, 0.28);
+    --border-strong: var(--hairline-strong);
     --border-control: var(--control-border);
     --danger: var(--warning);
     --danger-border: color-mix(in srgb, var(--warning) 72%, transparent);
     --focus-ring: var(--focus);
-    --surface-glass: color-mix(in srgb, var(--surface-1) 78%, transparent);
+    --surface-glass: rgba(18, 21, 28, 0.86);
 
-    --font-sans: var(--font-manrope), ui-sans-serif, system-ui, -apple-system,
+    /* ---- Type families --------------------------------------------------- */
+    --font-sans: var(--font-inter-tight), ui-sans-serif, system-ui, -apple-system,
       "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    --font-display: var(--font-instrument-sans), var(--font-manrope),
-      ui-sans-serif, system-ui, sans-serif;
+    --font-display: var(--font-inter-tight), ui-sans-serif, system-ui,
+      sans-serif;
+    --font-serif: var(--font-instrument-serif), "Iowan Old Style",
+      "Palatino Linotype", Georgia, serif;
     --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular,
       "SF Mono", Menlo, Consolas, monospace;
 
-    --text-display: clamp(3.4rem, 7.3vw, 7.25rem);
-    --text-h1: clamp(3.4rem, 7.3vw, 7.25rem);
-    --text-h2: clamp(2.5rem, 5vw, 5rem);
-    --text-h3: clamp(1.5rem, 2.5vw, 2.4rem);
-    --text-body-lg: 1.125rem;
-    --text-body: 1rem;
-    --text-sm: 0.875rem;
-    --text-mono: 0.8125rem;
+    /* ---- Fluid type scale (360px → 1920px, linear clamp) ----------------- */
+    --step--2: clamp(0.7188rem, 0.7043rem + 0.0641vw, 0.7813rem); /* 11.5–12.5 label */
+    --step--1: clamp(0.8438rem, 0.8221rem + 0.0962vw, 0.9375rem); /* 13.5–15 small */
+    --step-0: clamp(1rem, 0.9712rem + 0.1282vw, 1.125rem); /* 16–18 body */
+    --step-1: clamp(1.125rem, 1.0673rem + 0.2564vw, 1.375rem); /* 18–22 lead */
+    --step-2: clamp(1.375rem, 1.2596rem + 0.5128vw, 1.875rem); /* 22–30 h4 */
+    --step-3: clamp(1.75rem, 1.5192rem + 1.0256vw, 2.75rem); /* 28–44 h3 */
+    --step-4: clamp(2.5rem, 1.9231rem + 2.5641vw, 5rem); /* 40–80 h2 */
+    --step-5: clamp(3.25rem, 1.8077rem + 6.4103vw, 9.5rem); /* 52–152 display */
+    --step-6: clamp(4rem, 1.2308rem + 12.3077vw, 16rem); /* 64–256 mega */
 
+    /* Legacy names mapped onto the scale (Tailwind + older modules). */
+    --text-display: var(--step-5);
+    --text-h1: var(--step-5);
+    --text-h2: var(--step-4);
+    --text-h3: var(--step-3);
+    --text-body-lg: var(--step-1);
+    --text-body: var(--step-0);
+    --text-sm: var(--step--1);
+    --text-mono: var(--step--2);
+
+    --tracking-mega: -0.065em;
+    --tracking-display: -0.055em;
+    --tracking-heading: -0.04em;
+    --tracking-title: -0.025em;
+    --tracking-label: 0.08em;
+
+    /* ---- Space (4px base) + fluid section rhythm ------------------------- */
     --space-1: 0.25rem;
     --space-2: 0.5rem;
     --space-3: 0.75rem;
@@ -67,22 +152,36 @@
     --space-28: 7rem;
     --space-32: 8rem;
     --space-40: 10rem;
+    --space-section: clamp(5.5rem, 3.6rem + 8.4vw, 13.5rem); /* 88–216px */
+    --space-block: clamp(3rem, 2.2rem + 3.6vw, 6.5rem); /* 48–104px */
 
+    /* ---- Grid ------------------------------------------------------------ */
+    --container-max: 1680px;
+    --container-pad: clamp(20px, 5vw, 88px);
+    --grid-cols: 4;
+    --grid-gutter: clamp(12px, 1.6vw, 28px);
+
+    /* ---- Shape ----------------------------------------------------------- */
+    --r-xs: 4px;
     --r-sm: 8px;
-    --r-md: 8px;
-    --r-lg: 14px;
-    --r-xl: 14px;
+    --r-md: 12px;
+    --r-lg: 20px;
+    --r-xl: 28px;
     --r-full: 9999px;
 
     --shadow-sm: 0 8px 20px -16px rgba(0, 0, 0, 0.72);
     --shadow-md: 0 20px 48px -30px rgba(0, 0, 0, 0.78);
     --shadow-lg: 0 36px 80px -48px rgba(0, 0, 0, 0.82);
+    --shadow-action: 0 18px 42px -20px rgba(194, 200, 250, 0.55);
+    --shadow-silver: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 20px 44px -24px rgba(0, 0, 0, 0.9);
 
+    /* ---- Layers ---------------------------------------------------------- */
     --z-canvas: 0;
     --z-content: 1;
     --z-base: 1;
     --z-raised: 10;
     --z-sticky: 20;
+    --z-grain: 25;
     --z-nav: 30;
     --z-controls: 40;
     --z-overlay: 40;
@@ -90,25 +189,121 @@
     --z-modal: 50;
 
     --nav-height: 68px;
-    --container-max: 1440px;
-    --container-pad: clamp(24px, 5vw, 88px);
 
+    /* ---- Motion ---------------------------------------------------------- */
     --ease-standard: cubic-bezier(0.2, 0, 0, 1);
-    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1); /* expo-out: reveals, arrivals */
+    --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1); /* hover, UI */
+    --ease-in-out: cubic-bezier(0.76, 0, 0.24, 1); /* scene changes, menus */
     --ease-emphasized: cubic-bezier(0.05, 0.7, 0.1, 1);
+    --ease-spring: linear(
+      0, 0.009, 0.035 2.1%, 0.141 4.4%, 0.723 12.9%, 0.938 16.7%, 1.017 19.3%,
+      1.061 22%, 1.074 24.8%, 1.066 28.2%, 1.018 36.9%, 0.998 41.2%,
+      0.993 46.4%, 1.001 63.9%, 1
+    );
 
-    --dur-fast: 150ms;
-    --dur-base: 240ms;
-    --dur-slow: 400ms;
-    --dur-entrance: 600ms;
-    --dur-choreo: 800ms;
+    --dur-instant: 90ms;
+    --dur-fast: 160ms;
+    --dur-base: 260ms;
+    --dur-slow: 480ms;
+    --dur-entrance: 900ms;
+    --dur-choreo: 1400ms;
+    --stagger: 70ms;
   }
 
   @media (min-width: 768px) {
     :root {
       --nav-height: 76px;
+      --grid-cols: 8;
     }
+  }
+
+  @media (min-width: 1024px) {
+    :root {
+      --grid-cols: 12;
+    }
+  }
+
+  /* ------------------------------------------------------------------------
+     Light theme (owner-requested exploration; dark stays the default).
+     Pale silver paper, graphite ink, silver rendered as polished graphite,
+     periwinkle deepened to hold AA on paper. Set by the boot script in
+     app/layout.tsx from localStorage 'portfolio-theme'; never from the OS.
+     ------------------------------------------------------------------------ */
+  :root[data-theme="light"] {
+    color-scheme: light;
+
+    --surface-0: #f1f0ec;
+    --surface-1: #f9f8f5;
+    --surface-2: #e8e7e2;
+    --surface-3: #dcdbd5;
+    --surface-warm: #f4ede3;
+
+    --text-primary: #16181d;
+    --text-secondary: #43474f;
+    --text-tertiary: #5a5e68;
+    --text-inverse: #f9f8f5;
+    --ink-ghost: #d3d2cc;
+
+    --accent: #4a50b0;
+    --accent-hover: #383d96;
+    --accent-glow: rgba(74, 80, 176, 0.3);
+    --silver-hi: #121419;
+    --silver-mid: #4d515b;
+    --silver-lo: #676b75;
+    --silver-text: linear-gradient(
+      176deg,
+      #0e1014 8%,
+      #272a31 42%,
+      #41454e 64%,
+      #666a74 100%
+    );
+    --silver-edge: linear-gradient(
+      135deg,
+      rgba(18, 20, 25, 0.6),
+      rgba(18, 20, 25, 0.14) 38%,
+      rgba(18, 20, 25, 0.42) 62%,
+      rgba(18, 20, 25, 0.1)
+    );
+    --success: #2d6a3c;
+    --warning: #8c5716;
+
+    --hairline: rgba(22, 24, 30, 0.13);
+    --hairline-strong: rgba(22, 24, 30, 0.25);
+    --control-border: #787c86;
+    --focus: #383d96;
+    --surface-glass: rgba(249, 248, 245, 0.86);
+
+    --glow-rgb: 124 132 216;
+    --line-rgb: 22 24 30;
+    --ground-rgb: 241 240 236;
+    --raised-rgb: 249 248 245;
+    --panel-rgb: 236 235 230;
+    --deep-rgb: 228 227 221;
+    --shade-rgb: 58 60 74;
+    --sheen-rgb: 255 255 255;
+    --warm-rgb: 196 128 56;
+
+    --nav-fill: #e4e3dd;
+    --nav-indicator: #d8d7d0;
+    --wordmark: #dcdbd4;
+    --community-person: #3a322a;
+    --seat: #bcae9b; /* warm stone seats on the light warm field */
+
+    --orb-ink: rgb(22, 24, 30);
+    --orb-ink-far: #fff;
+    --orb-ink-gain: 1.45;
+    --orb-halo-in: rgba(110, 118, 210, 0.075);
+    --orb-halo-mid: rgba(110, 118, 210, 0.028);
+    --orb-poster-shadow: rgba(58, 60, 74, 0.16);
+    --grain-opacity: 0.05;
+    --orb-veil: 0.35;
+
+    --shadow-sm: 0 8px 20px -16px rgba(40, 42, 54, 0.3);
+    --shadow-md: 0 20px 48px -30px rgba(40, 42, 54, 0.32);
+    --shadow-lg: 0 36px 80px -48px rgba(40, 42, 54, 0.36);
+    --shadow-action: 0 18px 42px -20px rgba(74, 80, 176, 0.5);
+    --shadow-silver: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 20px 44px -24px rgba(40, 42, 54, 0.4);
   }
 
   *,
@@ -130,20 +325,45 @@
     background: var(--surface-0);
     color: var(--text-primary);
     font-family: var(--font-sans);
-    font-size: var(--text-body);
-    line-height: 1.65;
+    font-size: var(--step-0);
+    font-weight: 400;
+    line-height: 1.6;
+    font-feature-settings: "ss01" on, "cv11" on;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
+  }
+
+  /* Film grain: one static tile on a fixed layer. No blend mode, no animation,
+     so it is composited once and never repainted while scrolling. */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-grain);
+    pointer-events: none;
+    opacity: var(--grain-opacity, 0.055);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.6 -.3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 160px 160px;
+  }
+
+  /* Light theme grain: the same tile in graphite (white grain vanishes on paper). */
+  :root[data-theme="light"] body::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.09 0 0 0 0 0.1 0 0 0 0 0.12 0 0 0 1.6 -.3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
   h1,
   h2,
-  h3 {
+  h3,
+  h4 {
     font-family: var(--font-display);
+    font-weight: 500;
+    text-wrap: balance;
   }
 
-  body::selection,
+  p {
+    text-wrap: pretty;
+  }
+
   ::selection {
     background: var(--accent-hover);
     color: var(--text-inverse);
@@ -156,8 +376,8 @@
 
   :where(a) {
     color: inherit;
-    text-underline-offset: 0.18em;
-    text-decoration-thickness: from-font;
+    text-underline-offset: 0.2em;
+    text-decoration-thickness: 1px;
   }
 
   :where(button, input, textarea, select) {
@@ -189,6 +409,7 @@
 }
 
 @layer components {
+  /* ---- Layout ------------------------------------------------------------ */
   .container {
     width: 100%;
     max-width: var(--container-max);
@@ -196,16 +417,146 @@
     padding-inline: var(--container-pad);
   }
 
+  /* 4 / 8 / 12 column grid. Children place themselves with grid-column. */
+  .grid-system {
+    display: grid;
+    grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
+    column-gap: var(--grid-gutter);
+  }
+
+  .section-pad {
+    padding-block: var(--space-section);
+  }
+
+  /* ---- Type roles -------------------------------------------------------- */
+  .t-mega,
+  .t-display,
+  .t-h2,
+  .t-h3 {
+    margin: 0;
+    font-family: var(--font-display);
+    color: var(--text-primary);
+    text-wrap: balance;
+  }
+
+  .t-mega {
+    font-size: var(--step-6);
+    font-weight: 600;
+    line-height: 0.8;
+    letter-spacing: var(--tracking-mega);
+  }
+
+  .t-display {
+    font-size: var(--step-5);
+    font-weight: 560;
+    line-height: 0.88;
+    letter-spacing: var(--tracking-display);
+  }
+
+  .t-h2 {
+    font-size: var(--step-4);
+    font-weight: 540;
+    line-height: 0.95;
+    letter-spacing: var(--tracking-heading);
+  }
+
+  .t-h3 {
+    font-size: var(--step-3);
+    font-weight: 520;
+    line-height: 1.05;
+    letter-spacing: var(--tracking-title);
+  }
+
+  .t-h4 {
+    margin: 0;
+    font-size: var(--step-2);
+    font-weight: 520;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+
+  .t-lead {
+    font-size: var(--step-1);
+    line-height: 1.5;
+    letter-spacing: -0.01em;
+    color: var(--text-secondary);
+  }
+
+  .t-body {
+    font-size: var(--step-0);
+    line-height: 1.62;
+    color: var(--text-secondary);
+  }
+
+  .t-small {
+    font-size: var(--step--1);
+    line-height: 1.55;
+    color: var(--text-secondary);
+  }
+
+  /* Mono label. For facts, figures and system chrome — never an eyebrow
+     above a heading. */
+  .t-label {
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    font-weight: 500;
+    line-height: 1.4;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* The "thought" voice: Instrument Serif italic, 1–3 words per section. */
+  .t-serif {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+  }
+
+  /* Silver-lit text: the static material every metal effect falls back to. */
+  .text-silver {
+    color: var(--text-primary);
+    background: var(--silver-text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .measure {
+    max-width: 60ch;
+  }
+
+  .measure-narrow {
+    max-width: 42ch;
+  }
+
+  .hairline {
+    height: 1px;
+    border: 0;
+    margin: 0;
+    background: var(--hairline);
+  }
+
   .surface-glass {
-    background: rgba(18, 21, 28, 0.78);
+    background: var(--surface-glass);
   }
 
-  @supports (background: color-mix(in srgb, white 50%, transparent)) {
-    .surface-glass {
-      background: color-mix(in srgb, var(--surface-1) 78%, transparent);
-    }
+  /* Visually hidden but announced. */
+  .visually-hidden {
+    position: absolute !important;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
 
+  /* ---- Prose ------------------------------------------------------------- */
   .prose {
     max-width: 60ch;
     color: var(--text-secondary);
@@ -241,14 +592,75 @@
 
   .prose code {
     border: 1px solid var(--hairline);
-    border-radius: var(--r-sm);
+    border-radius: var(--r-xs);
     background: var(--surface-2);
     color: var(--text-primary);
     font-size: 0.9em;
     padding: 0.15em 0.4em;
   }
+
+  /* ---- Link underline micro-interaction ---------------------------------- */
+  .link-draw {
+    text-decoration: none;
+    background: linear-gradient(currentColor, currentColor) 0 100% / 0% 1px
+      no-repeat;
+    transition: background-size var(--dur-slow) var(--ease-out);
+  }
+
+  .link-draw:hover,
+  .link-draw:focus-visible {
+    background-size: 100% 1px;
+  }
 }
 
+/* ==========================================================================
+   Reveal system (components/effects/Reveal.tsx + RevealRoot.tsx)
+   Content is visible by default. Hidden entrance states apply ONLY after
+   RevealRoot has marked everything already on screen as revealed and set
+   html[data-reveal-ready] — so no-JS, reduced motion and the LCP element are
+   never hidden.
+   ========================================================================== */
+[data-reveal="lines"] [data-line] {
+  display: block;
+  overflow: clip;
+  padding-block: 0.06em 0.14em;
+  margin-block: -0.06em -0.14em;
+}
+
+[data-reveal="lines"] [data-line-inner] {
+  display: block;
+}
+
+html[data-reveal-ready][data-motion="full"] [data-reveal]:not([data-revealed]):not([data-reveal="lines"]) {
+  opacity: 0;
+  transform: translate3d(0, var(--reveal-y, 28px), 0);
+}
+
+html[data-reveal-ready][data-motion="full"] [data-reveal="mask"]:not([data-revealed]) {
+  opacity: 1;
+  transform: none;
+  clip-path: inset(0 0 100% 0);
+}
+
+html[data-reveal-ready][data-motion="full"] [data-reveal="lines"]:not([data-revealed]) [data-line-inner] {
+  transform: translate3d(0, 108%, 0);
+}
+
+html[data-motion="full"] [data-reveal][data-revealed] {
+  transition:
+    opacity var(--dur-entrance) var(--ease-out) var(--reveal-delay, 0ms),
+    transform var(--dur-entrance) var(--ease-out) var(--reveal-delay, 0ms),
+    clip-path var(--dur-choreo) var(--ease-in-out) var(--reveal-delay, 0ms);
+}
+
+html[data-motion="full"] [data-reveal="lines"][data-revealed] [data-line-inner] {
+  transition: transform var(--dur-choreo) var(--ease-out)
+    calc(var(--reveal-delay, 0ms) + var(--i, 0) * var(--stagger));
+}
+
+/* ==========================================================================
+   Focus ring that no variant or className can remove (see Button.tsx).
+   ========================================================================== */
 [data-focus-ring][data-focus-ring][data-focus-ring]:focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 4px;
@@ -258,6 +670,9 @@
   outline: none;
 }
 
+/* ==========================================================================
+   Motion off: OS preference or the header toggle (html[data-motion=reduced]).
+   ========================================================================== */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -267,4 +682,40 @@
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+html[data-motion="reduced"] *,
+html[data-motion="reduced"] *::before,
+html[data-motion="reduced"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  scroll-behavior: auto !important;
+  transition-duration: 0.01ms !important;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --surface-glass: var(--surface-1);
+  }
+}
+
+@media (forced-colors: active) {
+  .text-silver {
+    -webkit-text-fill-color: currentColor;
+    background: none;
+  }
+
+  body::after {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   Theme switch (lib/theme.ts): a quick root crossfade through the View
+   Transitions API where supported. setTheme() skips it under reduced motion.
+   ========================================================================== */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 320ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }

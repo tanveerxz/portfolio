@@ -29,8 +29,11 @@ export type { FieldProps, FieldOption } from "./Field";
 export { Section } from "./Section";
 export type { SectionProps } from "./Section";
 
-export { Stat } from "./Stat";
+export { Stat, StatRow } from "./Stat";
 export type { StatProps, StatElement } from "./Stat";
 
 export { Prose } from "./Prose";
 export type { ProseProps, ProseElement } from "./Prose";
+
+export { MetaStrip } from "./Density";
+export type { MetaItem } from "./Density";
