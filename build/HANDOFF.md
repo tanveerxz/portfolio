@@ -244,3 +244,18 @@ GPU-layer promotion of the grain and orb layers (`translateZ(0)`, `will-change`,
 - **Social links:** `SOCIAL_LINKS` in `config/site.ts` (github.com/tanveerxz, linkedin.com/in/tanveerxz), rendered as a "Profiles" nav in the footer. External, new tab, with a visually hidden "(opens in a new tab)".
 - **404:** `app/not-found.tsx` + `not-found.module.css`. A searching AmbientOrb in a hairline ring, "404", "This page doesn't *exist*.", and two buttons (homepage, Work). Verified: `/nope` returns a real 404 status, one h1, no overflow at 1440 or 390, and it fits above the fold in both themes.
 - Still not added: analytics, a CV download, light favicon/OG images.
+
+## Real-device round (2026-09-23)
+
+Owner tested on a real phone: "What I build" was laggy and the Community morph was misaligned.
+
+**Community alignment: FIXED.** Measured at 390px: the hub, the gap in the seat grid and the orb all centred on (195, 293), but the orb and the person glyph were drawn at ~(238, 340), about 43px right and 50px down, and the glyph overflowed the gap onto the seats.
+- Cause: `.morphOrb, .person` were grid items sized in percentages, so the percentages resolved against a grid track that the SVG's own intrinsic size inflated to 171px inside a 136px box.
+- Fix: both states are now absolutely positioned and centred with the `translate` property (leaving `transform` for the morph animation), and `PERSON_VIEWBOX` is computed as a tight square box around the sampled dots so the glyph centres itself.
+- Verified: hole, glyph and orb all centre on (195, 293); the glyph is 85x105 inside the 132px gap.
+
+**Mobile lag in #work: two causes fixed.**
+1. **The beam was the single running animation on the page** (border-beam's `beam-spin` drives `@property` custom properties, restyling its host every frame). Measured in #work on a 4x-throttled phone: ~1.1-1.4s of style recalculation per few seconds of scrolling. `Beam` now uses a new `useCoarsePointer()` from `effects/runtime.ts`: touch devices keep the static beam frame, desktop keeps the animation. Verified: 0 beam layers on phone, 7 (2 animating) on desktop.
+2. **Orb animation budget.** `OrbCanvas` now ranks visible orbs by distance from the viewport centre every 250ms and only animates the nearest (1 on low-power, 2 on compact, unlimited on desktop). The rest hold their last painted frame.
+
+**Measurement note:** this machine renders without a GPU, so mobile fps figures swing wildly (task time 5.0-6.5s for the same scroll) and are not a reliable A/B. Behaviour was verified instead. The owner should re-test on the real phone.

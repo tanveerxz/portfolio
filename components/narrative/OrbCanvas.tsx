@@ -97,6 +97,8 @@ type Orb = {
   el: HTMLDivElement;
   surface: OrbSurface;
   visible: boolean;
+  /** Distance rank from the viewport centre; only the nearest few animate. */
+  animationRank: number;
   seeded: boolean;
   // Rendered values.
   x: number;
@@ -162,6 +164,7 @@ export function OrbCanvas() {
         el,
         surface: new OrbSurface(canvas),
         visible: false,
+        animationRank: 0,
         seeded: false,
         x: 0, y: 0, size: 64, opacity: 0,
         offX: 0, offY: 0, offSize: 0,
@@ -461,7 +464,12 @@ export function OrbCanvas() {
 
       // Paint only visible orbs; animated repaints are rate-limited. Not
       // gated on `revealed`: painting is what makes the orb revealable.
-      const animating = index === 0 || index === CANDIDATE ? !quietAct(narrativeState.act) : true;
+      const animating =
+        (index === 0 || index === CANDIDATE ? !quietAct(narrativeState.act) : true) &&
+        // Phones / low-power: only the orbs nearest the middle of the screen
+        // keep animating. The rest hold their last painted frame, so #work
+        // never pays for four canvases at once.
+        (animationBudget === Infinity || orb.animationRank < animationBudget);
       const due = time - orb.lastPaint >= policy.paintInterval - 0.002;
       const wantsPaint =
         !hidden && orb.visible &&
@@ -485,9 +493,29 @@ export function OrbCanvas() {
       return settling || continuous || (orb.dirty && !hidden && orb.visible);
     }
 
+    // How many orbs may animate at once (Infinity on a desktop GPU).
+    const animationBudget = policy.lowPower ? 1 : policy.compact ? 2 : Infinity;
+
+    /** Rank visible orbs by distance from the viewport centre, nearest first. */
+    function rankOrbs() {
+      if (animationBudget === Infinity) return;
+      const middle = innerHeight / 2;
+      const ranked = orbs
+        .filter((orb) => orb.visible && !orb.hidden)
+        .map((orb) => ({ orb, d: Math.abs(orb.y - scrollY - middle) }))
+        .sort((a, b) => a.d - b.d);
+      orbs.forEach((orb) => { orb.animationRank = Infinity; });
+      ranked.forEach(({ orb }, rank) => { orb.animationRank = rank; });
+    }
+
     let firstPaint = true;
+    let rankAt = 0;
     function frame(time: number, delta: number) {
       if (!measured) return;
+      if (animationBudget !== Infinity && time - rankAt > 0.25) {
+        rankAt = time;
+        rankOrbs();
+      }
       // Freeze the animation clock in quiet acts so scroll never makes it jump.
       if (!quietAct(narrativeState.act)) animTime += delta;
       let demand = false;

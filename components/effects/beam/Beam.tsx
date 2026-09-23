@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState, type ElementType, type ReactNode } from "react";
 
-import { useAwake, useEffectGate, useMotionMode } from "../runtime";
+import { useAwake, useCoarsePointer, useEffectGate, useMotionMode } from "../runtime";
 import styles from "./beam.module.css";
 
 const BeamLayer = dynamic(() => import("./BeamLayer").then((mod) => mod.BeamLayer), {
@@ -106,12 +106,17 @@ export function Beam({
 }: BeamProps) {
   const ref = useRef<HTMLElement>(null);
   const gate = useEffectGate(ref, "low", "300px");
+  // Phones keep the static beam frame. The animation drives @property custom
+  // properties, so it restyles its host every frame, and on a phone the orb
+  // canvases already own the budget (measured: ~1.1s of style recalc per few
+  // seconds of scrolling in #work, from this one animation).
+  const coarse = useCoarsePointer();
   const motion = useMotionMode();
   const shared = useBeamsOpen();
   useEffect(() => {
     if (gate) openAllBeams();
   }, [gate]);
-  const enabled = motion === "full" && (gate || shared);
+  const enabled = motion === "full" && !coarse && (gate || shared);
   const awake = useAwake(ref, rest);
 
   return (

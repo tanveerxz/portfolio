@@ -17,6 +17,23 @@ const PERSON_DOTS: Array<[number, number]> = (() => {
   return dots;
 })();
 
+// Tight viewBox around the sampled dots (plus the dot radius and a hair of
+// padding) so the glyph is centred in its box at any size instead of drifting
+// with the empty margins of the 100x100 sampling grid.
+const PERSON_VIEWBOX = (() => {
+  const pad = 1.7 + 0.6;
+  const xs = PERSON_DOTS.map(([x]) => x);
+  const ys = PERSON_DOTS.map(([, y]) => y);
+  const minX = Math.min(...xs) - pad;
+  const minY = Math.min(...ys) - pad;
+  const w = Math.max(...xs) + pad - minX;
+  const h = Math.max(...ys) + pad - minY;
+  const size = Math.max(w, h);
+  return [minX - (size - w) / 2, minY - (size - h) / 2, size, size]
+    .map((n) => Math.round(n * 100) / 100)
+    .join(" ");
+})();
+
 const SEATS = 100;
 const GRID = 10;
 // The centre 4x4 block is left empty in the dot field so the shared
@@ -88,7 +105,7 @@ export function Community() {
                     <AmbientOrb state="connecting" size={220} className={styles.morphOrb} />
                     <svg
                       className={styles.person}
-                      viewBox="0 0 100 100"
+                      viewBox={PERSON_VIEWBOX}
                       style={{ "--n": PERSON_DOTS.length } as React.CSSProperties}
                     >
                       {PERSON_DOTS.map(([cx, cy], i) => (

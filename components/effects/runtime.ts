@@ -89,6 +89,22 @@ export function getDeviceTier(probeWebgl = true): DeviceTier {
   return supportsWebgl2() ? "high" : "low";
 }
 
+/**
+ * True on touch-first devices (no fine pointer). Used to keep per-frame
+ * decorative animations off phones, where the orb canvases own the budget.
+ */
+export function useCoarsePointer(): boolean {
+  const [coarse, setCoarse] = useState(false);
+  useEffect(() => {
+    const query = window.matchMedia("(hover: none), (pointer: coarse)");
+    const sync = () => setCoarse(query.matches);
+    sync();
+    query.addEventListener("change", sync);
+    return () => query.removeEventListener("change", sync);
+  }, []);
+  return coarse;
+}
+
 /** True once the element has come within `rootMargin` of the viewport. */
 export function useNearViewport(
   ref: RefObject<Element | null>,
