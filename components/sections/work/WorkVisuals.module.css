@@ -1,0 +1,722 @@
+/* ==========================================================================
+   Work — bespoke project visuals. Static SVG, server-rendered, zero JS.
+   Entrances are cheap one-shot transitions keyed off the ancestor Reveal
+   wrapper (the same [data-reveal]/[data-revealed] attributes RevealRoot
+   already writes for the card), transforms and opacity only, and they settle
+   permanently once played — nothing here loops or reads a frame.
+   ========================================================================== */
+
+.visual {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.visual * {
+  vector-effect: non-scaling-stroke;
+}
+
+/* ---- Shared one-shot entrances -------------------------------------------
+   Scoped to any Reveal wrapper (article/li), not to a specific card class,
+   so the same utility works inside the featured card and the grid cards. */
+:global(html[data-motion="full"]) :global([data-reveal]) .pop {
+  opacity: 0;
+  transform: scale(0.4);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+:global(html[data-motion="full"]) :global([data-reveal][data-revealed]) .pop {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 480ms var(--ease-out) calc(160ms + var(--i, 0) * 70ms),
+    transform 480ms var(--ease-out) calc(160ms + var(--i, 0) * 70ms);
+}
+
+/* Bottom-anchored variant of .pop (the waveform bars): percentage
+   transform-origin is safe under transform-box: fill-box (it is relative to
+   each element's own bounding box), unlike an absolute pixel value, which
+   fill-box reinterprets as an offset from the box's own corner rather than
+   an SVG viewport coordinate. */
+.popBottom {
+  transform-origin: 50% 100% !important;
+}
+
+:global(html[data-motion="full"]) :global([data-reveal]) .grow {
+  opacity: 0;
+  transform: scale(0.7);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+:global(html[data-motion="full"]) :global([data-reveal][data-revealed]) .grow {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 420ms var(--ease-out) calc(260ms + var(--i, 0) * 80ms),
+    transform 620ms var(--ease-out) calc(260ms + var(--i, 0) * 80ms);
+}
+
+:global(html[data-motion="full"]) :global([data-reveal]) .rise {
+  opacity: 0;
+  transform: translate3d(0, 8px, 0);
+}
+
+:global(html[data-motion="full"]) :global([data-reveal][data-revealed]) .rise {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 420ms var(--ease-out) calc(200ms + var(--i, 0) * 70ms),
+    transform 480ms var(--ease-out) calc(200ms + var(--i, 0) * 70ms);
+}
+
+/* ---- Palette (tokens only, both themes) ----------------------------------- */
+.ink {
+  stroke: var(--text-secondary);
+  fill: var(--text-secondary);
+}
+
+.inkStrong {
+  stroke: var(--text-primary);
+  fill: var(--text-primary);
+}
+
+.hair {
+  stroke: var(--hairline-strong);
+}
+
+.glow {
+  stroke: var(--accent);
+  fill: var(--accent);
+}
+
+.success {
+  stroke: var(--success);
+  fill: var(--success);
+}
+
+/* Stroke-only strong ink: for outlines (e.g. the escalated PO row) that must
+   not inherit .inkStrong's fill, since a CSS class fill beats an SVG
+   fill="none" presentation attribute. */
+.strokeStrong {
+  stroke: var(--text-primary);
+  fill: none;
+}
+
+/* Card hover/focus wake (scale) is applied to the .art/.featureArt wrapper
+   in Work.module.css, which owns those class names; it scales this whole
+   visual along with it. */
+
+.check {
+  display: inline-block;
+  width: 0.95em;
+  height: 0.95em;
+  flex: none;
+  color: var(--success);
+}
+
+.arrow {
+  display: block;
+  width: clamp(20px, 3vw, 28px);
+  height: auto;
+  flex: none;
+}
+
+/* ==========================================================================
+   Pollen Mesh — one wall, four signals arriving at it, one crossing.
+
+   The layout switches on the CONTAINER, not the page. This visual lives in
+   the right-hand column of the feature card, so its width does not follow
+   the viewport: ~294px on a 390px phone, ~244px at a 768px page (where the
+   card first splits in two), ~429px at 1024px. The old page-width media
+   query put the multi-column crossing into that 244px and truncated every
+   label down to "src_ip …" / "cr…" / "sha2…". `container-type: inline-size`
+   also takes this subtree out of its column's min-content width, so it can
+   no longer push anything past the panel edge; that was the mechanism behind
+   the earlier pill overflow rather than a symptom of it.
+
+   Narrow (default): a plain list, a full-width boundary rule, what arrives
+   on the far side underneath it. Wide (>= 420px of container): the wall
+   turns vertical, the held and dropped signals stop short of it, and the one
+   matched signature crosses.
+   ========================================================================== */
+.pollen {
+  container-type: inline-size;
+  width: 100%;
+  min-width: 0;
+  padding: 4px 0;
+  font-size: var(--step--1);
+}
+
+.grid {
+  display: grid;
+  /* Explicit rows on purpose: heading, four signatures, the wall, what
+     arrives. Named line numbers below rely on them (a negative line number
+     in an implicit grid resolves against the explicit grid, i.e. line 1). */
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto repeat(4, auto) auto auto;
+  align-items: stretch;
+  row-gap: 0;
+  column-gap: 10px;
+  min-width: 0;
+}
+
+.orgA,
+.orgB {
+  margin: 0 0 10px;
+  align-self: end;
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.orgA {
+  grid-area: 1 / 1 / 2 / 3;
+}
+
+/* Narrow: one column, so the far-side heading rides with the receipt. */
+.orgB {
+  display: none;
+}
+
+/* ---- The four candidate signatures ---------------------------------------- */
+.line,
+.tag {
+  min-width: 0;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--hairline);
+  opacity: 0.5;
+}
+
+.line {
+  grid-column: 1;
+  display: block;
+  overflow: hidden;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.7;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.tag {
+  grid-column: 2;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.line[data-status="dropped"] {
+  text-decoration: line-through;
+  text-decoration-color: var(--hairline-strong);
+}
+
+.line[data-status="matched"],
+.tag[data-status="matched"] {
+  opacity: 1;
+}
+
+.line[data-status="matched"],
+.tag[data-status="matched"] {
+  border-bottom: 0;
+}
+
+.line[data-status="matched"] {
+  color: var(--text-primary);
+}
+
+.tag[data-status="matched"] {
+  color: var(--accent);
+}
+
+/* ---- The wall ------------------------------------------------------------- */
+.wall {
+  grid-area: 6 / 1 / 7 / 3;
+  align-self: center;
+  height: 1px;
+  margin: 22px 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--hairline-strong) 12%,
+    var(--hairline-strong) 36%,
+    transparent 37%,
+    transparent 63%,
+    var(--hairline-strong) 64%,
+    var(--hairline-strong) 88%,
+    transparent
+  );
+}
+
+.wallLabel {
+  grid-area: 6 / 1 / 7 / 3;
+  align-self: center;
+  justify-self: center;
+  padding: 0 10px;
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* The connectors only exist once there is a wall to cross. */
+.link {
+  display: none;
+}
+
+/* ---- What arrives on the far side ----------------------------------------- */
+.result {
+  grid-area: 7 / 1 / 8 / 3;
+  display: grid;
+  justify-items: start;
+  gap: 8px;
+  min-width: 0;
+}
+
+.hashChip {
+  max-width: 100%;
+  padding: 6px 12px;
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--r-full);
+  background: rgb(var(--panel-rgb) / 0.8);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  letter-spacing: 0.02em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gate {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.gateStatus {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+  color: var(--text-primary);
+  font-size: var(--step--2);
+  letter-spacing: 0.02em;
+}
+
+.gateDot {
+  width: 6px;
+  height: 6px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--warning);
+}
+
+.gateNote {
+  margin: 0;
+  color: var(--text-tertiary);
+  font-size: 0.7rem;
+  letter-spacing: 0.02em;
+}
+
+/* ==========================================================================
+   Wide: the crossing. Column 3 is the wall's lane. The held and dropped
+   signals reach a short way into it and stop; the matched one runs the whole
+   width and comes out the far side as a hash.
+   ========================================================================== */
+@container (min-width: 420px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr) auto var(--lane, 66px) minmax(0, 0.84fr);
+    /* The wall and what arrives stand beside the signatures, so the two
+       stacked rows collapse away. */
+    grid-template-rows: auto repeat(4, auto);
+    column-gap: 0;
+  }
+
+  .line {
+    padding-right: 14px;
+  }
+
+  .orgB {
+    display: block;
+    grid-area: 1 / 4 / 2 / 5;
+    padding-left: 20px;
+  }
+
+  .wall {
+    grid-area: 2 / 3 / 7 / 4;
+    align-self: stretch;
+    justify-self: center;
+    width: 1px;
+    height: auto;
+    margin: 0;
+    background: linear-gradient(
+      180deg,
+      transparent,
+      var(--hairline-strong) 10%,
+      var(--hairline-strong) 90%,
+      transparent
+    );
+  }
+
+  .wallLabel {
+    grid-area: 2 / 3 / 7 / 4;
+    align-self: start;
+    justify-self: center;
+    margin: 0;
+    padding: 10px 2px;
+    background: var(--surface-0);
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+  }
+
+  /* A hairline running from the tag towards the wall. Held stops a third of
+     the way across, dropped barely starts, matched carries straight through
+     and arrives with an arrowhead on the far side. */
+  .link {
+    display: block;
+    position: relative;
+    grid-column: 3;
+  }
+
+  .link::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 26%;
+    height: 1px;
+    background: var(--hairline-strong);
+    transform-origin: 0 50%;
+  }
+
+  .link[data-status="dropped"]::before {
+    width: 15%;
+    opacity: 0.55;
+  }
+
+  .link[data-status="matched"]::before {
+    width: calc(100% + 14px);
+    background: var(--accent);
+    box-shadow: 0 0 10px 0 rgb(var(--glow-rgb) / 0.45);
+  }
+
+  .link[data-status="matched"]::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: calc(100% + 8px);
+    width: 5px;
+    height: 5px;
+    border-top: 1px solid var(--accent);
+    border-right: 1px solid var(--accent);
+    transform: translate(0, -50%) rotate(45deg);
+  }
+
+  /* The chip is what crossed, so it sits on the crossing's own line; the
+     approval it is waiting on sits under it, in a row the left-hand side
+     does not use. */
+  .result {
+    display: contents;
+  }
+
+  .hashChip {
+    grid-area: 5 / 4 / 6 / 5;
+    align-self: center;
+    /* justify-self: start would size the chip from its content and ignore
+       the track, so the indent would push it out of the panel on a narrow
+       column. Width from the track, capped by it, indent included. */
+    width: fit-content;
+    max-width: calc(100% - 22px);
+    margin-left: 22px;
+  }
+
+  .gate {
+    grid-area: 6 / 4 / 7 / 5;
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+    margin-left: 22px;
+    padding-top: 14px;
+  }
+}
+
+/* One-shot draw for the connectors: outwards from the tag, never looping. */
+:global(html[data-motion="full"]) :global([data-reveal]) .link::before {
+  transform: scaleX(0);
+}
+
+:global(html[data-motion="full"]) :global([data-reveal]) .link::after {
+  opacity: 0;
+}
+
+:global(html[data-motion="full"]) :global([data-reveal][data-revealed]) .link::before {
+  transform: none;
+  transition: transform 520ms var(--ease-out) calc(300ms + var(--i, 0) * 80ms);
+}
+
+:global(html[data-motion="full"]) :global([data-reveal][data-revealed]) .link::after {
+  opacity: 1;
+  transition: opacity 320ms var(--ease-out) calc(820ms + var(--i, 0) * 80ms);
+}
+
+/* ==========================================================================
+   HukamConnect — a tap resolving into one real content update, landing
+   live across named tenants.
+   ========================================================================== */
+.hukam {
+  display: grid;
+  gap: 18px;
+  width: 100%;
+  font-size: var(--step--1);
+}
+
+.hukamHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.tapIcon {
+  flex: none;
+  width: 34px;
+  height: 34px;
+}
+
+.tapIcon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.tapLabel {
+  margin: 0;
+  flex: none;
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.hukamArrow {
+  flex: none;
+  width: 22px;
+}
+
+.updateChip {
+  min-width: 0;
+  padding: 8px 14px;
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--r-md);
+  background: rgb(var(--panel-rgb) / 0.6);
+}
+
+.updateTitle {
+  margin: 0;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-weight: 520;
+  font-size: var(--step-0);
+  letter-spacing: -0.01em;
+}
+
+.updateMeta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 4px 0 0;
+  color: var(--text-tertiary);
+  font-size: var(--step--2);
+  letter-spacing: 0.02em;
+}
+
+.liveDot {
+  width: 6px;
+  height: 6px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--success);
+}
+
+.tenantList {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--hairline);
+}
+
+.tenantList li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.tenantName {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  letter-spacing: 0.02em;
+}
+
+.synced {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  color: var(--success);
+  font-size: var(--step--2);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* The real aggregate figures (build/content-source.md), carried in the
+   visual itself, not only in the card copy beside it. Wraps to its own line
+   rather than shrinking or escaping the panel at any width. */
+.hukamTotals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin: 2px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--hairline);
+  min-width: 0;
+}
+
+.hukamTotals span {
+  min-width: 0;
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   ArgusAI — spoken delivery text matched against real PO lines, one
+   exception escalated.
+   ========================================================================== */
+.argus {
+  display: grid;
+  gap: 14px;
+  width: 100%;
+  font-size: var(--step--1);
+}
+
+.voice {
+  display: grid;
+  gap: 10px;
+}
+
+.waveform {
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+  height: 30px;
+}
+
+.bar {
+  width: 5px;
+  height: var(--h, 16px);
+  border-radius: 3px;
+  background: var(--text-secondary);
+}
+
+.voiceText {
+  margin: 0;
+  max-width: 32ch;
+  color: var(--text-secondary);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--step--1);
+  line-height: 1.4;
+}
+
+.argusArrow {
+  width: 22px;
+  transform: rotate(90deg);
+}
+
+.poLines {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--hairline);
+}
+
+.poLines li {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.poItem {
+  min-width: 0;
+  color: var(--text-primary);
+  font-size: var(--step--2);
+  letter-spacing: 0.01em;
+}
+
+.poQty {
+  margin-left: auto;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  font-variant-numeric: tabular-nums;
+}
+
+.matched {
+  flex: none;
+  display: inline-flex;
+}
+
+.exceptionRow .poItem,
+.exceptionRow .poQty {
+  color: var(--text-primary);
+}
+
+.exceptionRow .poQty {
+  margin-left: 0;
+}
+
+.exceptionTag {
+  flex: none;
+  margin-left: auto;
+  padding: 3px 9px;
+  border: 1px solid var(--warning);
+  border-radius: var(--r-full);
+  color: var(--warning);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}

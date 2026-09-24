@@ -56,7 +56,7 @@ export function Contact() {
           <div className={styles.action}>
             <span ref={metalRef} className={styles.emailWrap}>
               {metalOn ? (
-                <MetalRing glow strength={1}>
+                <MetalRing strength={1}>
                   <Button
                     href={`mailto:${SITE.email}`}
                     variant="silver"

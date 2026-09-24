@@ -11,6 +11,7 @@ import {
 } from "react";
 import type Lenis from "lenis";
 
+import { createPhaseSnap, easeInOutQuart } from "./phase-snap";
 import {
   hasFrameDemand,
   notifyLayoutChange,
@@ -142,6 +143,8 @@ export function NarrativeController() {
       type LenisInstance = InstanceType<(typeof import("lenis"))["default"]>;
       let lenis: LenisInstance | undefined;
       let lenisRequest = 0;
+      let snap: ReturnType<typeof createPhaseSnap> | undefined;
+      let tween = 0;
       let tickerAttached = false;
       let syncRequested = true;
       let currentAct: Act = "dormant";
@@ -317,6 +320,65 @@ export function NarrativeController() {
       }
       ready = true;
 
+      /**
+       * A rAF tween over the native scroller, for when Lenis is not running
+       * (touch). Same easing as the Lenis path so both feel identical.
+       */
+      function tweenScroll(top: number, duration: number, done: () => void) {
+        cancelAsync();
+        const from = window.scrollY;
+        const delta = top - from;
+        const started = performance.now();
+        const ms = Math.max(1, duration * 1000);
+        const stepFrame = (now: number) => {
+          const t = Math.min(1, (now - started) / ms);
+          window.scrollTo(0, from + delta * easeInOutQuart(t));
+          if (t < 1) {
+            tween = requestAnimationFrame(stepFrame);
+          } else {
+            tween = 0;
+            done();
+          }
+        };
+        tween = requestAnimationFrame(stepFrame);
+      }
+      function cancelAsync() {
+        if (tween) cancelAnimationFrame(tween);
+        tween = 0;
+      }
+      // One short gesture per chapter inside the sticky runway. Only created
+      // when the runway actually exists; the snap itself stands down whenever
+      // the stage is not sticky or motion is off.
+      if (stage && verificationTrigger) {
+        const trigger = verificationTrigger;
+        snap = createPhaseSnap({
+          stage,
+          phases: phaseCount,
+          runway: () => [trigger.start, trigger.end],
+          animate: (top, duration, done) => {
+            wake();
+            if (lenis) {
+              lenis.scrollTo(top, {
+                duration,
+                easing: easeInOutQuart,
+                lock: true,
+                force: true,
+                onComplete: () => done(),
+              });
+            } else {
+              tweenScroll(top, duration, done);
+            }
+          },
+          stopAnimation: () => {
+            cancelAsync();
+            // stop() aborts an in-flight Lenis scrollTo; start() hands the
+            // wheel back (unless the tab is hidden, which owns stopped state).
+            lenis?.stop();
+            if (!document.hidden) lenis?.start();
+          },
+        });
+      }
+
       const observer = typeof IntersectionObserver !== "undefined"
         ? new IntersectionObserver((entries) => {
             entries.forEach((entry) => {
@@ -366,6 +428,7 @@ export function NarrativeController() {
         // Release in-flight wheel easing before the browser's default action.
         // Recreate at its restored position; never write scroll or history here.
         ++lenisRequest;
+        snap?.release();
         lenis?.destroy();
         lenis = undefined;
         navigationTimers.forEach(clearTimeout);
@@ -395,11 +458,12 @@ export function NarrativeController() {
         const request = (event as CustomEvent<ScrollRequest>).detail;
         if (!lenis || !request) return;
         request.handled = true;
+        snap?.release();
         const distance = Math.abs(request.top - window.scrollY);
         wake();
         lenis.scrollTo(request.top, {
           duration: Math.min(1.8, Math.max(0.9, distance / 2600)),
-          easing: (t: number) => (t < 0.5 ? 8 * t ** 4 : 1 - (-2 * t + 2) ** 4 / 2),
+          easing: easeInOutQuart,
           onComplete: request.done,
         });
       }
@@ -450,6 +514,7 @@ export function NarrativeController() {
 
       dispose = () => {
         ++lenisRequest;
+        snap?.dispose();
         detachTicker();
         lenis?.destroy();
         observer?.disconnect();

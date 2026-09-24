@@ -63,13 +63,6 @@
   min-height: clamp(220px, 30vw, 340px);
 }
 
-/* featureArt reads wider on desktop, so give it a slightly larger circle
-   than the 3-up cards -- still an absolute clamp(), so it stays exactly
-   circular regardless of the track's aspect ratio. */
-.featureArt::before {
-  width: clamp(140px, 18vw, 280px);
-}
-
 .featureCopy {
   display: grid;
   align-content: start;
@@ -232,45 +225,39 @@
 
 .art {
   position: relative;
+  overflow: hidden;
   pointer-events: none;
   min-height: clamp(180px, 20vw, 280px);
   margin-bottom: clamp(20px, 2.4vw, 32px);
   transition: transform var(--dur-slow) var(--ease-out-quint);
 }
 
+/* Each project's bespoke visual (components/sections/work/WorkVisuals.tsx)
+   is a static SVG, no fixed canvas underneath, so a translucent field here
+   is a stylistic choice rather than a rule (the old "never cover the orb"
+   constraint no longer applies to this section: there is no orb slot left
+   to cover). Kept soft and off-centre so it reads as ambient light, not a
+   badge behind the art. */
 .art::before {
-  /* A soft, always-circular light behind the orb (no outline). Translucent,
-     so the orb stays visible. Sized in viewport units, not a percentage of
-     `.art`: `.art` only sets min-height (never a definite height), and its
-     card tracks range from near-square (mobile, one column) to much wider
-     than tall (desktop, three columns) -- any single width-of-container or
-     height-of-container percentage resolves to an ellipse in one of those
-     shapes. clamp()ing an absolute size sidesteps the container's aspect
-     ratio entirely, so the circle is exact everywhere. */
   content: "";
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: clamp(120px, 16vw, 220px);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgb(var(--glow-rgb) / 0.06) 0%, transparent 68%);
+  inset: 0;
+  border-radius: var(--r-lg);
+  background: radial-gradient(65% 60% at 30% 20%, rgb(var(--glow-rgb) / 0.05), transparent 72%);
   opacity: 0.7;
-  transform: translate(-50%, -50%);
   pointer-events: none;
   transition: opacity var(--dur-slow) var(--ease-out-quint);
 }
 
-/* Orb "wake": hovering/focusing a project's .visit link brightens its glow
-   and nudges the slot slightly larger — transform/opacity/box-shadow only,
-   never a fill, so the fixed orb canvas underneath is never dimmed or
-   covered. Scoped to the card that actually contains a .visit link, so
+/* Visual "wake": hovering/focusing a project's .visit link nudges its art
+   slightly larger and brightens the ambient field behind it. Transform/
+   opacity only. Scoped to the card that actually contains a .visit link, so
    ArgusAI/Scoofy (no link) never react. Disabled under reduced motion. */
 :global(html[data-motion="full"]) .card:has(.visit:hover) .art,
 :global(html[data-motion="full"]) .card:has(.visit:focus-visible) .art,
 :global(html[data-motion="full"]) .feature:has(.visit:hover) .featureArt,
 :global(html[data-motion="full"]) .feature:has(.visit:focus-visible) .featureArt {
-  transform: scale(1.035);
+  transform: scale(1.02);
 }
 
 :global(html[data-motion="full"]) .card:has(.visit:hover) .art::before,
@@ -278,12 +265,6 @@
 :global(html[data-motion="full"]) .feature:has(.visit:hover) .featureArt::before,
 :global(html[data-motion="full"]) .feature:has(.visit:focus-visible) .featureArt::before {
   opacity: 1;
-  background: radial-gradient(circle, rgb(var(--glow-rgb) / 0.12) 0%, transparent 70%);
-}
-
-.poster {
-  width: 100%;
-  height: 100%;
 }
 
 .cardTitle {

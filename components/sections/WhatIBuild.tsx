@@ -1,6 +1,11 @@
 import { Beam } from "@/components/effects/beam/Beam";
-import { OrbPoster } from "@/components/narrative/OrbPoster";
 import { Reveal } from "@/components/effects/Reveal";
+import {
+  ArgusVisual,
+  HukamConnectVisual,
+  PollenMeshVisual,
+  ScoofyVisual,
+} from "@/components/sections/work/WorkVisuals";
 import styles from "./Work.module.css";
 
 /**
@@ -29,17 +34,26 @@ function VisitLink({ href, label }: { href: string; label: string }) {
  * Act III — fragmented. Server component.
  *
  * Pollen Mesh leads as the featured build, then the remaining projects in
- * the order fixed by build/content-source.md. Each project owns one of the
- * engine's four project orb anchors (`data-orb-project="0..3"`); the engine
- * assigns connecting / weaving / listening / composing to 0–3, and each
- * project below was chosen to fit that state rather than fight it:
- *   0 connecting — Pollen Mesh links organisations without sharing raw data.
- *   1 weaving    — HukamConnect threads many Gurdwaras into one platform.
- *   2 listening  — ArgusAI matches spoken deliveries to purchase orders.
- *   3 composing  — Scoofy, a storefront built one interface at a time.
- * Geometry for those orbs is rendered by the shared narrative scene; this
- * file only reserves the anchors and renders their static poster fallback.
- * Every fact traces to build/content-source.md; nothing here is invented.
+ * the order fixed by build/content-source.md. Each project used to share the
+ * engine's generic dotted orb (`data-orb-project="0..3"`); none of the four
+ * anchors are used any more, so the fragmented act shows no orbs at all
+ * (the engine copes with no anchor: those orbs stay idle, opacity 0). Instead
+ * every project gets a bespoke, static visual (`components/sections/work/
+ * WorkVisuals.tsx`), built the way the LegacyLift chapters are (real labels
+ * and data, not an abstract node graph):
+ *   Pollen Mesh    — two organisation panels, raw lines tagged "stays", a
+ *                    hashed signature crossing the boundary, "2 of 2
+ *                    approved".
+ *   HukamConnect   — a tap resolving into one real content item (the daily
+ *                    Hukamnama) landing live across named tenant rows.
+ *   ArgusAI        — the spoken delivery as real text, matched against PO
+ *                    lines with quantities, one flagged and escalated.
+ *   Scoofy         — interface blocks assembling into their final layout.
+ * This also drops four always-present orb canvases from the page, which was
+ * the section the owner found laggy on a real phone. Every real figure
+ * traces to build/content-source.md; IPs, hashes, tenant names, PO lines and
+ * the spoken quote are illustrative sample data in the product's own style,
+ * same as LegacyLift's demo account numbers, never a specific real result.
  */
 export function WhatIBuild() {
   return (
@@ -64,13 +78,8 @@ export function WhatIBuild() {
           className={styles.featureBeam}
         >
           <Reveal as="article" className={styles.feature} aria-labelledby="pollen-heading">
-            <div
-              className={`${styles.art} ${styles.featureArt}`}
-              data-orb-anchor="fragmented"
-              data-orb-project="0"
-              aria-hidden="true"
-            >
-              <OrbPoster state="fragmented" orbState="connecting" className={styles.poster} />
+            <div className={`${styles.art} ${styles.featureArt}`} aria-hidden="true">
+              <PollenMeshVisual />
             </div>
             <div className={styles.featureCopy}>
               <h3 id="pollen-heading" className={styles.featureTitle}>
@@ -104,13 +113,8 @@ export function WhatIBuild() {
         <ol className={styles.grid}>
           <Reveal as="li" delay={40} className={styles.card}>
             <article aria-labelledby="hukam-heading">
-              <div
-                className={styles.art}
-                data-orb-anchor="fragmented"
-                data-orb-project="1"
-                aria-hidden="true"
-              >
-                <OrbPoster state="fragmented" orbState="weaving" className={styles.poster} />
+              <div className={styles.art} aria-hidden="true">
+                <HukamConnectVisual />
               </div>
               <h3 id="hukam-heading" className={styles.cardTitle}>
                 HukamConnect
@@ -130,13 +134,8 @@ export function WhatIBuild() {
 
           <Reveal as="li" delay={90} className={styles.card}>
             <article aria-labelledby="argus-heading">
-              <div
-                className={styles.art}
-                data-orb-anchor="fragmented"
-                data-orb-project="2"
-                aria-hidden="true"
-              >
-                <OrbPoster state="fragmented" orbState="listening" className={styles.poster} />
+              <div className={styles.art} aria-hidden="true">
+                <ArgusVisual />
               </div>
               <h3 id="argus-heading" className={styles.cardTitle}>
                 ArgusAI
@@ -155,13 +154,8 @@ export function WhatIBuild() {
 
           <Reveal as="li" delay={140} className={styles.card}>
             <article aria-labelledby="scoofy-heading">
-              <div
-                className={styles.art}
-                data-orb-anchor="fragmented"
-                data-orb-project="3"
-                aria-hidden="true"
-              >
-                <OrbPoster state="fragmented" orbState="composing" className={styles.poster} />
+              <div className={styles.art} aria-hidden="true">
+                <ScoofyVisual />
               </div>
               <h3 id="scoofy-heading" className={styles.cardTitle}>
                 Scoofy

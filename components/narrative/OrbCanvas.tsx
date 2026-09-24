@@ -114,6 +114,8 @@ type Orb = {
   writtenY: number;
   writtenOpacity: number;
   hidden: boolean;
+  /** Written as position:fixed, in viewport coordinates (see step()). */
+  pinned: boolean;
   // State crossfade.
   state: OrbState;
   previous: OrbState;
@@ -170,6 +172,7 @@ export function OrbCanvas() {
         offX: 0, offY: 0, offSize: 0,
         writtenX: NaN, writtenY: NaN, writtenOpacity: -1,
         hidden: true,
+        pinned: false,
         state, previous: state, mix: 1,
         targetKey: "",
         lastPaint: -Infinity,
@@ -190,6 +193,7 @@ export function OrbCanvas() {
     const candidateAnchors = new Map<NarrativeAct, Anchor | null>();
     const projectAnchors: (Anchor | null)[] = [null, null, null, null];
     let layerTop = 0;
+    let layerLeft = 0;
     let measured = false;
 
     function findSticky(element: HTMLElement): HTMLElement | null {
@@ -236,6 +240,7 @@ export function OrbCanvas() {
 
       const layerRect = layer!.getBoundingClientRect();
       layerTop = layerRect.top + scroll;
+      layerLeft = layerRect.left;
       const stickyGeometry = new Map<HTMLElement, Anchor["sticky"]>();
       stickies.forEach((info, sticky) => {
         const rect = sticky.getBoundingClientRect();
@@ -336,6 +341,11 @@ export function OrbCanvas() {
     let targetY = 0;
     let targetSize = 0;
     let targetOpacity = 0;
+    /**
+     * Viewport-space centre Y when the orb's sticky ancestor is genuinely
+     * stuck, else null. See step() for why this exists.
+     */
+    let targetPin: number | null = null;
 
     function resolveTarget(orb: Orb, index: number): string {
       const act = narrativeState.act;
@@ -361,6 +371,7 @@ export function OrbCanvas() {
       }
       if (!anchor) {
         // No slot for this act: fade out in place.
+        targetPin = null;
         targetX = orb.x - orb.offX;
         targetY = orb.y - orb.offY;
         targetSize = orb.size - orb.offSize;
@@ -370,6 +381,16 @@ export function OrbCanvas() {
       const shift = stickyShift(anchor, layerTop, narrativeState.scroll);
       targetX = anchor.cx;
       targetY = anchor.cy + shift;
+      // While a sticky ancestor is *strictly* stuck (the shift is off both
+      // ends of its clamp) the anchor holds a constant viewport position, so
+      // the orb can be pinned there instead of chasing the scroll offset.
+      // Hysteresis: once pinned, only an exact clamp releases it.
+      const sticky = anchor.sticky;
+      const edge = orb.pinned ? 0 : 0.5;
+      targetPin =
+        sticky && shift > edge && shift < sticky.maxShift - edge
+          ? anchor.cy + sticky.inset - sticky.top
+          : null;
       targetSize = Math.max(56, anchor.min * scale);
       targetOpacity = anchor.range ? opacity * rangeVisibility(anchor.range, narrativeState.verification) : opacity;
       return key;
@@ -435,9 +456,24 @@ export function OrbCanvas() {
       }
 
       // Compositor-only writes, only when changed.
+      //
+      // A document-anchored orb scrolls with the page for free. An orb inside
+      // a stuck sticky box does not: its document position depends on the
+      // scroll offset, which is sampled on the main thread. Phones scroll on
+      // the compositor, so that sample lags what is actually painted and the
+      // orb visibly shakes against the frame it sits in. Pinning it (position:
+      // fixed, viewport coordinates) removes the scroll term altogether: the
+      // transform is then constant for the whole stuck stretch, so the orb and
+      // the sticky box move as one however the scroll is driven.
+      const pinned = targetPin !== null;
       const half = surface.box / 2;
-      const x = Math.round((orb.x - half) * 2) / 2;
-      const y = Math.round((orb.y - half) * 2) / 2;
+      const x = Math.round(((pinned ? layerLeft + targetX + orb.offX : orb.x) - half) * 2) / 2;
+      const y = Math.round(((pinned ? (targetPin as number) + orb.offY : orb.y) - half) * 2) / 2;
+      if (pinned !== orb.pinned) {
+        orb.pinned = pinned;
+        orb.el.style.position = pinned ? "fixed" : "absolute";
+        orb.writtenX = NaN;
+      }
       if (x !== orb.writtenX || y !== orb.writtenY) {
         orb.el.style.transform = `translate3d(${x}px, ${y}px, 0)`;
         orb.writtenX = x;

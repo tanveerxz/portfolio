@@ -40,3 +40,6 @@ next-env.d.ts
 
 # design tooling output (screenshots, caches, design system snapshot)
 /.impeccable/
+
+# build notes (local only)
+/build/HANDOFF.md

@@ -19,7 +19,13 @@ export interface MetalRingProps {
   strength?: number;
   /** Ring thickness in CSS px. Default 1.5. */
   ring?: number;
-  /** Wandering halo. Default true — the one sanctioned glow on the page. */
+  /**
+   * Wandering halo. Default false: metal-fx's glow module tracks anchor
+   * points by index and throws "Cannot read properties of undefined
+   * (reading 'x')" in a loop on real GPUs when that index outruns the list
+   * (reported by the owner, ~114 errors per page view). The ring itself is
+   * unaffected, so the halo stays off until the library fixes it.
+   */
   glow?: boolean;
 }
 
@@ -33,7 +39,7 @@ export function MetalRing({
   className,
   strength = 1,
   ring = 1.5,
-  glow = true,
+  glow = false,
 }: MetalRingProps) {
   const ref = useRef<HTMLSpanElement>(null);
   const enabled = useEffectGate(ref, "high", "0px");
