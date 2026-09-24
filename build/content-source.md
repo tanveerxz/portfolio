@@ -31,8 +31,10 @@ WHAT HE BUILDS (in this order, Pollen Mesh leads):
   boundaries without ever sharing raw data, only matched, hashed attack
   signatures, gated behind two rounds of human approval. Built with Shritesh
   Jamulkar, Software Engineer at Booking.com, link his name to
-  https://www.linkedin.com/in/rxshri99. Won an Honourable Mention, later
-  featured by name in Flower Labs' official Flower Monthly announcement.
+  https://www.linkedin.com/in/rxshri99. Won an Honourable Mention, and demoed
+  it at Flower Labs' Flower Monthly. CORRECTION (owner, 2026-09-24): they were
+  NOT named in the Flower Monthly announcement; they demoed/presented there.
+  Do not reinstate "featured by name".
   LINK (owner, 2026-09-22): https://flower.ai/apps/tanveer/pollen-mesh-agent
 - HukamConnect: multi-tenant web platform serving Sikh Gurdwaras, 300+
   active users, 2,000+ monthly visits. Tanveer architected and deployed it.

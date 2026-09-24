@@ -102,8 +102,8 @@ export function WhatIBuild() {
                 Software Engineer at Booking.com.
               </p>
               <p className={styles.recognition}>
-                Won an Honourable Mention, later featured by name in Flower
-                Labs&rsquo; official Flower Monthly announcement.
+                Won an Honourable Mention, and demoed it at Flower Labs&rsquo;
+                Flower Monthly.
               </p>
               <VisitLink href="https://flower.ai/apps/tanveer/pollen-mesh-agent" label="Visit Pollen Mesh" />
             </div>
