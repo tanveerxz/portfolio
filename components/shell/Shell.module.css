@@ -158,10 +158,17 @@
   gap: 8px;
 }
 
+/* Hidden for everyone who does not need it (owner request, QA session 2),
+   but NOT hidden from the people the site has already put into reduced
+   motion. Android's battery saver sets the system animation scale to zero and
+   Chrome reports prefers-reduced-motion: reduce for it, so visitors who only
+   meant to save battery land on the static site; with the control gone they
+   had no way out of it. Keyed off the OS query rather than the current mode
+   so it does not vanish the moment it is used. */
 .motion {
   min-width: 44px;
   min-height: 44px;
-  display: inline-flex;
+  display: none;
   align-items: center;
   gap: 10px;
   padding: 0 16px 0 12px;
@@ -174,6 +181,17 @@
   transition:
     color var(--dur-base) var(--ease-out-quint),
     box-shadow var(--dur-base) var(--ease-out-quint);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motion {
+    display: inline-flex;
+  }
+}
+
+/* Also for anyone already carrying a stored "reduced" preference. */
+:global(html[data-motion="reduced"]) .motion {
+  display: inline-flex;
 }
 
 .motion:hover {

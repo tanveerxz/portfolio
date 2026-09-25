@@ -43,3 +43,6 @@ next-env.d.ts
 
 # build notes (local only)
 /build/HANDOFF.md
+
+# scratch scripts (screenshots, one-off browser checks)
+/.*.mjs

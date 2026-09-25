@@ -78,16 +78,6 @@ function useHeaderScroll(ref: React.RefObject<HTMLElement>) {
   }, [ref]);
 }
 
-/**
- * Owner request (QA session 2): hide the motion toggle from the header for
- * now, without removing the feature. Everything it depends on stays wired
- * up (the boot script's html[data-motion] in app/layout.tsx, the
- * 'portfolio-motion' localStorage key, MotionToggle itself) so flipping
- * this back to true is the only step needed to bring it back. The
- * light/dark ThemeToggle now takes this header slot at every width.
- */
-const SHOW_MOTION_TOGGLE = false;
-
 export function SiteHeader() {
   const pathname = usePathname();
   const onHome = pathname === "/";
@@ -106,7 +96,11 @@ export function SiteHeader() {
         <NavIndicator active={onHome ? active : null} />
 
         <div className={styles.controls}>
-          {SHOW_MOTION_TOGGLE ? <MotionToggle /> : null}
+          {/* Hidden by default (owner request, QA session 2) and revealed by
+              Shell.module.css only for visitors whose device asks for reduced
+              motion, who would otherwise be stuck on the static site with no
+              way back. See the .motion rules there. */}
+          <MotionToggle />
           <ThemeToggle />
           <MobileMenu />
         </div>

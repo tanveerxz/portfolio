@@ -673,10 +673,17 @@ html[data-motion="full"] [data-reveal="lines"][data-revealed] [data-line-inner] 
 /* ==========================================================================
    Motion off: OS preference or the header toggle (html[data-motion=reduced]).
    ========================================================================== */
+/* Scoped to :not([data-motion="full"]) on purpose. Unscoped, this block
+   still fired after a visitor had opted back into motion, so the toggle only
+   half worked on exactly the devices that need it: the JS side went full
+   (orbs painting, Lenis running, the sticky stage back) while every CSS
+   transition and animation stayed pinned at 0.01ms by these !important
+   declarations. The boot script writes data-motion before first paint, and
+   the selector fails safe: no attribute, or no JS at all, still reduces. */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  html:not([data-motion="full"]) *,
+  html:not([data-motion="full"]) *::before,
+  html:not([data-motion="full"]) *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
